@@ -17,6 +17,15 @@
       --radius: 18px;
       --machine-w: min(92vw, 980px);
       --machine-h: min(78vh, 720px);
+
+      --toy-size: 70px;
+      --claw-open-gap: 70px;
+      --claw-closed-gap: 42px;
+      --claw-prong-width: 40px;
+      --claw-prong-height: 82px;
+      --claw-prong-thickness: 9px;
+      --claw-body-width: 132px;
+      --claw-catch-offset-y: 102px;
     }
 
     *{box-sizing:border-box}
@@ -166,8 +175,8 @@
       top:36px;
       left:50%;
       transform:translateX(-50%);
-      width:110px;
-      height:310px;
+      width:var(--claw-body-width);
+      height:330px;
       z-index:8;
       pointer-events:none;
     }
@@ -199,11 +208,20 @@
       position:absolute;
       left:50%;
       top:170px;
+      width:var(--claw-body-width);
+      height:132px;
       transform:translateX(-50%);
-      width:100px;
-      height:120px;
       transform-origin: top center;
       transition: transform .18s ease;
+      --gap: var(--claw-open-gap);
+      --left-rot: 10deg;
+      --right-rot: -10deg;
+    }
+
+    .claw.closed{
+      --gap: var(--claw-closed-gap);
+      --left-rot: 2deg;
+      --right-rot: -2deg;
     }
 
     .clawCore{
@@ -211,11 +229,12 @@
       left:50%;
       top:8px;
       transform:translateX(-50%);
-      width:24px;
+      width:26px;
       height:30px;
       border-radius:8px;
       background: linear-gradient(180deg, #ffffff, #9fb2dd);
       box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.12);
+      z-index:3;
     }
 
     .clawStem{
@@ -224,52 +243,50 @@
       top:34px;
       transform:translateX(-50%);
       width:8px;
-      height:16px;
+      height:14px;
       border-radius:999px;
       background: linear-gradient(180deg, #f8fbff, #a8b9de);
+      z-index:3;
     }
 
     .prong{
       position:absolute;
-      top:42px;
-      width:34px;
-      height:62px;
+      top:40px;
+      width:var(--claw-prong-width);
+      height:var(--claw-prong-height);
       transform-origin: top center;
-      transition: transform .18s ease;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
+      transition:
+        transform .18s ease,
+        left .18s ease,
+        right .18s ease;
+      filter: drop-shadow(0 3px 3px rgba(0,0,0,.18));
+      z-index:2;
     }
 
     .prong::before{
       content:"";
       position:absolute;
       inset:0;
-      border:6px solid #dfe8ff;
+      border: var(--claw-prong-thickness) solid #dfe8ff;
       background: transparent;
     }
 
     .prong.left{
-      left:15px;
-      transform:rotate(22deg);
+      left: calc(50% - var(--gap));
+      transform: rotate(var(--left-rot));
     }
     .prong.left::before{
       border-right:none;
-      border-radius:28px 0 0 28px;
+      border-radius:48px 0 0 48px;
     }
 
     .prong.right{
-      right:15px;
-      transform:rotate(-22deg);
+      right: calc(50% - var(--gap));
+      transform: rotate(var(--right-rot));
     }
     .prong.right::before{
       border-left:none;
-      border-radius:0 28px 28px 0;
-    }
-
-    .claw.closed .prong.left{
-      transform:rotate(7deg) translateX(3px);
-    }
-    .claw.closed .prong.right{
-      transform:rotate(-7deg) translateX(-3px);
+      border-radius:0 48px 48px 0;
     }
 
     .claw.swing-left{
@@ -284,14 +301,14 @@
       left:5%;
       right:22%;
       bottom:7%;
-      top:44%;
+      top:58%;
       z-index:5;
     }
 
     .toy{
       position:absolute;
-      width:70px;
-      height:70px;
+      width:var(--toy-size);
+      height:var(--toy-size);
       border-radius:50%;
       display:flex;
       align-items:center;
@@ -477,16 +494,29 @@
     .flashMessage.show{ display:block; }
 
     @media (max-width: 800px){
+      :root{
+        --toy-size: 58px;
+        --claw-open-gap: 58px;
+        --claw-closed-gap: 34px;
+        --claw-prong-width: 34px;
+        --claw-prong-height: 72px;
+        --claw-prong-thickness: 8px;
+        --claw-body-width: 120px;
+        --claw-catch-offset-y: 96px;
+      }
+
       .machine{ min-height:520px; }
+
       .toy{
-        width:58px;
-        height:58px;
         font-size:28px;
       }
       .dropZone{
         width:110px;
         height:120px;
         font-size:12px;
+      }
+      .toyArea{
+        top:60%;
       }
     }
   </style>
@@ -702,6 +732,18 @@
       statusText.textContent = text;
     }
 
+    function getCssVarPx(name){
+      return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 0;
+    }
+
+    function getToySize(){
+      return getCssVarPx('--toy-size') || 70;
+    }
+
+    function getCatchOffsetY(){
+      return getCssVarPx('--claw-catch-offset-y') || 102;
+    }
+
     function updateClawPosition(){
       clawRig.style.left = state.currentXPercent + '%';
       const cableHeight = Math.max(40, state.currentClawTop - 20);
@@ -737,18 +779,18 @@
       const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
 
       const positions = [
-        { x: 12, y: 14 },
-        { x: 30, y: 10 },
-        { x: 48, y: 14 },
-        { x: 66, y: 10 },
+        { x: 10, y: 18 },
+        { x: 30, y: 14 },
+        { x: 50, y: 18 },
+        { x: 70, y: 14 },
 
-        { x: 18, y: 40 },
-        { x: 36, y: 36 },
-        { x: 54, y: 40 },
-        { x: 72, y: 36 },
+        { x: 16, y: 44 },
+        { x: 36, y: 40 },
+        { x: 56, y: 44 },
+        { x: 74, y: 40 },
 
-        { x: 28, y: 64 },
-        { x: 58, y: 62 }
+        { x: 26, y: 68 },
+        { x: 58, y: 66 }
       ];
 
       items.forEach((item, index) => {
@@ -810,7 +852,7 @@
     function getClawCatchPoint(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const x = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const y = playRect.top + state.currentClawTop + 94;
+      const y = playRect.top + state.currentClawTop + getCatchOffsetY();
       return { x, y };
     }
 
@@ -818,6 +860,7 @@
       const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
+      const threshold = getToySize() * 0.66;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
@@ -828,7 +871,7 @@
         const dy = point.y - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if(dist < 48 && dist < bestDistance){
+        if(dist < threshold && dist < bestDistance){
           best = toy;
           bestDistance = dist;
         }
@@ -877,6 +920,7 @@
     function findNearestToyInColumn(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const thresholdX = getToySize() * 0.82;
 
       let best = null;
       let bestDx = Infinity;
@@ -886,7 +930,7 @@
         const r = toy.el.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const dx = Math.abs(clawX - cx);
-        if(dx < 58 && dx < bestDx){
+        if(dx < thresholdX && dx < bestDx){
           best = toy;
           bestDx = dx;
         }
@@ -900,11 +944,11 @@
       const toyRect = toy.el.getBoundingClientRect();
       const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
 
-      return Math.max(170, Math.min(toyCenterY - 94, 360));
+      return Math.max(170, Math.min(toyCenterY - getCatchOffsetY(), 382));
     }
 
     function getDefaultDropTop(){
-      return 320;
+      return 338;
     }
 
     function animateClawDown(targetTop){
@@ -943,6 +987,9 @@
     }
 
     async function liftWithToy(toy){
+      const toySize = getToySize();
+      const offsetY = getCatchOffsetY();
+
       while(state.currentClawTop > 170){
         state.currentClawTop -= 8;
         updateClawPosition();
@@ -950,8 +997,8 @@
         const playRect = document.getElementById('playfield').getBoundingClientRect();
         const clawX = playRect.width * (state.currentXPercent / 100);
         const toyAreaRect = toyArea.getBoundingClientRect();
-        const localX = clawX - toyAreaRect.left + playRect.left - 35;
-        const localY = state.currentClawTop + 99 - (toyAreaRect.top - playRect.top) - 35;
+        const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
+        const localY = state.currentClawTop + offsetY - (toyAreaRect.top - playRect.top) - toySize / 2;
 
         toy.el.style.left = localX + 'px';
         toy.el.style.top = localY + 'px';
