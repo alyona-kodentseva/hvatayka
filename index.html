@@ -17,6 +17,10 @@
       --radius: 18px;
       --machine-w: min(92vw, 980px);
       --machine-h: min(78vh, 720px);
+
+      --claw-metal-1: #dce6ff;
+      --claw-metal-2: #93a4d6;
+      --claw-metal-3: #7f93c8;
     }
 
     *{box-sizing:border-box}
@@ -195,14 +199,14 @@
       border-radius:999px;
     }
 
-    /* Классическая клешня */
+    /* УПРОЩЕННАЯ КЛЕШНЯ: 3 изогнутые палочки */
     .claw{
       position:absolute;
       left:50%;
       top:168px;
       transform:translateX(-50%);
-      width:112px;
-      height:126px;
+      width:108px;
+      height:132px;
     }
 
     .clawCore{
@@ -210,178 +214,88 @@
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:26px;
+      width:24px;
       height:34px;
       border-radius:8px;
-      background: linear-gradient(180deg, #ffffff, #c7d4ee 45%, #98abd3);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2));
       box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.75),
-        inset 0 -2px 4px rgba(0,0,0,.12);
+        inset 0 2px 2px rgba(255,255,255,.7),
+        inset 0 -2px 3px rgba(0,0,0,.12);
       z-index:4;
     }
 
-    .clawRing{
+    .clawBar{
       position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      width:42px;
-      height:8px;
-      border-radius:999px;
-      background: linear-gradient(180deg, #eef4ff, #aab8d8);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.65);
-      z-index:4;
-    }
-    .clawRing.r1{ top:10px; }
-    .clawRing.r2{ top:24px; }
-
-    .clawBody{
-      position:absolute;
-      left:50%;
-      top:28px;
-      transform:translateX(-50%);
-      width:20px;
-      height:30px;
-      border-radius:0 0 12px 12px;
-      background: linear-gradient(180deg, #eef4ff, #a4b5d9);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.7);
-      z-index:4;
-    }
-
-    .clawPin{
-      position:absolute;
-      top:34px;
-      width:10px;
-      height:10px;
-      border-radius:50%;
-      background: linear-gradient(180deg, #dfe8ff, #8ea1ce);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.7);
-      z-index:5;
-    }
-    .clawPin.left{ left:22px; }
-    .clawPin.right{ right:22px; }
-
-    .arm{
-      position:absolute;
-      top:38px;
-      width:34px;
-      height:82px;
-      transform-origin: top center;
-      transition: transform .24s ease;
-      filter: drop-shadow(0 2px 2px rgba(0,0,0,.16));
-      z-index:2;
-    }
-
-    .arm.left{
-      left:10px;
-      transform: rotate(20deg);
-    }
-
-    .arm.right{
-      right:10px;
-      transform: rotate(-20deg);
-    }
-
-    .upper{
-      position:absolute;
-      top:0;
-      left:50%;
+      top:30px;
       width:6px;
-      height:30px;
-      transform:translateX(-50%);
       border-radius:999px;
-      background: linear-gradient(180deg, #f4f8ff, #b6c4e0 55%, #8ea0c8);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.65);
-    }
-
-    .joint{
-      position:absolute;
-      top:24px;
-      left:50%;
-      width:8px;
-      height:8px;
-      transform:translateX(-50%);
-      border-radius:50%;
-      background: linear-gradient(180deg, #eef4ff, #92a4cf);
-      z-index:3;
-    }
-
-    .curve{
-      position:absolute;
-      top:26px;
-      width:32px;
-      height:56px;
-      border:5px solid #dfe8ff;
-      background: transparent;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.4);
-    }
-
-    .arm.left .curve{
-      right:0;
-      border-left:none;
-      border-top:none;
-      border-radius: 0 0 26px 0;
-    }
-
-    .arm.right .curve{
-      left:0;
-      border-right:none;
-      border-top:none;
-      border-radius: 0 0 0 26px;
-    }
-
-    .tip{
-      position:absolute;
-      bottom:0;
-      width:6px;
-      height:18px;
-      border-radius:999px;
-      background: linear-gradient(180deg, #f2f7ff, #b0bfdc 55%, #8ea0c8);
-    }
-
-    .arm.left .tip{
-      left:6px;
-      transform: rotate(18deg);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2) 60%, var(--claw-metal-3));
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
       transform-origin: top center;
+      transition: transform .22s ease;
     }
 
-    .arm.right .tip{
-      right:6px;
-      transform: rotate(-18deg);
-      transform-origin: top center;
+    .clawBar.left{
+      left:22px;
+      height:86px;
+      transform: rotate(26deg);
     }
 
-    .centerNeedle{
-      position:absolute;
+    .clawBar.right{
+      right:22px;
+      height:86px;
+      transform: rotate(-26deg);
+    }
+
+    .clawBar.center{
       left:50%;
-      top:52px;
-      transform:translateX(-50%);
-      width:4px;
-      height:46px;
-      border-radius:999px;
-      background: linear-gradient(180deg, #f2f7ff, #a5b6da 60%, #8799c5);
-      z-index:1;
-      opacity:.92;
+      margin-left:-3px;
+      height:62px;
+      transform: rotate(0deg);
     }
 
-    .centerNeedle::after{
+    .clawBar.left::after,
+    .clawBar.right::after,
+    .clawBar.center::after{
       content:"";
       position:absolute;
       left:50%;
       bottom:-2px;
-      transform:translateX(-50%);
-      width:8px;
-      height:16px;
-      border:3px solid #9aaed7;
-      border-top:none;
-      border-radius:0 0 8px 8px;
-      background: transparent;
+      transform-origin: top center;
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2) 60%, var(--claw-metal-3));
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.45);
     }
 
-    .claw.closed .arm.left{
-      transform: rotate(7deg);
+    .clawBar.left::after{
+      width:6px;
+      height:38px;
+      margin-left:-3px;
+      border-radius:999px;
+      transform: rotate(22deg);
     }
-    .claw.closed .arm.right{
-      transform: rotate(-7deg);
+
+    .clawBar.right::after{
+      width:6px;
+      height:38px;
+      margin-left:-3px;
+      border-radius:999px;
+      transform: rotate(-22deg);
+    }
+
+    .clawBar.center::after{
+      width:6px;
+      height:26px;
+      margin-left:-3px;
+      border-radius:999px;
+      transform: rotate(0deg);
+    }
+
+    .claw.closed .clawBar.left{
+      transform: rotate(10deg);
+    }
+
+    .claw.closed .clawBar.right{
+      transform: rotate(-10deg);
     }
 
     .toyArea{
@@ -623,27 +537,9 @@
           <div class="cable" id="cable"></div>
           <div class="claw" id="claw">
             <div class="clawCore"></div>
-            <div class="clawRing r1"></div>
-            <div class="clawRing r2"></div>
-            <div class="clawBody"></div>
-            <div class="clawPin left"></div>
-            <div class="clawPin right"></div>
-
-            <div class="arm left">
-              <div class="upper"></div>
-              <div class="joint"></div>
-              <div class="curve"></div>
-              <div class="tip"></div>
-            </div>
-
-            <div class="arm right">
-              <div class="upper"></div>
-              <div class="joint"></div>
-              <div class="curve"></div>
-              <div class="tip"></div>
-            </div>
-
-            <div class="centerNeedle"></div>
+            <div class="clawBar left"></div>
+            <div class="clawBar center"></div>
+            <div class="clawBar right"></div>
           </div>
         </div>
 
@@ -837,10 +733,6 @@
       updateClawPosition();
     }
 
-    /*
-      Игрушки теперь раскладываются по сетке
-      только в зоне, где клешня реально может их достать.
-    */
     function initToys(){
       toyArea.innerHTML = '';
       state.toys = [];
