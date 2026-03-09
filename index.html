@@ -17,10 +17,6 @@
       --radius: 18px;
       --machine-w: min(92vw, 980px);
       --machine-h: min(78vh, 720px);
-
-      --claw-metal-1: #dce6ff;
-      --claw-metal-2: #93a4d6;
-      --claw-metal-3: #7f93c8;
     }
 
     *{box-sizing:border-box}
@@ -167,11 +163,11 @@
 
     .clawRig{
       position:absolute;
-      top:36px;
+      top:30px;
       left:50%;
       transform:translateX(-50%);
-      width:110px;
-      height:310px;
+      width:150px;
+      height:360px;
       z-index:8;
       pointer-events:none;
     }
@@ -181,121 +177,190 @@
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:72px;
-      height:34px;
-      border-radius:12px;
-      background: linear-gradient(180deg, #f8fbff, #a9b9df);
-      box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.14);
+      width:44px;
+      height:54px;
+      border-radius:14px;
+      background:
+        linear-gradient(180deg, #4d4a47 0%, #1f1d1c 48%, #5f5953 100%);
+      box-shadow:
+        inset 0 2px 3px rgba(255,255,255,.18),
+        inset 0 -3px 5px rgba(0,0,0,.35),
+        0 4px 10px rgba(0,0,0,.22);
+      z-index:3;
     }
+
+    .clawHead::before,
+    .clawHead::after{
+      content:"";
+      position:absolute;
+      left:6px;
+      right:6px;
+      height:3px;
+      border-radius:999px;
+      background: rgba(255,255,255,.18);
+    }
+
+    .clawHead::before{ top:11px; }
+    .clawHead::after{ top:19px; }
 
     .cable{
       position:absolute;
       left:50%;
-      top:30px;
+      top:18px;
       transform:translateX(-50%);
       width:4px;
       height:150px;
       background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
       border-radius:999px;
+      z-index:1;
     }
 
-    /* УПРОЩЕННАЯ КЛЕШНЯ: 3 изогнутые палочки */
     .claw{
       position:absolute;
       left:50%;
-      top:168px;
+      top:170px;
       transform:translateX(-50%);
-      width:108px;
-      height:132px;
+      width:150px;
+      height:170px;
     }
 
-    .clawCore{
+    .clawBody{
       position:absolute;
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:24px;
-      height:34px;
-      border-radius:8px;
-      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2));
+      width:54px;
+      height:54px;
+      border-radius:50% 50% 42% 42%;
+      background:
+        linear-gradient(180deg, #2f2c2a 0%, #0f0e0d 52%, #4d4743 100%);
       box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.7),
-        inset 0 -2px 3px rgba(0,0,0,.12);
+        inset 0 2px 2px rgba(255,255,255,.18),
+        inset 0 -4px 6px rgba(0,0,0,.35);
       z-index:4;
     }
 
-    .clawBar{
-      position:absolute;
-      top:30px;
-      width:6px;
-      border-radius:999px;
-      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2) 60%, var(--claw-metal-3));
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
-      transform-origin: top center;
-      transition: transform .22s ease;
-    }
-
-    .clawBar.left{
-      left:22px;
-      height:86px;
-      transform: rotate(26deg);
-    }
-
-    .clawBar.right{
-      right:22px;
-      height:86px;
-      transform: rotate(-26deg);
-    }
-
-    .clawBar.center{
-      left:50%;
-      margin-left:-3px;
-      height:62px;
-      transform: rotate(0deg);
-    }
-
-    .clawBar.left::after,
-    .clawBar.right::after,
-    .clawBar.center::after{
+    .clawBody::before{
       content:"";
       position:absolute;
       left:50%;
-      bottom:-2px;
+      bottom:-14px;
+      transform:translateX(-50%);
+      width:74px;
+      height:28px;
+      border-radius:0 0 18px 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.9), rgba(214,220,230,.95));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.9),
+        inset 0 -2px 4px rgba(0,0,0,.14);
+    }
+
+    .clawBody::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      bottom:-60px;
+      transform:translateX(-50%);
+      width:6px;
+      height:54px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #d9e1ec, #818b97);
+      box-shadow: 0 1px 2px rgba(0,0,0,.18);
+    }
+
+    .arm{
+      position:absolute;
+      left:50%;
+      top:42px;
+      width:18px;
+      height:110px;
+      transform-origin: 50% 12px;
+      transition: transform .18s ease;
+      z-index:2;
+      filter: drop-shadow(0 3px 3px rgba(0,0,0,.18));
+    }
+
+    .arm::before{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:0;
+      transform:translateX(-50%);
+      width:7px;
+      height:76px;
+      border-radius:999px;
+      background:
+        linear-gradient(180deg, #fdfefe 0%, #cfd8e2 48%, #f8fbff 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(120,130,145,.18),
+        inset 1px 0 1px rgba(255,255,255,.85),
+        inset -1px 0 1px rgba(0,0,0,.08);
+    }
+
+    .arm::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:68px;
+      width:7px;
+      height:48px;
       transform-origin: top center;
-      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2) 60%, var(--claw-metal-3));
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.45);
-    }
-
-    .clawBar.left::after{
-      width:6px;
-      height:38px;
-      margin-left:-3px;
       border-radius:999px;
-      transform: rotate(22deg);
+      background:
+        linear-gradient(180deg, #fefefe 0%, #d8e0e8 45%, #aab4bf 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(120,130,145,.15),
+        inset 1px 0 1px rgba(255,255,255,.7);
     }
 
-    .clawBar.right::after{
-      width:6px;
-      height:38px;
-      margin-left:-3px;
-      border-radius:999px;
-      transform: rotate(-22deg);
+    .arm.left{
+      transform:translateX(-50%) rotate(31deg);
+    }
+    .arm.left::after{
+      transform:translateX(-50%) rotate(24deg);
     }
 
-    .clawBar.center::after{
-      width:6px;
-      height:26px;
-      margin-left:-3px;
-      border-radius:999px;
-      transform: rotate(0deg);
+    .arm.right{
+      transform:translateX(-50%) rotate(-31deg);
+    }
+    .arm.right::after{
+      transform:translateX(-50%) rotate(-24deg);
     }
 
-    .claw.closed .clawBar.left{
-      transform: rotate(10deg);
+    .arm.center{
+      transform:translateX(-50%) rotate(180deg);
+      top:58px;
+      height:92px;
+    }
+    .arm.center::before{
+      height:52px;
+    }
+    .arm.center::after{
+      top:45px;
+      height:36px;
+      transform:translateX(-50%) rotate(0deg);
     }
 
-    .claw.closed .clawBar.right{
-      transform: rotate(-10deg);
+    .claw.closed .arm.left{
+      transform:translateX(-50%) rotate(16deg);
+    }
+    .claw.closed .arm.left::after{
+      transform:translateX(-50%) rotate(12deg);
+    }
+
+    .claw.closed .arm.right{
+      transform:translateX(-50%) rotate(-16deg);
+    }
+    .claw.closed .arm.right::after{
+      transform:translateX(-50%) rotate(-12deg);
+    }
+
+    .claw.closed .arm.center{
+      transform:translateX(-50%) rotate(180deg);
+    }
+    .claw.closed .arm.center::after{
+      transform:translateX(-50%) rotate(0deg);
     }
 
     .toyArea{
@@ -497,11 +562,23 @@
 
     @media (max-width: 800px){
       .machine{ min-height:520px; }
+
+      .clawRig{
+        width:132px;
+        height:340px;
+      }
+
+      .claw{
+        width:132px;
+        height:156px;
+      }
+
       .toy{
         width:58px;
         height:58px;
         font-size:28px;
       }
+
       .dropZone{
         width:110px;
         height:120px;
@@ -535,11 +612,12 @@
         <div class="clawRig" id="clawRig">
           <div class="clawHead"></div>
           <div class="cable" id="cable"></div>
+
           <div class="claw" id="claw">
-            <div class="clawCore"></div>
-            <div class="clawBar left"></div>
-            <div class="clawBar center"></div>
-            <div class="clawBar right"></div>
+            <div class="clawBody"></div>
+            <div class="arm left"></div>
+            <div class="arm right"></div>
+            <div class="arm center"></div>
           </div>
         </div>
 
@@ -722,7 +800,7 @@
 
     function updateClawPosition(){
       clawRig.style.left = state.currentXPercent + '%';
-      const cableHeight = Math.max(40, state.currentClawTop - 20);
+      const cableHeight = Math.max(40, state.currentClawTop - 18);
       cable.style.height = cableHeight + 'px';
       claw.style.top = state.currentClawTop + 'px';
     }
@@ -813,7 +891,7 @@
     function getClawCatchPoint(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const x = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const y = playRect.top + state.currentClawTop + 90;
+      const y = playRect.top + state.currentClawTop + 116;
       return { x, y };
     }
 
@@ -902,7 +980,7 @@
       const toyRect = toy.el.getBoundingClientRect();
       const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
 
-      return Math.max(170, Math.min(toyCenterY - 90, 360));
+      return Math.max(170, Math.min(toyCenterY - 116, 360));
     }
 
     function getDefaultDropTop(){
@@ -953,7 +1031,7 @@
         const clawX = playRect.width * (state.currentXPercent / 100);
         const toyAreaRect = toyArea.getBoundingClientRect();
         const localX = clawX - toyAreaRect.left + playRect.left - 35;
-        const localY = state.currentClawTop + 95 - (toyAreaRect.top - playRect.top) - 35;
+        const localY = state.currentClawTop + 120 - (toyAreaRect.top - playRect.top) - 35;
 
         toy.el.style.left = localX + 'px';
         toy.el.style.top = localY + 'px';
