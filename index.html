@@ -166,7 +166,7 @@
       top:36px;
       left:50%;
       transform:translateX(-50%);
-      width:130px;
+      width:124px;
       height:320px;
       z-index:8;
       pointer-events:none;
@@ -200,190 +200,205 @@
       left:50%;
       top:170px;
       transform:translateX(-50%);
-      width:130px;
-      height:145px;
+      width:124px;
+      height:150px;
     }
 
-    .clawCore{
+    /* Новый визуал клешни под фото */
+    .clawTopTube{
       position:absolute;
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:24px;
-      height:34px;
-      border-radius:8px;
-      background: linear-gradient(180deg, #1e1e1e, #0c0c0c);
-      box-shadow: inset 0 1px 2px rgba(255,255,255,.12);
-      z-index:3;
-    }
-
-    .clawBody{
-      position:absolute;
-      left:50%;
-      top:24px;
-      transform:translateX(-50%);
-      width:70px;
+      width:28px;
       height:56px;
-      background: linear-gradient(180deg, #aeb4ba, #808891 65%, #6e7680);
-      clip-path: polygon(18% 0%, 82% 0%, 94% 34%, 84% 100%, 16% 100%, 6% 34%);
+      border-radius:10px;
+      background: linear-gradient(90deg, #b9c0c8 0%, #f4f6f8 35%, #c8ced4 70%, #939aa3 100%);
       box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.45),
-        inset 0 -3px 5px rgba(0,0,0,.18),
-        0 3px 6px rgba(0,0,0,.16);
+        inset 0 1px 2px rgba(255,255,255,.7),
+        inset 0 -2px 4px rgba(0,0,0,.12);
+    }
+
+    .clawRing{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      width:44px;
+      height:10px;
+      border-radius:999px;
+      background: linear-gradient(90deg, #9ea5ad, #f1f4f6 45%, #adb4bc 75%, #7e8790);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
+    }
+    .clawRing.r1{ top:18px; }
+    .clawRing.r2{ top:42px; }
+
+    .clawLowerBody{
+      position:absolute;
+      left:50%;
+      top:54px;
+      transform:translateX(-50%);
+      width:34px;
+      height:30px;
+      border-radius:0 0 10px 10px;
+      background: linear-gradient(90deg, #a4abb3, #f0f2f4 42%, #b5bcc4 72%, #818991);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
       z-index:3;
     }
 
-    .clawBody::before,
-    .clawBody::after{
-      content:"";
-      position:absolute;
-      top:24px;
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#2e2e2e;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.18);
-    }
-
-    .clawBody::before{ left:6px; }
-    .clawBody::after{ right:6px; }
-
-    .clawNose{
+    .clawHook{
       position:absolute;
       left:50%;
-      top:64px;
+      top:78px;
       transform:translateX(-50%);
-      width:30px;
-      height:24px;
-      border-radius: 0 0 18px 18px;
-      background: linear-gradient(180deg, #8d949c, #6f7780);
-      box-shadow: inset 0 1px 2px rgba(255,255,255,.35);
-      z-index:4;
-    }
-
-    .clawNose::after{
-      content:"";
-      position:absolute;
-      left:50%;
-      bottom:4px;
-      transform:translateX(-50%);
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:#3a3a3a;
-    }
-
-    .arm{
-      position:absolute;
-      top:74px;
-      width:68px;
-      height:68px;
-      transition: transform .24s ease;
+      width:14px;
+      height:54px;
+      border:4px solid #aeb5bc;
+      border-top:none;
+      border-radius:0 0 12px 12px;
+      opacity:.9;
       z-index:1;
     }
 
-    .arm.left{
-      left:4px;
-      transform-origin: 56px 8px;
-      transform: rotate(12deg);
-    }
-
-    .arm.right{
-      right:4px;
-      transform-origin: 12px 8px;
-      transform: rotate(-12deg);
-    }
-
-    .claw.closed .arm.left{
-      transform: rotate(1deg);
-    }
-
-    .claw.closed .arm.right{
-      transform: rotate(-1deg);
-    }
-
-    .armBar{
+    .armLink{
       position:absolute;
-      top:0;
-      width:40px;
-      height:14px;
-      background: linear-gradient(180deg, #d62b2b, #9e1111);
-      border-radius:10px;
-      box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.22),
-        inset 0 -2px 3px rgba(0,0,0,.2);
-    }
-
-    .arm.left .armBar{
-      right:10px;
-      transform: rotate(-6deg);
-      transform-origin: right center;
-    }
-
-    .arm.right .armBar{
-      left:10px;
-      transform: rotate(6deg);
-      transform-origin: left center;
-    }
-
-    .armCurve{
-      position:absolute;
-      top:6px;
-      width:54px;
+      top:36px;
+      width:12px;
       height:62px;
-      border:11px solid #cf1d1d;
-      border-top:none;
-      background: transparent;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.16);
+      border-radius:999px;
+      background: linear-gradient(90deg, #97a0a9, #eef1f4 46%, #aeb6bd 72%, #7e8790);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
+      z-index:4;
+      transition: transform .26s ease;
     }
 
-    .arm.left .armCurve{
-      right:0;
-      border-left:none;
-      border-radius: 0 0 32px 0;
-    }
-
-    .arm.right .armCurve{
-      left:0;
-      border-right:none;
-      border-radius: 0 0 0 32px;
-    }
-
-    .armTip{
-      position:absolute;
-      bottom:1px;
-      width:11px;
-      height:15px;
-      background: linear-gradient(180deg, #2b2b2b, #111);
-      border-radius:4px;
-    }
-
-    .arm.left .armTip{
-      left:8px;
+    .armLink.left{
+      left:28px;
+      transform-origin: top center;
       transform: rotate(18deg);
     }
 
-    .arm.right .armTip{
-      right:8px;
+    .armLink.right{
+      right:28px;
+      transform-origin: top center;
       transform: rotate(-18deg);
     }
 
-    .armScrew{
+    .clawFinger{
       position:absolute;
-      top:4px;
-      width:6px;
-      height:6px;
+      top:84px;
+      width:56px;
+      height:86px;
+      z-index:5;
+      transition: transform .26s ease;
+    }
+
+    .clawFinger.left{
+      left:4px;
+      transform-origin: 40px 8px;
+      transform: rotate(24deg);
+    }
+
+    .clawFinger.right{
+      right:4px;
+      transform-origin: 16px 8px;
+      transform: rotate(-24deg);
+    }
+
+    .fingerJoint{
+      position:absolute;
+      top:0;
+      width:14px;
+      height:14px;
       border-radius:50%;
-      background:#f0dede;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.2);
+      background: linear-gradient(180deg, #d7dde2, #8b949c);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.65);
     }
 
-    .arm.left .armScrew{
-      right:16px;
+    .clawFinger.left .fingerJoint{
+      right:8px;
     }
 
-    .arm.right .armScrew{
-      left:16px;
+    .clawFinger.right .fingerJoint{
+      left:8px;
+    }
+
+    .fingerUpper{
+      position:absolute;
+      top:6px;
+      width:10px;
+      height:52px;
+      border-radius:999px;
+      background: linear-gradient(90deg, #98a1aa, #f0f3f5 46%, #b2bac2 74%, #7b858e);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
+    }
+
+    .clawFinger.left .fingerUpper{
+      right:10px;
+      transform: rotate(16deg);
+      transform-origin: top center;
+    }
+
+    .clawFinger.right .fingerUpper{
+      left:10px;
+      transform: rotate(-16deg);
+      transform-origin: top center;
+    }
+
+    .fingerLower{
+      position:absolute;
+      bottom:2px;
+      width:12px;
+      height:94px;
+      border-radius:999px;
+      background: linear-gradient(90deg, #98a1aa, #f5f7f8 46%, #b4bcc4 74%, #7b858e);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.58);
+    }
+
+    .clawFinger.left .fingerLower{
+      left:14px;
+      transform-origin: top center;
+      transform: rotate(22deg);
+    }
+
+    .clawFinger.right .fingerLower{
+      right:14px;
+      transform-origin: top center;
+      transform: rotate(-22deg);
+    }
+
+    .fingerTip{
+      position:absolute;
+      bottom:0;
+      width:10px;
+      height:24px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #b0b7be, #7f8891);
+    }
+
+    .clawFinger.left .fingerTip{
+      left:10px;
+      transform: rotate(18deg);
+    }
+
+    .clawFinger.right .fingerTip{
+      right:10px;
+      transform: rotate(-18deg);
+    }
+
+    .claw.closed .armLink.left{
+      transform: rotate(8deg);
+    }
+
+    .claw.closed .armLink.right{
+      transform: rotate(-8deg);
+    }
+
+    .claw.closed .clawFinger.left{
+      transform: rotate(10deg);
+    }
+
+    .claw.closed .clawFinger.right{
+      transform: rotate(-10deg);
     }
 
     .toyArea{
@@ -624,22 +639,27 @@
           <div class="clawHead"></div>
           <div class="cable" id="cable"></div>
           <div class="claw" id="claw">
-            <div class="clawCore"></div>
-            <div class="clawBody"></div>
-            <div class="clawNose"></div>
+            <div class="clawTopTube"></div>
+            <div class="clawRing r1"></div>
+            <div class="clawRing r2"></div>
+            <div class="clawLowerBody"></div>
+            <div class="clawHook"></div>
 
-            <div class="arm left">
-              <div class="armBar"></div>
-              <div class="armCurve"></div>
-              <div class="armTip"></div>
-              <div class="armScrew"></div>
+            <div class="armLink left"></div>
+            <div class="armLink right"></div>
+
+            <div class="clawFinger left">
+              <div class="fingerJoint"></div>
+              <div class="fingerUpper"></div>
+              <div class="fingerLower"></div>
+              <div class="fingerTip"></div>
             </div>
 
-            <div class="arm right">
-              <div class="armBar"></div>
-              <div class="armCurve"></div>
-              <div class="armTip"></div>
-              <div class="armScrew"></div>
+            <div class="clawFinger right">
+              <div class="fingerJoint"></div>
+              <div class="fingerUpper"></div>
+              <div class="fingerLower"></div>
+              <div class="fingerTip"></div>
             </div>
           </div>
         </div>
@@ -834,6 +854,10 @@
       updateClawPosition();
     }
 
+    /*
+      Игрушки теперь раскладываются по сетке
+      только в зоне, где клешня реально может их достать.
+    */
     function initToys(){
       toyArea.innerHTML = '';
       state.toys = [];
