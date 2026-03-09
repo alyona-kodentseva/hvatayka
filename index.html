@@ -201,7 +201,7 @@
       top:170px;
       transform:translateX(-50%);
       width:100px;
-      height:120px;
+      height:124px;
       transform-origin: top center;
       transition: transform .18s ease;
     }
@@ -216,6 +216,7 @@
       border-radius:8px;
       background: linear-gradient(180deg, #ffffff, #9fb2dd);
       box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.12);
+      z-index:3;
     }
 
     .clawStem{
@@ -227,19 +228,21 @@
       height:16px;
       border-radius:999px;
       background: linear-gradient(180deg, #f8fbff, #a8b9de);
+      z-index:3;
     }
 
     .prong{
       position:absolute;
-      top:42px;
+      top:40px;
       width:34px;
-      height:62px;
+      height:68px;
       transform-origin: top center;
       transition:
         transform .18s ease,
         left .18s ease,
         right .18s ease;
       filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
+      z-index:2;
     }
 
     .prong::before{
@@ -250,6 +253,17 @@
       background: transparent;
     }
 
+    .prong::after{
+      content:"";
+      position:absolute;
+      top:-12px;
+      width:16px;
+      height:18px;
+      background: linear-gradient(180deg, #f3f7ff, #c9d5ef);
+      border-radius:10px;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.7);
+    }
+
     .prong.left{
       left:6px;
       transform:rotate(22deg);
@@ -257,6 +271,10 @@
     .prong.left::before{
       border-right:none;
       border-radius:28px 0 0 28px;
+    }
+    .prong.left::after{
+      right:4px;
+      transform:rotate(-18deg);
     }
 
     .prong.right{
@@ -266,6 +284,10 @@
     .prong.right::before{
       border-left:none;
       border-radius:0 28px 28px 0;
+    }
+    .prong.right::after{
+      left:4px;
+      transform:rotate(18deg);
     }
 
     .claw.closed .prong.left{
@@ -289,7 +311,7 @@
       left:5%;
       right:22%;
       bottom:7%;
-      top:52%;
+      top:55%;
       z-index:5;
     }
 
@@ -503,7 +525,7 @@
       .claw.closed .prong.right{ right:20px; }
 
       .toyArea{
-        top:54%;
+        top:57%;
       }
     }
   </style>
@@ -597,71 +619,71 @@
       moveStep: 26,
       clawMinXPercent: 12,
       clawMaxXPercent: 76,
-      toyCount: 10,
-
-      items: [
-        {
-          emoji: "🧸",
-          color: "#ff7b8e",
-          front: { type: "text", text: "Назови игрушку" },
-          back:  { type: "text", text: "Медвежонок" }
-        },
-        {
-          emoji: "🚗",
-          color: "#57b8ff",
-          front: { type: "text", text: "Назови предмет" },
-          back:  { type: "text", text: "Машина" }
-        },
-        {
-          emoji: "⚽",
-          color: "#67d38c",
-          front: { type: "text", text: "Прочитай слово: мяч" },
-          back:  { type: "text", text: "мяч" }
-        },
-        {
-          emoji: "🪁",
-          color: "#c987ff",
-          front: { type: "text", text: "Что это?" },
-          back:  { type: "text", text: "Воздушный змей" }
-        },
-        {
-          emoji: "🦄",
-          color: "#ff8bd8",
-          front: { type: "text", text: "Назови игрушку" },
-          back:  { type: "text", text: "Единорог" }
-        },
-        {
-          emoji: "🎲",
-          color: "#ffad5c",
-          front: { type: "text", text: "Назови предмет" },
-          back:  { type: "text", text: "Кубик" }
-        },
-        {
-          emoji: "🎈",
-          color: "#ff667a",
-          front: { type: "text", text: "Что изображено?" },
-          back:  { type: "text", text: "Воздушный шар" }
-        },
-        {
-          emoji: "🪀",
-          color: "#6ed3ff",
-          front: { type: "text", text: "Назови игрушку" },
-          back:  { type: "text", text: "Йо-йо" }
-        },
-        {
-          emoji: "🧩",
-          color: "#8dda66",
-          front: { type: "text", text: "Выполни устно: назови цвет игрушки" },
-          back:  { type: "text", text: "Пример ответа: зелёный / салатовый" }
-        },
-        {
-          emoji: "🎯",
-          color: "#ff8c42",
-          front: { type: "text", text: "Назови предмет" },
-          back:  { type: "text", text: "Мишень" }
-        }
-      ]
+      toyCount: 10
     };
+
+    GAME_CONFIG.items = [
+      {
+        emoji: "🧸",
+        color: "#ff7b8e",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Медвежонок" }
+      },
+      {
+        emoji: "🚗",
+        color: "#57b8ff",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Машина" }
+      },
+      {
+        emoji: "⚽",
+        color: "#67d38c",
+        front: { type: "text", text: "Прочитай слово: мяч" },
+        back:  { type: "text", text: "мяч" }
+      },
+      {
+        emoji: "🪁",
+        color: "#c987ff",
+        front: { type: "text", text: "Что это?" },
+        back:  { type: "text", text: "Воздушный змей" }
+      },
+      {
+        emoji: "🦄",
+        color: "#ff8bd8",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Единорог" }
+      },
+      {
+        emoji: "🎲",
+        color: "#ffad5c",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Кубик" }
+      },
+      {
+        emoji: "🎈",
+        color: "#ff667a",
+        front: { type: "text", text: "Что изображено?" },
+        back:  { type: "text", text: "Воздушный шар" }
+      },
+      {
+        emoji: "🪀",
+        color: "#6ed3ff",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Йо-йо" }
+      },
+      {
+        emoji: "🧩",
+        color: "#8dda66",
+        front: { type: "text", text: "Выполни устно: назови цвет игрушки" },
+        back:  { type: "text", text: "Пример ответа: зелёный / салатовый" }
+      },
+      {
+        emoji: "🎯",
+        color: "#ff8c42",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Мишень" }
+      }
+    ];
 
     const state = {
       active: false,
@@ -719,27 +741,6 @@
       statusText.textContent = text;
     }
 
-    function getToyVisualSize(){
-      const sampleToy = state.toys.find(t => !t.removed)?.el || document.querySelector('.toy');
-      if(!sampleToy) return 70;
-      return sampleToy.getBoundingClientRect().width || 70;
-    }
-
-    function updateProngSpread(){
-      const toySize = getToyVisualSize();
-      const targetInnerGap = toySize;
-      const prongWidth = 34;
-      const clawWidth = 100;
-
-      const sideOffset = Math.max(2, (clawWidth - targetInnerGap - prongWidth * 2) / 2);
-
-      document.querySelector('.prong.left').style.left = sideOffset + 'px';
-      document.querySelector('.prong.right').style.right = sideOffset + 'px';
-
-      const closedOffset = Math.max(16, sideOffset + 13);
-      document.documentElement.style.setProperty('--closed-left-offset', closedOffset + 'px');
-    }
-
     function updateClawPosition(){
       clawRig.style.left = state.currentXPercent + '%';
       const cableHeight = Math.max(40, state.currentClawTop - 20);
@@ -775,15 +776,15 @@
       const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
 
       const positions = [
-        { x: 12, y: 26 },
-        { x: 30, y: 22 },
-        { x: 48, y: 26 },
-        { x: 66, y: 22 },
+        { x: 12, y: 28 },
+        { x: 30, y: 24 },
+        { x: 48, y: 28 },
+        { x: 66, y: 24 },
 
-        { x: 18, y: 48 },
-        { x: 36, y: 44 },
-        { x: 54, y: 48 },
-        { x: 72, y: 44 },
+        { x: 18, y: 50 },
+        { x: 36, y: 46 },
+        { x: 54, y: 50 },
+        { x: 72, y: 46 },
 
         { x: 28, y: 68 },
         { x: 58, y: 66 }
@@ -809,8 +810,6 @@
           removed: false
         });
       });
-
-      updateProngSpread();
     }
 
     function startRound(){
@@ -847,10 +846,16 @@
       resetClawVisual();
     }
 
+    function getToySize(){
+      const toy = state.toys.find(t => !t.removed)?.el;
+      if(!toy) return 70;
+      return toy.getBoundingClientRect().width || 70;
+    }
+
     function getClawCatchPoint(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const x = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const y = playRect.top + state.currentClawTop + 94;
+      const y = playRect.top + state.currentClawTop + 102;
       return { x, y };
     }
 
@@ -858,6 +863,7 @@
       const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
+      const catchRadius = getToySize() * 0.68;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
@@ -868,7 +874,7 @@
         const dy = point.y - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if(dist < 48 && dist < bestDistance){
+        if(dist < catchRadius && dist < bestDistance){
           best = toy;
           bestDistance = dist;
         }
@@ -917,6 +923,7 @@
     function findNearestToyInColumn(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const maxDx = getToySize() * 0.85;
 
       let best = null;
       let bestDx = Infinity;
@@ -926,7 +933,7 @@
         const r = toy.el.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const dx = Math.abs(clawX - cx);
-        if(dx < 58 && dx < bestDx){
+        if(dx < maxDx && dx < bestDx){
           best = toy;
           bestDx = dx;
         }
@@ -940,7 +947,7 @@
       const toyRect = toy.el.getBoundingClientRect();
       const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
 
-      return Math.max(170, Math.min(toyCenterY - 94, 360));
+      return Math.max(170, Math.min(toyCenterY - 102, 360));
     }
 
     function getDefaultDropTop(){
@@ -992,7 +999,7 @@
         const toyAreaRect = toyArea.getBoundingClientRect();
         const toySize = toy.el.getBoundingClientRect().width || 70;
         const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
-        const localY = state.currentClawTop + 99 - (toyAreaRect.top - playRect.top) - toySize / 2;
+        const localY = state.currentClawTop + 108 - (toyAreaRect.top - playRect.top) - toySize / 2;
 
         toy.el.style.left = localX + 'px';
         toy.el.style.top = localY + 'px';
@@ -1180,7 +1187,6 @@
     });
 
     window.addEventListener('resize', () => {
-      updateProngSpread();
       updateClawPosition();
     });
 
