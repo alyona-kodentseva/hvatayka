@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Хватайка</title>
+  <style>
+    :root{
+      --ui-bg: rgba(8,16,32,.72);
+      --ui-border: rgba(255,255,255,.16);
+      --ui-text: #eef4ff;
+      --accent: #7fd7ff;
+      --danger: #ff7a9e;
+      --success: #7dffb3;
+      --glass: rgba(255,255,255,.08);
+      --shadow: 0 14px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+      --machine-w: min(92vw, 980px);
+      --machine-h: min(78vh, 720px);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: transparent;
+      color: var(--ui-text);
+      overflow:hidden;
+    }
+
+    .game{
+      position:relative;
+      width:100vw;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: transparent;
+    }
+
+    .machine{
+      position:relative;
+      width:var(--machine-w);
+      height:var(--machine-h);
+      min-height:540px;
+      border-radius:28px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(94,145,255,.28), rgba(25,35,68,.30)),
+        radial-gradient(600px 260px at 50% 10%, rgba(255,255,255,.20), transparent 70%),
+        rgba(15,23,48,.45);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar{
+      position:absolute;
+      inset:14px 14px auto 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      z-index:20;
+    }
+
+    .panel{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:14px;
+      background:var(--ui-bg);
+      border:1px solid var(--ui-border);
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+    }
+
+    .panel strong{font-size:14px}
+    .timerValue{
+      display:inline-flex;
+      min-width:52px;
+      justify-content:center;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .status{
+      font-size:14px;
+      opacity:.95;
+    }
+
+    .coinBtn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      background: linear-gradient(180deg,#ffe27a,#ffb937);
+      color:#3a2500;
+      font-weight:800;
+      box-shadow: 0 8px 20px rgba(255,185,55,.35);
+    }
+    .coinBtn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      filter:grayscale(.1);
+    }
+
+    .playfield{
+      position:absolute;
+      inset:70px 18px 18px 18px;
+      border-radius:24px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(179,233,255,.28), rgba(126,191,255,.10) 45%, rgba(8,14,28,.20) 46%, rgba(8,14,28,.20)),
+        radial-gradient(circle at 50% 10%, rgba(255,255,255,.22), transparent 40%);
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .glassShine{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 22%, rgba(255,255,255,.05) 38%, rgba(255,255,255,0) 60%);
+      z-index:2;
+    }
+
+    .ceilingRail{
+      position:absolute;
+      left:8%;
+      right:8%;
+      top:28px;
+      height:10px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #dce6ff, #93a4d6);
+      box-shadow: inset 0 2px 2px rgba(255,255,255,.6), inset 0 -2px 3px rgba(0,0,0,.16);
+      z-index:3;
+    }
+
+    .dropZone{
+      position:absolute;
+      right:18px;
+      bottom:22px;
+      width:min(18%, 140px);
+      height:min(24%, 150px);
+      border-radius:18px;
+      background:
+        linear-gradient(180deg, rgba(255,170,88,.28), rgba(255,130,66,.48)),
+        rgba(0,0,0,.22);
+      border:2px dashed rgba(255,220,180,.7);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:8px;
+      font-weight:800;
+      color:#fff2db;
+      z-index:4;
+    }
+
+    .clawRig{
+      position:absolute;
+      top:36px;
+      left:50%;
+      transform:translateX(-50%);
+      width:110px;
+      height:310px;
+      z-index:8;
+      pointer-events:none;
+    }
+
+    .clawHead{
+      position:absolute;
+      left:50%;
+      top:0;
+      transform:translateX(-50%);
+      width:72px;
+      height:34px;
+      border-radius:12px;
+      background: linear-gradient(180deg, #f8fbff, #a9b9df);
+      box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.14);
+    }
+
+    .cable{
+      position:absolute;
+      left:50%;
+      top:30px;
+      transform:translateX(-50%);
+      width:4px;
+      height:150px;
+      background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
+      border-radius:999px;
+    }
+
+    .claw{
+      position:absolute;
+      left:50%;
+      top:170px;
+      transform:translateX(-50%);
+      width:100px;
+      height:110px;
+    }
+
+    .clawCore{
+      position:absolute;
+      left:50%;
+      top:10px;
+      transform:translateX(-50%);
+      width:24px;
+      height:28px;
+      border-radius:8px;
+      background: linear-gradient(180deg, #ffffff, #9fb2dd);
+    }
+
+    .arm{
+      position:absolute;
+      top:24px;
+      width:34px;
+      height:56px;
+      border:5px solid #dfe8ff;
+      border-top:none;
+      border-radius:0 0 18px 18px;
+      transform-origin: top center;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
+    }
+    .arm.left{
+      left:12px;
+      transform:rotate(26deg);
+    }
+    .arm.right{
+      right:12px;
+      transform:rotate(-26deg);
+    }
+    .claw.closed .arm.left{ transform:rotate(8deg); }
+    .claw.closed .arm.right{ transform:rotate(-8deg); }
+
+    .toyArea{
+      position:absolute;
+      left:5%;
+      right:22%;
+      bottom:7%;
+      top:44%;
+      z-index:5;
+    }
+
+    .toy{
+      position:absolute;
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+      font-weight:700;
+      color:#fff;
+      box-shadow: 0 10px 20px rgba(0,0,0,.22);
+      border:2px solid rgba(255,255,255,.55);
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+    }
+    .toy.caught{
+      transform: scale(.95);
+    }
+    .toy.hidden{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .bottomHint{
+      position:absolute;
+      left:14px;
+      right:14px;
+      bottom:12px;
+      z-index:20;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+    }
+    .bottomHint .panel{
+      pointer-events:auto;
+      font-size:14px;
+      text-align:center;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      background: rgba(6,10,20,.35);
+      padding:20px;
+    }
+    .overlay.show{ display:flex; }
+
+    .card{
+      position:relative;
+      width:min(92vw, 700px);
+      min-height:360px;
+      border-radius:24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(240,246,255,.96));
+      color:#1e2740;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.7);
+    }
+
+    .cardClose{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:22px;
+      font-weight:900;
+      background:#ff6e8f;
+      color:white;
+      z-index:4;
+    }
+
+    .cardFlipWrap{
+      position:relative;
+      width:100%;
+      min-height:360px;
+      perspective:1200px;
+      cursor:pointer;
+    }
+
+    .cardInner{
+      position:relative;
+      width:100%;
+      min-height:360px;
+      transition: transform .7s ease;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .cardInner{
+      transform: rotateY(180deg);
+    }
+
+    .cardFace{
+      position:absolute;
+      inset:0;
+      padding:56px 24px 24px;
+      backface-visibility:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:18px;
+    }
+
+    .cardBack{
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, #eef7ff, #ffffff);
+    }
+
+    .cardTitle{
+      font-size:18px;
+      font-weight:800;
+      opacity:.7;
+    }
+
+    .cardText{
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight:800;
+      line-height:1.25;
+      white-space:pre-wrap;
+    }
+
+    .cardSub{
+      font-size:14px;
+      opacity:.65;
+      font-weight:700;
+    }
+
+    .cardImage{
+      max-width:min(86%, 340px);
+      max-height:220px;
+      object-fit:contain;
+      border-radius:18px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    }
+
+    .finish{
+      width:min(90vw, 760px);
+      padding:38px 24px;
+      border-radius:28px;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(238,245,255,.96));
+      color:#13203c;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    }
+    .finishText{
+      font-size: clamp(34px, 6vw, 78px);
+      font-weight:900;
+      line-height:1.05;
+      margin-bottom:12px;
+    }
+    .finishSub{
+      font-size: clamp(16px, 2vw, 24px);
+      opacity:.75;
+      font-weight:700;
+    }
+
+    .flashMessage{
+      position:absolute;
+      left:50%;
+      top:26%;
+      transform:translate(-50%, -50%);
+      z-index:40;
+      padding:12px 18px;
+      border-radius:14px;
+      background: rgba(255,85,120,.92);
+      color:white;
+      font-weight:900;
+      box-shadow: var(--shadow);
+      display:none;
+    }
+    .flashMessage.show{ display:block; }
+
+    @media (max-width: 800px){
+      .machine{ min-height:520px; }
+      .toy{
+        width:58px;
+        height:58px;
+        font-size:28px;
+      }
+      .dropZone{
+        width:110px;
+        height:120px;
+        font-size:12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <div class="machine" id="machine">
+      <div class="topbar">
+        <div class="panel">
+          <strong id="labelTimer">Время:</strong>
+          <span class="timerValue" id="timerValue">5.0</span>
+        </div>
+
+        <div class="panel status" id="statusText">
+          Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел
+        </div>
+
+        <button class="coinBtn" id="coinBtn">🪙 Бросить монетку</button>
+      </div>
+
+      <div class="playfield" id="playfield">
+        <div class="glassShine"></div>
+        <div class="ceilingRail"></div>
+
+        <div class="dropZone" id="dropZone">Воронка</div>
+
+        <div class="clawRig" id="clawRig">
+          <div class="clawHead"></div>
+          <div class="cable" id="cable"></div>
+          <div class="claw" id="claw">
+            <div class="clawCore"></div>
+            <div class="arm left"></div>
+            <div class="arm right"></div>
+          </div>
+        </div>
+
+        <div class="toyArea" id="toyArea"></div>
+      </div>
+
+      <div class="flashMessage" id="flashMessage">Промах!</div>
+
+      <div class="bottomHint">
+        <div class="panel" id="controlsHint">
+          ← → двигать клешню • Пробел — опустить клешню
+        </div>
+      </div>
+
+      <div class="overlay" id="cardOverlay">
+        <div class="card" id="taskCard">
+          <button class="cardClose" id="closeCard">×</button>
+          <div class="cardFlipWrap" id="flipCard">
+            <div class="cardInner">
+              <div class="cardFace cardFront" id="cardFront"></div>
+              <div class="cardFace cardBack" id="cardBack"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay" id="finishOverlay">
+        <div class="finish">
+          <div class="finishText" id="finishText">You did it!</div>
+          <div class="finishSub" id="finishSub">Все игрушки собраны</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ===============================
+      НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
+      ===============================
+      В будущем эти параметры можно будет менять через редактор.
+    */
+    const GAME_CONFIG = {
+      lang: {
+        timer: "Время:",
+        dropZone: "Воронка",
+        coinButton: "🪙 Бросить монетку",
+        statusIdle: "Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел",
+        statusActive: "У вас есть время, чтобы поймать игрушку",
+        statusDropping: "Клешня опускается...",
+        statusCard: "Нажмите на карточку, чтобы перевернуть её",
+        statusMiss: "Промах! Бросьте монетку снова",
+        statusTimeout: "Время вышло! Бросьте монетку снова",
+        controlsHint: "← → двигать клешню • Пробел — опустить клешню",
+        cardFrontTitle: "Задание",
+        cardBackTitle: "Ответ",
+        cardFlipHint: "Нажмите на карточку, чтобы увидеть обратную сторону",
+        finishTitle: "You did it!",
+        finishSubtitle: "Все игрушки собраны"
+      },
+
+      timerSeconds: 5,
+      moveStep: 26,
+      clawMinXPercent: 12,
+      clawMaxXPercent: 76,
+      toyCount: 10,
+
+      /*
+        Карточки:
+        side.type = "text" | "image" | "mixed"
+        side.text = текст
+        side.image = url картинки
+      */
+      items: [
+        {
+          emoji: "🧸",
+          color: "#ff7b8e",
+          front: { type: "text", text: "Назови игрушку" },
+          back:  { type: "text", text: "Медвежонок" }
+        },
+        {
+          emoji: "🚗",
+          color: "#57b8ff",
+          front: { type: "text", text: "Назови предмет" },
+          back:  { type: "text", text: "Машина" }
+        },
+        {
+          emoji: "⚽",
+          color: "#67d38c",
+          front: { type: "text", text: "Прочитай слово: мяч" },
+          back:  { type: "text", text: "мяч" }
+        },
+        {
+          emoji: "🪁",
+          color: "#c987ff",
+          front: { type: "text", text: "Что это?" },
+          back:  { type: "text", text: "Воздушный змей" }
+        },
+        {
+          emoji: "🦄",
+          color: "#ff8bd8",
+          front: { type: "text", text: "Назови игрушку" },
+          back:  { type: "text", text: "Единорог" }
+        },
+        {
+          emoji: "🎲",
+          color: "#ffad5c",
+          front: { type: "text", text: "Назови предмет" },
+          back:  { type: "text", text: "Кубик" }
+        },
+        {
+          emoji: "🎈",
+          color: "#ff667a",
+          front: { type: "text", text: "Что изображено?" },
+          back:  { type: "text", text: "Воздушный шар" }
+        },
+        {
+          emoji: "🪀",
+          color: "#6ed3ff",
+          front: { type: "text", text: "Назови игрушку" },
+          back:  { type: "text", text: "Йо-йо" }
+        },
+        {
+          emoji: "🧩",
+          color: "#8dda66",
+          front: { type: "text", text: "Выполни устно: назови цвет игрушки" },
+          back:  { type: "text", text: "Пример ответа: зелёный / салатовый" }
+        },
+        {
+          emoji: "🎯",
+          color: "#ff8c42",
+          front: { type: "text", text: "Назови предмет" },
+          back:  { type: "text", text: "Мишень" }
+        }
+      ]
+    };
+
+    const state = {
+      active: false,
+      dropping: false,
+      caughtToyId: null,
+      currentXPercent: 50,
+      currentClawTop: 170,
+      timerLeft: GAME_CONFIG.timerSeconds,
+      timerInterval: null,
+      toys: [],
+      currentCardToy: null,
+      completed: false
+    };
+
+    const machine = document.getElementById('machine');
+    const toyArea = document.getElementById('toyArea');
+    const clawRig = document.getElementById('clawRig');
+    const claw = document.getElementById('claw');
+    const cable = document.getElementById('cable');
+    const timerValue = document.getElementById('timerValue');
+    const coinBtn = document.getElementById('coinBtn');
+    const statusText = document.getElementById('statusText');
+    const dropZone = document.getElementById('dropZone');
+    const flashMessage = document.getElementById('flashMessage');
+
+    const cardOverlay = document.getElementById('cardOverlay');
+    const taskCard = document.getElementById('taskCard');
+    const flipCard = document.getElementById('flipCard');
+    const closeCard = document.getElementById('closeCard');
+    const cardFront = document.getElementById('cardFront');
+    const cardBack = document.getElementById('cardBack');
+
+    const finishOverlay = document.getElementById('finishOverlay');
+    const finishText = document.getElementById('finishText');
+    const finishSub = document.getElementById('finishSub');
+
+    function applyLanguage(){
+      document.getElementById('labelTimer').textContent = GAME_CONFIG.lang.timer;
+      dropZone.textContent = GAME_CONFIG.lang.dropZone;
+      coinBtn.textContent = GAME_CONFIG.lang.coinButton;
+      statusText.textContent = GAME_CONFIG.lang.statusIdle;
+      document.getElementById('controlsHint').textContent = GAME_CONFIG.lang.controlsHint;
+      finishText.textContent = GAME_CONFIG.lang.finishTitle;
+      finishSub.textContent = GAME_CONFIG.lang.finishSubtitle;
+    }
+
+    function rand(min, max){
+      return Math.random() * (max - min) + min;
+    }
+
+    function showFlash(text){
+      flashMessage.textContent = text;
+      flashMessage.classList.add('show');
+      setTimeout(() => flashMessage.classList.remove('show'), 1200);
+    }
+
+    function setStatus(text){
+      statusText.textContent = text;
+    }
+
+    function updateClawPosition(){
+      clawRig.style.left = state.currentXPercent + '%';
+      const cableHeight = Math.max(40, state.currentClawTop - 20);
+      cable.style.height = cableHeight + 'px';
+      claw.style.top = state.currentClawTop + 'px';
+    }
+
+    function resetClawVisual(){
+      state.currentClawTop = 170;
+      claw.classList.remove('closed');
+      updateClawPosition();
+    }
+
+    function initToys(){
+      toyArea.innerHTML = '';
+      state.toys = [];
+
+      const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
+
+      items.forEach((item, index) => {
+        const toy = document.createElement('div');
+        toy.className = 'toy';
+        toy.dataset.id = String(index);
+        toy.textContent = item.emoji;
+        toy.style.background = `radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ${item.color}`;
+        toy.style.left = rand(4, 82) + '%';
+        toy.style.top = rand(6, 70) + '%';
+
+        toyArea.appendChild(toy);
+
+        state.toys.push({
+          id: index,
+          item,
+          el: toy,
+          removed: false
+        });
+      });
+    }
+
+    function startRound(){
+      if(state.active || state.dropping || state.completed) return;
+
+      state.active = true;
+      state.timerLeft = GAME_CONFIG.timerSeconds;
+      timerValue.textContent = state.timerLeft.toFixed(1);
+      coinBtn.disabled = true;
+      setStatus(GAME_CONFIG.lang.statusActive);
+
+      clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        state.timerLeft = Math.max(0, state.timerLeft - 0.1);
+        timerValue.textContent = state.timerLeft.toFixed(1);
+
+        if(state.timerLeft <= 0){
+          clearInterval(state.timerInterval);
+          state.active = false;
+          coinBtn.disabled = false;
+          playFailSound();
+          setStatus(GAME_CONFIG.lang.statusTimeout);
+          showFlash(GAME_CONFIG.lang.statusTimeout);
+        }
+      }, 100);
+    }
+
+    function endRound(){
+      clearInterval(state.timerInterval);
+      state.active = false;
+      state.dropping = false;
+      coinBtn.disabled = false;
+      timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+      resetClawVisual();
+    }
+
+    function getClawCatchPoint(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const x = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const y = playRect.top + state.currentClawTop + 90;
+      return { x, y };
+    }
+
+    function findCaughtToy(){
+      const point = getClawCatchPoint();
+      let best = null;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = Math.abs(point.x - cx);
+        const dy = Math.abs(point.y - cy);
+
+        if(dx < 40 && dy < 40){
+          best = toy;
+        }
+      });
+
+      return best;
+    }
+
+    async function dropClaw(){
+      if(!state.active || state.dropping || state.completed) return;
+
+      state.dropping = true;
+      clearInterval(state.timerInterval);
+      setStatus(GAME_CONFIG.lang.statusDropping);
+
+      const targetTop = getDropTargetTop();
+      await animateClawDown(targetTop);
+
+      const toy = findCaughtToy();
+
+      claw.classList.add('closed');
+
+      if(toy){
+        toy.el.classList.add('caught');
+        await delay(180);
+        await liftWithToy(toy);
+        await moveToyToDropZone(toy);
+        toy.removed = true;
+        toy.el.classList.add('hidden');
+        await delay(120);
+
+        playSuccessSound();
+        openCard(toy);
+      } else {
+        await delay(180);
+        await animateClawUp();
+        playFailSound();
+        setStatus(GAME_CONFIG.lang.statusMiss);
+        showFlash(GAME_CONFIG.lang.statusMiss);
+        endRound();
+      }
+    }
+
+    function getDropTargetTop(){
+      const playfield = document.getElementById('playfield');
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      const playRect = playfield.getBoundingClientRect();
+      const localTop = toyAreaRect.top - playRect.top + toyAreaRect.height * 0.45;
+      return Math.max(170, Math.min(localTop, 340));
+    }
+
+    function animateClawDown(targetTop){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop += 8;
+          if(state.currentClawTop >= targetTop){
+            state.currentClawTop = targetTop;
+            updateClawPosition();
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    function animateClawUp(){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop -= 8;
+          if(state.currentClawTop <= 170){
+            state.currentClawTop = 170;
+            updateClawPosition();
+            claw.classList.remove('closed');
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    async function liftWithToy(toy){
+      while(state.currentClawTop > 170){
+        state.currentClawTop -= 8;
+        updateClawPosition();
+
+        const playRect = document.getElementById('playfield').getBoundingClientRect();
+        const clawX = playRect.width * (state.currentXPercent / 100);
+        const toyAreaRect = toyArea.getBoundingClientRect();
+        const localX = clawX - toyAreaRect.left + playRect.left - 35;
+        const localY = state.currentClawTop + 95 - (toyAreaRect.top - playRect.top) - 35;
+
+        toy.el.style.left = localX + 'px';
+        toy.el.style.top = localY + 'px';
+
+        await delay(16);
+      }
+      updateClawPosition();
+    }
+
+    async function moveToyToDropZone(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      const dropRect = dropZone.getBoundingClientRect();
+
+      const targetX = dropRect.left - toyAreaRect.left + dropRect.width * 0.35;
+      const targetY = dropRect.top - toyAreaRect.top + dropRect.height * 0.28;
+
+      const startLeft = parseFloat(toy.el.style.left);
+      const startTop = parseFloat(toy.el.style.top);
+
+      const frames = 28;
+      for(let i=1; i<=frames; i++){
+        const p = i / frames;
+        const ease = 1 - Math.pow(1 - p, 3);
+        const x = startLeft + (targetX - startLeft) * ease;
+        const y = startTop + (targetY - startTop) * ease;
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${1 - p * 0.18})`;
+        await delay(16);
+      }
+
+      await animateClawUp();
+    }
+
+    function renderCardSide(side, title){
+      let html = `<div class="cardTitle">${escapeHtml(title)}</div>`;
+
+      if(side.type === 'text'){
+        html += `<div class="cardText">${escapeHtml(side.text || '')}</div>`;
+      } else if(side.type === 'image'){
+        html += side.image ? `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">` : '';
+      } else if(side.type === 'mixed'){
+        if(side.image){
+          html += `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">`;
+        }
+        if(side.text){
+          html += `<div class="cardText">${escapeHtml(side.text)}</div>`;
+        }
+      }
+
+      html += `<div class="cardSub">${escapeHtml(GAME_CONFIG.lang.cardFlipHint)}</div>`;
+      return html;
+    }
+
+    function openCard(toy){
+      state.currentCardToy = toy;
+      taskCard.classList.remove('flipped');
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle);
+      cardOverlay.classList.add('show');
+      setStatus(GAME_CONFIG.lang.statusCard);
+    }
+
+    function closeCurrentCard(){
+      cardOverlay.classList.remove('show');
+      state.currentCardToy = null;
+
+      const remaining = state.toys.filter(t => !t.removed).length;
+      if(remaining === 0){
+        finishGame();
+      } else {
+        endRound();
+        setStatus(GAME_CONFIG.lang.statusIdle);
+      }
+    }
+
+    function finishGame(){
+      state.completed = true;
+      endRound();
+      finishOverlay.classList.add('show');
+      playTriumphSound();
+    }
+
+    function moveClaw(dir){
+      if(!state.active || state.dropping || state.completed) return;
+      const stepPercent = (GAME_CONFIG.moveStep / document.getElementById('playfield').clientWidth) * 100;
+      state.currentXPercent += dir * stepPercent;
+      state.currentXPercent = Math.max(GAME_CONFIG.clawMinXPercent, Math.min(GAME_CONFIG.clawMaxXPercent, state.currentXPercent));
+      updateClawPosition();
+    }
+
+    function delay(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function escapeAttr(s){
+      return String(s).replaceAll('"', '&quot;');
+    }
+
+    /*
+      ===============================
+      ЗВУКИ БЕЗ ВНЕШНИХ ФАЙЛОВ
+      ===============================
+    */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio(){
+      if(!audioCtx) audioCtx = new AudioCtx();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function tone(freq, duration, type='sine', gainValue=.05, startAt=0){
+      const now = audioCtx.currentTime + startAt;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function playSuccessSound(){
+      ensureAudio();
+      tone(523.25, .18, 'triangle', .06, 0);
+      tone(659.25, .18, 'triangle', .06, .08);
+      tone(783.99, .24, 'triangle', .06, .16);
+    }
+
+    function playFailSound(){
+      ensureAudio();
+      tone(240, .20, 'sawtooth', .05, 0);
+      tone(180, .28, 'sawtooth', .05, .10);
+    }
+
+    function playTriumphSound(){
+      ensureAudio();
+      tone(523.25, .22, 'triangle', .07, 0);
+      tone(659.25, .22, 'triangle', .07, .12);
+      tone(783.99, .22, 'triangle', .07, .24);
+      tone(1046.5, .45, 'triangle', .08, .36);
+    }
+
+    /*
+      ===============================
+      СОБЫТИЯ
+      ===============================
+    */
+    coinBtn.addEventListener('click', () => {
+      ensureAudio();
+      startRound();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if(cardOverlay.classList.contains('show')) return;
+      if(finishOverlay.classList.contains('show')) return;
+
+      if(e.code === 'ArrowLeft'){
+        e.preventDefault();
+        moveClaw(-1);
+      } else if(e.code === 'ArrowRight'){
+        e.preventDefault();
+        moveClaw(1);
+      } else if(e.code === 'Space'){
+        e.preventDefault();
+        dropClaw();
+      }
+    });
+
+    flipCard.addEventListener('click', () => {
+      taskCard.classList.toggle('flipped');
+    });
+
+    closeCard.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeCurrentCard();
+    });
+
+    window.addEventListener('resize', () => {
+      updateClawPosition();
+    });
+
+    /*
+      ===============================
+      СТАРТ
+      ===============================
+    */
+    applyLanguage();
+    initToys();
+    updateClawPosition();
+    timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+  </script>
+</body>
+</html>
