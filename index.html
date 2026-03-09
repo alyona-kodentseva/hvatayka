@@ -17,6 +17,12 @@
       --radius: 18px;
       --machine-w: min(92vw, 980px);
       --machine-h: min(78vh, 720px);
+
+      /* Новый цвет клешни = цвет верхней рейки */
+      --claw-metal-1: #dce6ff;
+      --claw-metal-2: #93a4d6;
+      --claw-metal-3: #7e90c4;
+      --claw-dark: #5c6f9f;
     }
 
     *{box-sizing:border-box}
@@ -200,8 +206,8 @@
       left:50%;
       top:170px;
       transform:translateX(-50%);
-      width:92px;
-      height:120px;
+      width:96px;
+      height:124px;
     }
 
     .clawStem{
@@ -209,36 +215,39 @@
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:18px;
-      height:32px;
-      border-radius:4px;
-      background: linear-gradient(90deg, #0b0d10, #1f2328 42%, #0a0c0e 72%, #2a3038);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.10);
+      width:16px;
+      height:28px;
+      border-radius:6px;
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2));
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.55),
+        inset 0 -2px 3px rgba(0,0,0,.12);
     }
 
     .clawBody{
       position:absolute;
       left:50%;
-      top:24px;
+      top:22px;
       transform:translateX(-50%);
-      width:54px;
-      height:42px;
-      border-radius:50% 50% 42% 42%;
-      background: linear-gradient(180deg, #9b9b95, #85857f);
+      width:48px;
+      height:40px;
+      border-radius:50%;
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2));
       box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.22),
-        0 2px 4px rgba(0,0,0,.16);
+        inset 0 2px 2px rgba(255,255,255,.35),
+        inset 0 -2px 3px rgba(0,0,0,.12),
+        0 2px 4px rgba(0,0,0,.14);
       z-index:3;
     }
 
     .hinge{
       position:absolute;
-      top:48px;
-      width:14px;
-      height:14px;
+      top:46px;
+      width:12px;
+      height:12px;
       border-radius:50%;
-      background: linear-gradient(180deg, #8f8f89, #6d6d67);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-dark));
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.4);
       z-index:4;
     }
     .hinge.left{ left:18px; }
@@ -246,33 +255,33 @@
 
     .clawArm{
       position:absolute;
-      top:56px;
-      width:32px;
-      height:50px;
+      top:50px;
+      width:36px;
+      height:60px;
       z-index:2;
       transition: transform .22s ease;
     }
 
     .clawArm.left{
-      left:8px;
+      left:10px;
       transform-origin: top right;
-      transform: rotate(16deg);
+      transform: rotate(18deg);
     }
 
     .clawArm.right{
-      right:8px;
+      right:10px;
       transform-origin: top left;
-      transform: rotate(-16deg);
+      transform: rotate(-18deg);
     }
 
     .upperLink{
       position:absolute;
       top:0;
-      width:8px;
-      height:26px;
+      width:7px;
+      height:24px;
       border-radius:999px;
-      background: linear-gradient(180deg, #8d8e90, #b8bcc0 45%, #72757a);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-2));
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.4);
     }
 
     .clawArm.left .upperLink{
@@ -289,66 +298,70 @@
 
     .elbow{
       position:absolute;
-      top:22px;
-      width:10px;
-      height:10px;
+      top:21px;
+      width:9px;
+      height:9px;
       border-radius:50%;
-      background: linear-gradient(180deg, #8c8d8f, #6d6e70);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-dark));
       z-index:3;
     }
 
-    .clawArm.left .elbow{ left:6px; }
-    .clawArm.right .elbow{ right:6px; }
+    .clawArm.left .elbow{ left:9px; }
+    .clawArm.right .elbow{ right:9px; }
 
-    .lowerLink{
+    /* ВАЖНО: нижнее звено теперь полукругом, а кончики смотрят друг на друга */
+    .lowerArc{
       position:absolute;
-      top:24px;
-      width:8px;
-      height:28px;
-      border-radius:999px;
-      background: linear-gradient(180deg, #8d8e90, #b8bcc0 45%, #72757a);
+      top:22px;
+      width:26px;
+      height:34px;
+      border:6px solid var(--claw-metal-2);
+      background: transparent;
       box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
     }
 
-    .clawArm.left .lowerLink{
-      left:8px;
-      transform: rotate(30deg);
-      transform-origin: top center;
+    .clawArm.left .lowerArc{
+      left:2px;
+      border-left:none;
+      border-top:none;
+      border-radius: 0 0 18px 0;
     }
 
-    .clawArm.right .lowerLink{
-      right:8px;
-      transform: rotate(-30deg);
-      transform-origin: top center;
+    .clawArm.right .lowerArc{
+      right:2px;
+      border-right:none;
+      border-top:none;
+      border-radius: 0 0 0 18px;
     }
 
     .clawTip{
       position:absolute;
       bottom:0;
-      width:6px;
-      height:20px;
+      width:7px;
+      height:18px;
       border-radius:999px;
-      background: linear-gradient(180deg, #8b8c8e, #66686b);
+      background: linear-gradient(180deg, var(--claw-metal-1), var(--claw-metal-3));
     }
 
+    /* Кончики повернуты ДРУГ К ДРУГУ */
     .clawArm.left .clawTip{
-      left:8px;
-      transform: rotate(30deg);
+      right:8px;
+      transform: rotate(-26deg);
       transform-origin: top center;
     }
 
     .clawArm.right .clawTip{
-      right:8px;
-      transform: rotate(-30deg);
+      left:8px;
+      transform: rotate(26deg);
       transform-origin: top center;
     }
 
     .claw.closed .clawArm.left{
-      transform: rotate(4deg);
+      transform: rotate(6deg);
     }
 
     .claw.closed .clawArm.right{
-      transform: rotate(-4deg);
+      transform: rotate(-6deg);
     }
 
     .toyArea{
@@ -587,24 +600,14 @@
 
         <div class="clawRig" id="clawRig">
           <div class="clawHead"></div>
-          <div class="cable" id="cable"></div>
-          <div class="claw" id="claw">
-            <div class="clawStem"></div>
-            <div class="clawBody"></div>
-            <div class="hinge left"></div>
-            <div class="hinge right"></div>
-
-            <div class="clawArm left">
-              <div class="upperLink"></div>
-              <div class="elbow"></div>
-              <div class="lowerLink"></div>
+div>
               <div class="clawTip"></div>
             </div>
 
             <div class="clawArm right">
               <div class="upperLink"></div>
               <div class="elbow"></div>
-              <div class="lowerLink"></div>
+              <div class="lowerArc"></div>
               <div class="clawTip"></div>
             </div>
           </div>
