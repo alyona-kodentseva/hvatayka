@@ -62,6 +62,7 @@
       justify-content:space-between;
       gap:12px;
       z-index:20;
+      flex-wrap:wrap;
     }
 
     .panel{
@@ -363,6 +364,12 @@
       background: linear-gradient(180deg, #eef7ff, #ffffff);
     }
 
+    .cardEmoji{
+      font-size: clamp(46px, 9vw, 82px);
+      line-height:1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    }
+
     .cardTitle{
       font-size:18px;
       font-weight:800;
@@ -507,12 +514,6 @@
   </div>
 
   <script>
-    /*
-      ===============================
-      НАСТРАИВАЕМЫЕ ПАРАМЕТРЫ
-      ===============================
-      В будущем эти параметры можно будет менять через редактор.
-    */
     const GAME_CONFIG = {
       lang: {
         timer: "Время:",
@@ -538,12 +539,6 @@
       clawMaxXPercent: 76,
       toyCount: 10,
 
-      /*
-        Карточки:
-        side.type = "text" | "image" | "mixed"
-        side.text = текст
-        side.image = url картинки
-      */
       items: [
         {
           emoji: "🧸",
@@ -653,10 +648,6 @@
       finishSub.textContent = GAME_CONFIG.lang.finishSubtitle;
     }
 
-    function rand(min, max){
-      return Math.random() * (max - min) + min;
-    }
-
     function showFlash(text){
       flashMessage.textContent = text;
       flashMessage.classList.add('show');
@@ -680,11 +671,30 @@
       updateClawPosition();
     }
 
+    /*
+      Игрушки теперь раскладываются по сетке
+      только в зоне, где клешня реально может их достать.
+    */
     function initToys(){
       toyArea.innerHTML = '';
       state.toys = [];
 
       const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
+
+      const positions = [
+        { x: 12, y: 14 },
+        { x: 30, y: 10 },
+        { x: 48, y: 14 },
+        { x: 66, y: 10 },
+
+        { x: 18, y: 40 },
+        { x: 36, y: 36 },
+        { x: 54, y: 40 },
+        { x: 72, y: 36 },
+
+        { x: 28, y: 64 },
+        { x: 58, y: 62 }
+      ];
 
       items.forEach((item, index) => {
         const toy = document.createElement('div');
@@ -692,8 +702,10 @@
         toy.dataset.id = String(index);
         toy.textContent = item.emoji;
         toy.style.background = `radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ${item.color}`;
-        toy.style.left = rand(4, 82) + '%';
-        toy.style.top = rand(6, 70) + '%';
+
+        const pos = positions[index % positions.length];
+        toy.style.left = pos.x + '%';
+        toy.style.top = pos.y + '%';
 
         toyArea.appendChild(toy);
 
@@ -750,17 +762,20 @@
     function findCaughtToy(){
       const point = getClawCatchPoint();
       let best = null;
+      let bestDistance = Infinity;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
         const r = toy.el.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
-        const dx = Math.abs(point.x - cx);
-        const dy = Math.abs(point.y - cy);
+        const dx = point.x - cx;
+        const dy = point.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if(dx < 40 && dy < 40){
+        if(dist < 48 && dist < bestDistance){
           best = toy;
+          bestDistance = dist;
         }
       });
 
@@ -774,24 +789,25 @@
       clearInterval(state.timerInterval);
       setStatus(GAME_CONFIG.lang.statusDropping);
 
-      const targetTop = getDropTargetTop();
+      const toy = findNearestToyInColumn();
+      const targetTop = toy ? getClawTopForToy(toy) : getDefaultDropTop();
+
       await animateClawDown(targetTop);
 
-      const toy = findCaughtToy();
-
+      const caughtToy = findCaughtToy();
       claw.classList.add('closed');
 
-      if(toy){
-        toy.el.classList.add('caught');
+      if(caughtToy){
+        caughtToy.el.classList.add('caught');
         await delay(180);
-        await liftWithToy(toy);
-        await moveToyToDropZone(toy);
-        toy.removed = true;
-        toy.el.classList.add('hidden');
+        await liftWithToy(caughtToy);
+        await moveToyToDropZone(caughtToy);
+        caughtToy.removed = true;
+        caughtToy.el.classList.add('hidden');
         await delay(120);
 
         playSuccessSound();
-        openCard(toy);
+        openCard(caughtToy);
       } else {
         await delay(180);
         await animateClawUp();
@@ -802,12 +818,37 @@
       }
     }
 
-    function getDropTargetTop(){
-      const playfield = document.getElementById('playfield');
-      const toyAreaRect = toyArea.getBoundingClientRect();
-      const playRect = playfield.getBoundingClientRect();
-      const localTop = toyAreaRect.top - playRect.top + toyAreaRect.height * 0.45;
-      return Math.max(170, Math.min(localTop, 340));
+    function findNearestToyInColumn(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+
+      let best = null;
+      let bestDx = Infinity;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const dx = Math.abs(clawX - cx);
+        if(dx < 58 && dx < bestDx){
+          best = toy;
+          bestDx = dx;
+        }
+      });
+
+      return best;
+    }
+
+    function getClawTopForToy(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const toyRect = toy.el.getBoundingClientRect();
+      const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
+
+      return Math.max(170, Math.min(toyCenterY - 90, 360));
+    }
+
+    function getDefaultDropTop(){
+      return 320;
     }
 
     function animateClawDown(targetTop){
@@ -865,7 +906,6 @@
     }
 
     async function moveToyToDropZone(toy){
-      const playRect = document.getElementById('playfield').getBoundingClientRect();
       const toyAreaRect = toyArea.getBoundingClientRect();
       const dropRect = dropZone.getBoundingClientRect();
 
@@ -890,8 +930,12 @@
       await animateClawUp();
     }
 
-    function renderCardSide(side, title){
+    function renderCardSide(side, title, item){
       let html = `<div class="cardTitle">${escapeHtml(title)}</div>`;
+
+      if(item && item.emoji){
+        html += `<div class="cardEmoji">${escapeHtml(item.emoji)}</div>`;
+      }
 
       if(side.type === 'text'){
         html += `<div class="cardText">${escapeHtml(side.text || '')}</div>`;
@@ -913,8 +957,8 @@
     function openCard(toy){
       state.currentCardToy = toy;
       taskCard.classList.remove('flipped');
-      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle);
-      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle);
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
       cardOverlay.classList.add('show');
       setStatus(GAME_CONFIG.lang.statusCard);
     }
@@ -964,11 +1008,6 @@
       return String(s).replaceAll('"', '&quot;');
     }
 
-    /*
-      ===============================
-      ЗВУКИ БЕЗ ВНЕШНИХ ФАЙЛОВ
-      ===============================
-    */
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -1012,11 +1051,6 @@
       tone(1046.5, .45, 'triangle', .08, .36);
     }
 
-    /*
-      ===============================
-      СОБЫТИЯ
-      ===============================
-    */
     coinBtn.addEventListener('click', () => {
       ensureAudio();
       startRound();
@@ -1051,11 +1085,6 @@
       updateClawPosition();
     });
 
-    /*
-      ===============================
-      СТАРТ
-      ===============================
-    */
     applyLanguage();
     initToys();
     updateClawPosition();
