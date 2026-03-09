@@ -166,8 +166,8 @@
       top:36px;
       left:50%;
       transform:translateX(-50%);
-      width:124px;
-      height:320px;
+      width:110px;
+      height:310px;
       z-index:8;
       pointer-events:none;
     }
@@ -200,205 +200,155 @@
       left:50%;
       top:170px;
       transform:translateX(-50%);
-      width:124px;
-      height:150px;
+      width:92px;
+      height:120px;
     }
 
-    /* Новый визуал клешни под фото */
-    .clawTopTube{
+    .clawStem{
       position:absolute;
       left:50%;
       top:0;
       transform:translateX(-50%);
-      width:28px;
-      height:56px;
-      border-radius:10px;
-      background: linear-gradient(90deg, #b9c0c8 0%, #f4f6f8 35%, #c8ced4 70%, #939aa3 100%);
+      width:18px;
+      height:32px;
+      border-radius:4px;
+      background: linear-gradient(90deg, #0b0d10, #1f2328 42%, #0a0c0e 72%, #2a3038);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.10);
+    }
+
+    .clawBody{
+      position:absolute;
+      left:50%;
+      top:24px;
+      transform:translateX(-50%);
+      width:54px;
+      height:42px;
+      border-radius:50% 50% 42% 42%;
+      background: linear-gradient(180deg, #9b9b95, #85857f);
       box-shadow:
-        inset 0 1px 2px rgba(255,255,255,.7),
-        inset 0 -2px 4px rgba(0,0,0,.12);
-    }
-
-    .clawRing{
-      position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      width:44px;
-      height:10px;
-      border-radius:999px;
-      background: linear-gradient(90deg, #9ea5ad, #f1f4f6 45%, #adb4bc 75%, #7e8790);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
-    }
-    .clawRing.r1{ top:18px; }
-    .clawRing.r2{ top:42px; }
-
-    .clawLowerBody{
-      position:absolute;
-      left:50%;
-      top:54px;
-      transform:translateX(-50%);
-      width:34px;
-      height:30px;
-      border-radius:0 0 10px 10px;
-      background: linear-gradient(90deg, #a4abb3, #f0f2f4 42%, #b5bcc4 72%, #818991);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
+        inset 0 2px 2px rgba(255,255,255,.22),
+        0 2px 4px rgba(0,0,0,.16);
       z-index:3;
     }
 
-    .clawHook{
+    .hinge{
       position:absolute;
-      left:50%;
-      top:78px;
-      transform:translateX(-50%);
-      width:14px;
-      height:54px;
-      border:4px solid #aeb5bc;
-      border-top:none;
-      border-radius:0 0 12px 12px;
-      opacity:.9;
-      z-index:1;
-    }
-
-    .armLink{
-      position:absolute;
-      top:36px;
-      width:12px;
-      height:62px;
-      border-radius:999px;
-      background: linear-gradient(90deg, #97a0a9, #eef1f4 46%, #aeb6bd 72%, #7e8790);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.6);
-      z-index:4;
-      transition: transform .26s ease;
-    }
-
-    .armLink.left{
-      left:28px;
-      transform-origin: top center;
-      transform: rotate(18deg);
-    }
-
-    .armLink.right{
-      right:28px;
-      transform-origin: top center;
-      transform: rotate(-18deg);
-    }
-
-    .clawFinger{
-      position:absolute;
-      top:84px;
-      width:56px;
-      height:86px;
-      z-index:5;
-      transition: transform .26s ease;
-    }
-
-    .clawFinger.left{
-      left:4px;
-      transform-origin: 40px 8px;
-      transform: rotate(24deg);
-    }
-
-    .clawFinger.right{
-      right:4px;
-      transform-origin: 16px 8px;
-      transform: rotate(-24deg);
-    }
-
-    .fingerJoint{
-      position:absolute;
-      top:0;
+      top:48px;
       width:14px;
       height:14px;
       border-radius:50%;
-      background: linear-gradient(180deg, #d7dde2, #8b949c);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.65);
+      background: linear-gradient(180deg, #8f8f89, #6d6d67);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
+      z-index:4;
+    }
+    .hinge.left{ left:18px; }
+    .hinge.right{ right:18px; }
+
+    .clawArm{
+      position:absolute;
+      top:56px;
+      width:32px;
+      height:50px;
+      z-index:2;
+      transition: transform .22s ease;
     }
 
-    .clawFinger.left .fingerJoint{
-      right:8px;
-    }
-
-    .clawFinger.right .fingerJoint{
+    .clawArm.left{
       left:8px;
-    }
-
-    .fingerUpper{
-      position:absolute;
-      top:6px;
-      width:10px;
-      height:52px;
-      border-radius:999px;
-      background: linear-gradient(90deg, #98a1aa, #f0f3f5 46%, #b2bac2 74%, #7b858e);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.55);
-    }
-
-    .clawFinger.left .fingerUpper{
-      right:10px;
+      transform-origin: top right;
       transform: rotate(16deg);
-      transform-origin: top center;
     }
 
-    .clawFinger.right .fingerUpper{
-      left:10px;
+    .clawArm.right{
+      right:8px;
+      transform-origin: top left;
       transform: rotate(-16deg);
-      transform-origin: top center;
     }
 
-    .fingerLower{
+    .upperLink{
       position:absolute;
-      bottom:2px;
-      width:12px;
-      height:94px;
+      top:0;
+      width:8px;
+      height:26px;
       border-radius:999px;
-      background: linear-gradient(90deg, #98a1aa, #f5f7f8 46%, #b4bcc4 74%, #7b858e);
-      box-shadow: inset 0 1px 1px rgba(255,255,255,.58);
+      background: linear-gradient(180deg, #8d8e90, #b8bcc0 45%, #72757a);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
     }
 
-    .clawFinger.left .fingerLower{
-      left:14px;
+    .clawArm.left .upperLink{
+      right:10px;
+      transform: rotate(18deg);
       transform-origin: top center;
-      transform: rotate(22deg);
     }
 
-    .clawFinger.right .fingerLower{
-      right:14px;
+    .clawArm.right .upperLink{
+      left:10px;
+      transform: rotate(-18deg);
       transform-origin: top center;
-      transform: rotate(-22deg);
     }
 
-    .fingerTip{
+    .elbow{
+      position:absolute;
+      top:22px;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: linear-gradient(180deg, #8c8d8f, #6d6e70);
+      z-index:3;
+    }
+
+    .clawArm.left .elbow{ left:6px; }
+    .clawArm.right .elbow{ right:6px; }
+
+    .lowerLink{
+      position:absolute;
+      top:24px;
+      width:8px;
+      height:28px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #8d8e90, #b8bcc0 45%, #72757a);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.25);
+    }
+
+    .clawArm.left .lowerLink{
+      left:8px;
+      transform: rotate(30deg);
+      transform-origin: top center;
+    }
+
+    .clawArm.right .lowerLink{
+      right:8px;
+      transform: rotate(-30deg);
+      transform-origin: top center;
+    }
+
+    .clawTip{
       position:absolute;
       bottom:0;
-      width:10px;
-      height:24px;
+      width:6px;
+      height:20px;
       border-radius:999px;
-      background: linear-gradient(180deg, #b0b7be, #7f8891);
+      background: linear-gradient(180deg, #8b8c8e, #66686b);
     }
 
-    .clawFinger.left .fingerTip{
-      left:10px;
-      transform: rotate(18deg);
+    .clawArm.left .clawTip{
+      left:8px;
+      transform: rotate(30deg);
+      transform-origin: top center;
     }
 
-    .clawFinger.right .fingerTip{
-      right:10px;
-      transform: rotate(-18deg);
+    .clawArm.right .clawTip{
+      right:8px;
+      transform: rotate(-30deg);
+      transform-origin: top center;
     }
 
-    .claw.closed .armLink.left{
-      transform: rotate(8deg);
+    .claw.closed .clawArm.left{
+      transform: rotate(4deg);
     }
 
-    .claw.closed .armLink.right{
-      transform: rotate(-8deg);
-    }
-
-    .claw.closed .clawFinger.left{
-      transform: rotate(10deg);
-    }
-
-    .claw.closed .clawFinger.right{
-      transform: rotate(-10deg);
+    .claw.closed .clawArm.right{
+      transform: rotate(-4deg);
     }
 
     .toyArea{
@@ -639,27 +589,23 @@
           <div class="clawHead"></div>
           <div class="cable" id="cable"></div>
           <div class="claw" id="claw">
-            <div class="clawTopTube"></div>
-            <div class="clawRing r1"></div>
-            <div class="clawRing r2"></div>
-            <div class="clawLowerBody"></div>
-            <div class="clawHook"></div>
+            <div class="clawStem"></div>
+            <div class="clawBody"></div>
+            <div class="hinge left"></div>
+            <div class="hinge right"></div>
 
-            <div class="armLink left"></div>
-            <div class="armLink right"></div>
-
-            <div class="clawFinger left">
-              <div class="fingerJoint"></div>
-              <div class="fingerUpper"></div>
-              <div class="fingerLower"></div>
-              <div class="fingerTip"></div>
+            <div class="clawArm left">
+              <div class="upperLink"></div>
+              <div class="elbow"></div>
+              <div class="lowerLink"></div>
+              <div class="clawTip"></div>
             </div>
 
-            <div class="clawFinger right">
-              <div class="fingerJoint"></div>
-              <div class="fingerUpper"></div>
-              <div class="fingerLower"></div>
-              <div class="fingerTip"></div>
+            <div class="clawArm right">
+              <div class="upperLink"></div>
+              <div class="elbow"></div>
+              <div class="lowerLink"></div>
+              <div class="clawTip"></div>
             </div>
           </div>
         </div>
@@ -854,10 +800,6 @@
       updateClawPosition();
     }
 
-    /*
-      Игрушки теперь раскладываются по сетке
-      только в зоне, где клешня реально может их достать.
-    */
     function initToys(){
       toyArea.innerHTML = '';
       state.toys = [];
