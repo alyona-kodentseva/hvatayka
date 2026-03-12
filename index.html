@@ -283,7 +283,7 @@
       to{ opacity:.9; filter:brightness(1.18); }
     }
 
-    /* КРУГЛАЯ ВОРОНКА */
+    /* НОВАЯ ВОРОНКА: темная дырка, уходящая в глубину */
     .dropZoneWrap{
       position:absolute;
       right:18px;
@@ -301,19 +301,19 @@
       pointer-events:none;
       z-index:24;
       box-shadow:
-        0 0 0 2px rgba(255,232,170,.18),
-        0 0 16px rgba(255,180,70,.22);
+        0 0 0 2px rgba(255,232,170,.14),
+        0 0 12px rgba(255,180,70,.16);
       animation: dropPulse 1.2s ease-in-out infinite;
     }
 
     @keyframes dropPulse{
       0%,100%{
-        opacity:.45;
+        opacity:.38;
         transform:scale(1);
       }
       50%{
-        opacity:1;
-        transform:scale(1.02);
+        opacity:.82;
+        transform:scale(1.015);
       }
     }
 
@@ -322,13 +322,13 @@
       inset:0;
       border-radius:50%;
       background:
-        radial-gradient(circle at 50% 26%, rgba(255,255,255,.34), rgba(255,255,255,0) 28%),
-        radial-gradient(circle at 50% 44%, #ffdca7 0%, #ffbd71 42%, #ef8a42 74%, #bf5d28 100%);
-      border:2px solid rgba(255,235,198,.52);
+        radial-gradient(circle at 50% 24%, rgba(255,244,214,.30), rgba(255,244,214,0) 26%),
+        radial-gradient(circle at 50% 42%, #ffcb86 0%, #ef974c 58%, #b75b27 100%);
+      border:2px solid rgba(255,235,198,.42);
       box-shadow:
-        inset 0 5px 8px rgba(255,255,255,.22),
-        inset 0 -14px 18px rgba(0,0,0,.16),
-        0 12px 18px rgba(0,0,0,.22);
+        inset 0 6px 10px rgba(255,255,255,.15),
+        inset 0 -12px 16px rgba(0,0,0,.18),
+        0 10px 18px rgba(0,0,0,.22);
       overflow:hidden;
       z-index:25;
     }
@@ -338,57 +338,59 @@
       position:absolute;
       inset:12px;
       border-radius:50%;
-      border:2px solid rgba(255,244,222,.18);
+      border:1px solid rgba(255,244,222,.14);
       pointer-events:none;
     }
 
-    .dropDepth{
+    /* Внутренняя воронка */
+    .dropFunnel{
       position:absolute;
       left:50%;
       top:50%;
       transform:translate(-50%, -50%);
-      width:78%;
-      height:78%;
+      width:76%;
+      height:76%;
       border-radius:50%;
       background:
-        radial-gradient(circle at 50% 30%, rgba(255,205,130,.25), rgba(255,205,130,0) 28%),
-        radial-gradient(circle at 50% 56%, #b45a24 0%, #733716 38%, #2c1409 78%, #140904 100%);
+        radial-gradient(circle at 50% 18%, rgba(255,218,158,.30), rgba(255,218,158,0) 20%),
+        radial-gradient(circle at 50% 38%, #9b4c22 0%, #5f2c14 34%, #2a1409 72%, #120904 100%);
       box-shadow:
-        inset 0 16px 18px rgba(255,220,170,.10),
-        inset 0 -18px 26px rgba(0,0,0,.34);
+        inset 0 12px 16px rgba(255,205,150,.10),
+        inset 0 -22px 30px rgba(0,0,0,.42);
       z-index:1;
     }
 
+    /* Глубокая темная дырка */
     .dropHole{
       position:absolute;
       left:50%;
-      top:50%;
+      top:54%;
       transform:translate(-50%, -50%);
-      width:34%;
-      height:34%;
+      width:30%;
+      height:30%;
       border-radius:50%;
       background:
-        radial-gradient(circle at 50% 35%, #2d160b 0%, #120904 62%, #050302 100%);
+        radial-gradient(circle at 50% 34%, #241109 0%, #0f0704 62%, #030202 100%);
       box-shadow:
-        inset 0 8px 10px rgba(255,255,255,.04),
-        0 2px 6px rgba(0,0,0,.30);
+        inset 0 8px 10px rgba(255,255,255,.03),
+        0 3px 10px rgba(0,0,0,.35);
       z-index:3;
     }
 
-    .dropLip{
+    /* Светлое кольцо края, чтобы читалась глубина */
+    .dropRim{
       position:absolute;
       left:50%;
-      top:52%;
-      transform:translateX(-50%);
-      width:56%;
-      height:18%;
+      top:47%;
+      transform:translate(-50%, -50%);
+      width:50%;
+      height:16%;
       border-radius:50%;
       background:
-        radial-gradient(circle at 50% 0%, rgba(255,240,214,.55), rgba(255,240,214,0) 62%),
-        linear-gradient(180deg, rgba(255,219,160,.86), rgba(229,129,58,.12));
-      opacity:.62;
-      z-index:2;
+        radial-gradient(circle at 50% 30%, rgba(255,244,214,.68), rgba(255,244,214,.08) 70%, rgba(255,244,214,0) 100%);
       filter: blur(.4px);
+      opacity:.75;
+      z-index:2;
     }
 
     .dropBulbs{
@@ -687,11 +689,11 @@
     .baseControls{
       position:absolute;
       left:50%;
-      top:30px;
+      top:24px;
       transform:translateX(-50%);
-      width:min(46%, 360px);
-      min-width:240px;
-      height:36px;
+      width:min(52%, 420px);
+      min-width:260px;
+      height:44px;
       border-radius:12px;
       background: linear-gradient(180deg, #1b2238, #0e1423);
       box-shadow:
@@ -705,7 +707,8 @@
       font-size:13px;
       font-weight:700;
       text-align:center;
-      line-height:1.1;
+      line-height:1.2;
+      white-space:normal;
     }
 
     .bottomHint{
@@ -892,10 +895,11 @@
       }
 
       .baseControls{
-        width:min(50%, 320px);
+        width:min(52%, 330px);
         min-width:180px;
         font-size:11px;
         padding:0 10px;
+        height:46px;
       }
     }
   </style>
@@ -929,8 +933,8 @@
           <div class="dropZoneWrap">
             <div class="dropFrameGlow"></div>
             <div class="dropZone" id="dropZone">
-              <div class="dropDepth"></div>
-              <div class="dropLip"></div>
+              <div class="dropFunnel"></div>
+              <div class="dropRim"></div>
               <div class="dropHole"></div>
               <div class="dropBulbs">
                 <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -1408,37 +1412,36 @@
       const startLeft = parseFloat(toy.el.style.left);
       const startTop = parseFloat(toy.el.style.top);
 
-      /* Игрушка сверху, на переднем плане */
       toy.el.classList.add('dropForeground');
 
-      const lipX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
-      const lipY = dropRect.top - toyAreaRect.top + dropRect.height * 0.18 - toySize * 0.38;
+      const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
+      const stage1Y = dropRect.top - toyAreaRect.top + dropRect.height * 0.12 - toySize * 0.28;
 
-      const stage1 = 16;
-      for(let i=1; i<=stage1; i++){
-        const p = i / stage1;
+      const stage1Frames = 15;
+      for(let i=1; i<=stage1Frames; i++){
+        const p = i / stage1Frames;
         const ease = 1 - Math.pow(1 - p, 3);
-        const x = startLeft + (lipX - startLeft) * ease;
-        const y = startTop + (lipY - startTop) * ease;
+        const x = startLeft + (stage1X - startLeft) * ease;
+        const y = startTop + (stage1Y - startTop) * ease;
         toy.el.style.left = x + 'px';
         toy.el.style.top = y + 'px';
-        toy.el.style.transform = `scale(${1 - p * 0.08})`;
+        toy.el.style.transform = `scale(${1 - p * 0.06})`;
         await delay(16);
       }
 
-      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.26;
-      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.44 - toySize * 0.18;
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.16;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.52 - toySize * 0.06;
 
-      const stage2 = 16;
-      for(let i=1; i<=stage2; i++){
-        const p = i / stage2;
+      const stage2Frames = 18;
+      for(let i=1; i<=stage2Frames; i++){
+        const p = i / stage2Frames;
         const ease = p < 0.5
           ? 4 * p * p * p
           : 1 - Math.pow(-2 * p + 2, 3) / 2;
 
-        const x = lipX + (holeX - lipX) * ease;
-        const y = lipY + (holeY - lipY) * ease;
-        const scale = 0.92 - p * 0.42;
+        const x = stage1X + (holeX - stage1X) * ease;
+        const y = stage1Y + (holeY - stage1Y) * ease;
+        const scale = 0.94 - p * 0.52;
 
         toy.el.style.left = x + 'px';
         toy.el.style.top = y + 'px';
