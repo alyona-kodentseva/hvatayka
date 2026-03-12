@@ -490,14 +490,13 @@
       transform:rotate(-7deg) translateX(-3px);
     }
 
-    /* ЗАМЕТНО более открытый захват при наличии шарика */
     .claw.hasToy.closed .prong.left{
-      left:8px;
-      transform:rotate(18deg) translateX(0);
+      left:10px;
+      transform:rotate(17deg) translateX(0);
     }
     .claw.hasToy.closed .prong.right{
-      right:8px;
-      transform:rotate(-18deg) translateX(0);
+      right:10px;
+      transform:rotate(-17deg) translateX(0);
     }
 
     .claw.swing-left{
@@ -1065,7 +1064,6 @@
 
     function applyLanguage(){
       document.getElementById('labelTimer').textContent = GAME_CONFIG.lang.timer;
-      dropZone.textContent = GAME_CONFIG.lang.dropZone;
       coinBtn.textContent = GAME_CONFIG.lang.coinButton;
       statusText.textContent = GAME_CONFIG.lang.statusIdle;
       document.getElementById('controlsHint').textContent = GAME_CONFIG.lang.controlsHint;
@@ -1122,12 +1120,10 @@
         { x: 30, y: 24 },
         { x: 48, y: 28 },
         { x: 66, y: 24 },
-
         { x: 18, y: 50 },
         { x: 36, y: 46 },
         { x: 54, y: 50 },
         { x: 72, y: 46 },
-
         { x: 28, y: 68 },
         { x: 58, y: 66 }
       ];
@@ -1214,7 +1210,306 @@
         const cy = r.top + r.height / 2;
         const dx = point.x - cx;
         const dy = point.y - cy;
-        const dist = Math.sqrt(dx * dx    function playSuccessSound(){
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if(dist < catchRadius && dist < bestDistance){
+          best = toy;
+          bestDistance = dist;
+        }
+      });
+
+      return best;
+    }
+
+    async function dropClaw(){
+      if(!state.active || state.dropping || state.completed) return;
+
+      state.dropping = true;
+      clearInterval(state.timerInterval);
+      clearSwingClasses();
+      setStatus(GAME_CONFIG.lang.statusDropping);
+
+      const targetToy = findNearestToyInColumn();
+      const targetTop = targetToy ? getClawTopForToy(targetToy) : getDefaultDropTop();
+
+      await animateClawDown(targetTop);
+
+      const caughtToy = findCaughtToy();
+
+      if(caughtToy){
+        claw.classList.add('closed', 'hasToy');
+        await delay(180);
+
+        caughtToy.el.classList.add('caught');
+        await delay(120);
+        await liftWithToy(caughtToy);
+        await moveToyToDropZone(caughtToy);
+        caughtToy.removed = true;
+        caughtToy.el.classList.add('hidden');
+        await delay(120);
+
+        playSuccessSound();
+        openCard(caughtToy);
+      } else {
+        claw.classList.add('closed');
+        await delay(160);
+        await animateClawUp();
+        playFailSound();
+        setStatus(GAME_CONFIG.lang.statusMiss);
+        showFlash(GAME_CONFIG.lang.statusMiss);
+        endRound();
+      }
+    }
+
+    function findNearestToyInColumn(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const maxDx = getToySize() * 1.0;
+
+      let best = null;
+      let bestScore = Infinity;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = Math.abs(clawX - cx);
+
+        if(dx > maxDx) return;
+
+        const playfieldRect = document.getElementById('playfield').getBoundingClientRect();
+        const localY = cy - playfieldRect.top;
+        const score = dx + localY * 0.001;
+
+        if(score < bestScore){
+          best = toy;
+          bestScore = score;
+        }
+      });
+
+      return best;
+    }
+
+    function getClawTopForToy(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const toyRect = toy.el.getBoundingClientRect();
+      const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
+
+      return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
+    }
+
+    function getDefaultDropTop(){
+      return 330;
+    }
+
+    function animateClawDown(targetTop){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop += 8;
+          if(state.currentClawTop >= targetTop){
+            state.currentClawTop = targetTop;
+            updateClawPosition();
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    function animateClawUp(){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop -= 8;
+          if(state.currentClawTop <= GAME_CONFIG.clawStartTop){
+            state.currentClawTop = GAME_CONFIG.clawStartTop;
+            updateClawPosition();
+            claw.classList.remove('closed', 'hasToy');
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    async function liftWithToy(toy){
+      while(state.currentClawTop > GAME_CONFIG.clawStartTop){
+        state.currentClawTop -= 8;
+        updateClawPosition();
+
+        const playRect = document.getElementById('playfield').getBoundingClientRect();
+        const clawX = playRect.width * (state.currentXPercent / 100);
+        const toyAreaRect = toyArea.getBoundingClientRect();
+        const toySize = toy.el.getBoundingClientRect().width || 70;
+        const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
+        const localY = state.currentClawTop + 112 - (toyAreaRect.top - playRect.top) - toySize / 2;
+
+        toy.el.style.left = localX + 'px';
+        toy.el.style.top = localY + 'px';
+
+        await delay(16);
+      }
+      updateClawPosition();
+    }
+
+    async function moveToyToDropZone(toy){
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      const dropRect = dropZone.getBoundingClientRect();
+      const toySize = toy.el.getBoundingClientRect().width || 70;
+
+      const startLeft = parseFloat(toy.el.style.left);
+      const startTop = parseFloat(toy.el.style.top);
+
+      toy.el.classList.add('dropForeground');
+
+      const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
+      const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
+
+      const stage1Frames = 14;
+      for(let i=1; i<=stage1Frames; i++){
+        const p = i / stage1Frames;
+        const ease = 1 - Math.pow(1 - p, 3);
+        const x = startLeft + (stage1X - startLeft) * ease;
+        const y = startTop + (stage1Y - startTop) * ease;
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${1 - p * 0.05})`;
+        await delay(16);
+      }
+
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.5;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.5 - toySize * 0.5;
+
+      const stage2Frames = 18;
+      for(let i=1; i<=stage2Frames; i++){
+        const p = i / stage2Frames;
+        const ease = p < 0.45
+          ? 3.5 * p * p * p
+          : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+        const x = stage1X + (holeX - stage1X) * ease;
+        const y = stage1Y + (holeY - stage1Y) * ease;
+        const scale = 0.95 - p * 0.62;
+
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${scale})`;
+        await delay(16);
+      }
+
+      toy.el.classList.remove('dropForeground');
+
+      await animateClawUp();
+    }
+
+    function renderCardSide(side, title, item){
+      let html = `<div class="cardTitle">${escapeHtml(title)}</div>`;
+
+      if(item && item.emoji){
+        html += `<div class="cardEmoji">${escapeHtml(item.emoji)}</div>`;
+      }
+
+      if(side.type === 'text'){
+        html += `<div class="cardText">${escapeHtml(side.text || '')}</div>`;
+      } else if(side.type === 'image'){
+        html += side.image ? `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">` : '';
+      } else if(side.type === 'mixed'){
+        if(side.image){
+          html += `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">`;
+        }
+        if(side.text){
+          html += `<div class="cardText">${escapeHtml(side.text)}</div>`;
+        }
+      }
+
+      html += `<div class="cardSub">${escapeHtml(GAME_CONFIG.lang.cardFlipHint)}</div>`;
+      return html;
+    }
+
+    function openCard(toy){
+      state.currentCardToy = toy;
+      taskCard.classList.remove('flipped');
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
+      cardOverlay.classList.add('show');
+      setStatus(GAME_CONFIG.lang.statusCard);
+    }
+
+    function closeCurrentCard(){
+      cardOverlay.classList.remove('show');
+      state.currentCardToy = null;
+
+      const remaining = state.toys.filter(t => !t.removed).length;
+      if(remaining === 0){
+        finishGame();
+      } else {
+        endRound();
+        setStatus(GAME_CONFIG.lang.statusIdle);
+      }
+    }
+
+    function finishGame(){
+      state.completed = true;
+      endRound();
+      finishOverlay.classList.add('show');
+      playTriumphSound();
+    }
+
+    function moveClaw(dir){
+      if(!state.active || state.dropping || state.completed) return;
+      const stepPercent = (GAME_CONFIG.moveStep / document.getElementById('playfield').clientWidth) * 100;
+      state.currentXPercent += dir * stepPercent;
+      state.currentXPercent = Math.max(GAME_CONFIG.clawMinXPercent, Math.min(GAME_CONFIG.clawMaxXPercent, state.currentXPercent));
+      updateClawPosition();
+      animateClawSwing(dir);
+    }
+
+    function delay(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function escapeAttr(s){
+      return String(s).replaceAll('"', '&quot;');
+    }
+
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio(){
+      if(!audioCtx) audioCtx = new AudioCtx();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function tone(freq, duration, type='sine', gainValue=.05, startAt=0){
+      const now = audioCtx.currentTime + startAt;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function playSuccessSound(){
       ensureAudio();
       tone(523.25, .18, 'triangle', .06, 0);
       tone(659.25, .18, 'triangle', .06, .08);
