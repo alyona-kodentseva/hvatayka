@@ -354,7 +354,7 @@
 
     .clawRig{
       position:absolute;
-      top:24px;
+      top:18px;
       left:50%;
       transform:translateX(-50%);
       width:110px;
@@ -381,7 +381,7 @@
       top:30px;
       transform:translateX(-50%);
       width:4px;
-      height:136px;
+      height:130px;
       background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
       border-radius:999px;
     }
@@ -389,7 +389,7 @@
     .claw{
       position:absolute;
       left:50%;
-      top:156px;
+      top:150px;
       transform:translateX(-50%);
       width:100px;
       height:124px;
@@ -559,7 +559,7 @@
       position:absolute;
       left:16px;
       right:16px;
-      top:10px;
+      top:8px;
       height:8px;
       border-radius:999px;
       background: rgba(255,255,255,.14);
@@ -796,16 +796,16 @@
       }
 
       .clawRig{
-        top:16px;
+        top:10px;
         height:400px;
       }
 
       .cable{
-        height:128px;
+        height:122px;
       }
 
       .claw{
-        top:148px;
+        top:142px;
       }
 
       .prong.left{ left:10px; }
@@ -946,9 +946,9 @@
       clawMinXPercent: 12,
       clawMaxXPercent: 76,
       toyCount: 10,
-      clawStartTop: 156,
-      clawTopMin: 156,
-      clawCatchOffsetY: 108
+      clawStartTop: 150,
+      clawTopMin: 150,
+      clawCatchOffsetY: 110
     };
 
     GAME_CONFIG.items = [
@@ -1192,7 +1192,7 @@
       const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
-      const catchRadius = getToySize() * 0.78;
+      const catchRadius = getToySize() * 0.82;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
@@ -1253,7 +1253,7 @@
     function findNearestToyInColumn(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const maxDx = getToySize() * 0.95;
+      const maxDx = getToySize() * 1.0;
 
       let best = null;
       let bestScore = Infinity;
