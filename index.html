@@ -274,13 +274,14 @@
       to{ opacity:.9; filter:brightness(1.18); }
     }
 
+    /* ВОРОНКА ПОД ИГРУШКАМИ */
     .dropZoneWrap{
       position:absolute;
       right:48px;
       bottom:34px;
       width:86px;
       height:86px;
-      z-index:9;
+      z-index:7;
       pointer-events:none;
     }
 
@@ -298,7 +299,7 @@
         inset 0 10px 14px rgba(255,255,255,.04),
         inset 0 -18px 24px rgba(0,0,0,.62);
       overflow:hidden;
-      z-index:9;
+      z-index:7;
     }
 
     .dropTopLip,
@@ -499,6 +500,7 @@
       pointer-events:none;
     }
 
+    /* При падении игрушка должна быть над воронкой и входить В нее */
     .toy.dropForeground{
       z-index:40;
     }
@@ -1300,6 +1302,7 @@
 
       toy.el.classList.add('dropForeground');
 
+      /* Сначала ведем игрушку НАД воронкой */
       const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
       const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
 
@@ -1315,8 +1318,9 @@
         await delay(16);
       }
 
-      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.30;
-      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.50 - toySize * 0.10;
+      /* Затем опускаем игрушку ВНУТРЬ воронки */
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.5;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.5 - toySize * 0.5;
 
       const stage2Frames = 18;
       for(let i=1; i<=stage2Frames; i++){
