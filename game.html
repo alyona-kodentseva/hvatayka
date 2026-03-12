@@ -422,43 +422,76 @@
 
     .prong{
       position:absolute;
-      top:36px;
-      width:40px;
-      height:78px;
+      top:40px;
+      width:34px;
+      height:68px;
       transform-origin: top center;
       transition: transform .18s ease, left .18s ease, right .18s ease;
       z-index:2;
+      filter:none;
       overflow:visible;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+      transform-style:preserve-3d;
     }
 
-    .prong svg{
-      width:100%;
-      height:100%;
-      display:block;
-      overflow:visible;
+    .prong::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border:6px solid #dfe8ff;
+      background: transparent;
+      box-shadow:none;
+      outline:none;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
     }
 
-    .prong.left{ left:4px; transform:rotate(22deg); }
-    .prong.right{ right:4px; transform:rotate(-22deg); }
+    .prong::after{
+      content:"";
+      position:absolute;
+      top:-3px;
+      width:15px;
+      height:11px;
+      background: linear-gradient(180deg, #eef4ff, #cad7f0);
+      border-radius:7px 7px 3px 3px;
+      box-shadow:none;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+    }
+
+    .prong.left{ left:6px; transform:rotate(22deg) translateZ(0); }
+    .prong.left::before{
+      border-right:none;
+      border-radius:32px 0 0 32px;
+    }
+    .prong.left::after{ right:-8px; }
+
+    .prong.right{ right:6px; transform:rotate(-22deg) translateZ(0); }
+    .prong.right::before{
+      border-left:none;
+      border-radius:0 32px 32px 0;
+    }
+    .prong.right::after{ left:-8px; }
 
     .claw.closed .prong.left{
-      left:18px;
-      transform:rotate(7deg) translateX(3px);
+      left:19px;
+      transform:rotate(7deg) translateX(3px) translateZ(0);
     }
 
     .claw.closed .prong.right{
-      right:18px;
-      transform:rotate(-7deg) translateX(-3px);
+      right:19px;
+      transform:rotate(-7deg) translateX(-3px) translateZ(0);
     }
 
     .claw.hasToy.closed .prong.left{
-      left: calc((100px - var(--toy-gap)) / 2 - 20px);
-      transform:rotate(14deg);
+      left: calc((100px - var(--toy-gap)) / 2 - 17px);
+      transform:rotate(15deg) translateZ(0);
     }
 
     .claw.hasToy.closed .prong.right{
-      right: calc((100px - var(--toy-gap)) / 2 - 20px);
-      transform:rotate(-14deg);
+      right: calc((100px - var(--toy-gap)) / 2 - 17px);
+      transform:rotate(-15deg) translateZ(0);
     }
 
     .claw.swing-left{ transform:translateX(-50%) rotate(-4deg); }
@@ -783,10 +816,12 @@
       }
       .cable{ height:122px; }
       .claw{ top:142px; }
-      .prong.left{ left:8px; }
-      .prong.right{ right:8px; }
-      .claw.closed .prong.left{ left:18px; }
-      .claw.closed .prong.right{ right:18px; }
+      .prong.left{ left:10px; }
+      .prong.right{ right:10px; }
+      .prong.left::after{ right:-7px; }
+      .prong.right::after{ left:-7px; }
+      .claw.closed .prong.left{ left:20px; }
+      .claw.closed .prong.right{ right:20px; }
       .toyArea{ top:57%; }
       .baseSpeaker{ width:64px; }
       .baseControls{
@@ -847,36 +882,8 @@
             <div class="claw" id="claw">
               <div class="clawCore"></div>
               <div class="clawStem"></div>
-
-              <div class="prong left">
-                <svg viewBox="0 0 40 78" aria-hidden="true">
-                  <path
-                    d="M31 9
-                       C18 14, 8 27, 7 43
-                       C6 56, 11 66, 18 75"
-                    fill="none"
-                    stroke="#dfe8ff"
-                    stroke-width="8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"/>
-                  <ellipse cx="28" cy="9" rx="10" ry="12" fill="#dfe8ff"/>
-                </svg>
-              </div>
-
-              <div class="prong right">
-                <svg viewBox="0 0 40 78" aria-hidden="true">
-                  <path
-                    d="M9 9
-                       C22 14, 32 27, 33 43
-                       C34 56, 29 66, 22 75"
-                    fill="none"
-                    stroke="#dfe8ff"
-                    stroke-width="8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"/>
-                  <ellipse cx="12" cy="9" rx="10" ry="12" fill="#dfe8ff"/>
-                </svg>
-              </div>
+              <div class="prong left"></div>
+              <div class="prong right"></div>
             </div>
           </div>
 
