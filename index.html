@@ -48,7 +48,7 @@
 
     .editorGrid{
       display:grid;
-      grid-template-columns: 430px minmax(0,1fr);
+      grid-template-columns:430px minmax(0,1fr);
       gap:20px;
       align-items:start;
     }
@@ -308,8 +308,8 @@
 
           <div class="field">
             <label for="cardCount">Количество карточек</label>
-            <input id="cardCount" type="number" min="3" max="20" value="10" />
-            <div class="smallText">От 3 до 20. Количество шариков-игрушек будет таким же.</div>
+            <input id="cardCount" type="number" min="3" max="12" value="10" />
+            <div class="smallText">От 3 до 12. Количество шариков-игрушек будет таким же.</div>
           </div>
         </div>
 
@@ -489,16 +489,13 @@
     };
 
     const SAFE_EMOJIS = [
-      "🧸","🚗","⚽","🪁","🦄","🎲","🎈","🪀","🧩","🎯",
-      "🚂","🛴","🛹","🎳","🎮","🪅","🎨","🪄","🚀","🥁",
-      "🎺","🦋","🐥","🐠","🦕","🐢","🌟","🚜","🛶","🎹"
+      "🧸","🚗","⚽","🪁","🦄","🎲","🎈","🪀","🧩","🎯","🚂","🛴"
     ];
 
     const RANDOM_COLORS = [
       "#ff7b8e","#57b8ff","#67d38c","#c987ff","#ff8bd8",
       "#ffad5c","#ff667a","#6ed3ff","#8dda66","#ff8c42",
-      "#7fe0d4","#f2a5ff","#ffd166","#90caf9","#a5d66f",
-      "#f4978e","#84dcc6","#bdb2ff","#ffc6ff","#caffbf"
+      "#7fe0d4","#f2a5ff"
     ];
 
     const DEFAULT_CARDS = [
@@ -564,7 +561,7 @@
     }
 
     function clampCardCount(n){
-      return Math.max(3, Math.min(20, Number(n) || 3));
+      return Math.max(3, Math.min(12, Number(n) || 3));
     }
 
     function createEmptyCard(){
@@ -673,9 +670,9 @@
         fontFamily: state.fontFamily,
         touchControls: state.touchControls,
         lang: (LANGUAGES[state.language] || LANGUAGES.ru).strings,
-        items: state.cards.map((card, index) => ({
+        items: state.cards.slice(0, 12).map((card, index) => ({
           emoji: SAFE_EMOJIS[index % SAFE_EMOJIS.length],
-          color: RANDOM_COLORS[(index * 3 + 2) % RANDOM_COLORS.length],
+          color: RANDOM_COLORS[index % RANDOM_COLORS.length],
           front: mapEditorSide(card.frontType, card.frontText, card.frontImage),
           back: mapEditorSide(card.backType, card.backText, card.backImage)
         }))
@@ -739,7 +736,7 @@
     });
 
     addCardBtn.addEventListener('click', function(){
-      if(state.cards.length >= 20) return;
+      if(state.cards.length >= 12) return;
       state.cards.push(createEmptyCard());
       ensureCardCount(state.cards.length);
       renderCardEditors();
