@@ -601,32 +601,34 @@
       text-align:center;
       line-height:1.2;
       white-space:normal;
+      gap:10px;
     }
 
-    .touchControls{
-      position:absolute;
-      left:50%;
-      bottom:106px;
-      transform:translateX(-50%);
-      z-index:32;
-      display:flex;
-      gap:10px;
+    .baseControls.touchMode{
+      justify-content:center;
+      gap:12px;
     }
 
     .touchBtn{
       appearance:none;
       border:none;
-      width:58px;
-      height:58px;
-      border-radius:16px;
+      width:44px;
+      height:44px;
+      border-radius:12px;
       cursor:pointer;
-      font-size:24px;
+      font-size:20px;
       font-weight:900;
       color:#fff;
-      background: rgba(13,22,43,.78);
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 10px 18px rgba(0,0,0,.22);
-      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.08),
+        0 4px 10px rgba(0,0,0,.16);
+      flex:0 0 auto;
+    }
+
+    .touchBtn:active{
+      transform: translateY(1px);
     }
 
     .overlay{
@@ -813,10 +815,10 @@
         padding:0 10px;
         height:46px;
       }
-      .touchControls{ bottom:104px; }
       .touchBtn{
-        width:54px;
-        height:54px;
+        width:42px;
+        height:42px;
+        font-size:18px;
       }
     }
   </style>
@@ -871,12 +873,6 @@
 
           <div class="toyArea" id="toyArea"></div>
         </div>
-      </div>
-
-      <div class="touchControls" id="touchControlsBar" style="display:none;">
-        <button class="touchBtn" id="touchLeft">←</button>
-        <button class="touchBtn" id="touchDrop">↓</button>
-        <button class="touchBtn" id="touchRight">→</button>
       </div>
 
       <div class="basePanel">
@@ -965,9 +961,9 @@
 
     const incomingConfig = decodeConfigFromUrl() || {
       machineColor: "#ff5b74",
-      language: "ru",
       fontFamily: "Arial, Helvetica, sans-serif",
       touchControls: false,
+      lang: DEFAULT_LANG,
       items: [
         {
           emoji: "🧸",
@@ -1044,10 +1040,6 @@
     const finishText = document.getElementById('finishText');
     const finishSub = document.getElementById('finishSub');
     const controlsHint = document.getElementById('controlsHint');
-    const touchControlsBar = document.getElementById('touchControlsBar');
-    const touchLeft = document.getElementById('touchLeft');
-    const touchDrop = document.getElementById('touchDrop');
-    const touchRight = document.getElementById('touchRight');
     const labelTimer = document.getElementById('labelTimer');
 
     function escapeHTML(s){
@@ -1066,6 +1058,25 @@
         .replaceAll('<','&lt;');
     }
 
+    function renderBottomControls(){
+      if(!GAME_CONFIG.touchControls){
+        controlsHint.classList.remove('touchMode');
+        controlsHint.textContent = GAME_CONFIG.lang.controlsHint;
+        return;
+      }
+
+      controlsHint.classList.add('touchMode');
+      controlsHint.innerHTML = `
+        <button class="touchBtn" id="touchLeft">${escapeHTML(GAME_CONFIG.lang.touchLeft)}</button>
+        <button class="touchBtn" id="touchDrop">${escapeHTML(GAME_CONFIG.lang.touchDrop)}</button>
+        <button class="touchBtn" id="touchRight">${escapeHTML(GAME_CONFIG.lang.touchRight)}</button>
+      `;
+
+      document.getElementById('touchLeft').addEventListener('click', function(){ moveClaw(-1); });
+      document.getElementById('touchRight').addEventListener('click', function(){ moveClaw(1); });
+      document.getElementById('touchDrop').addEventListener('click', function(){ dropClaw(); });
+    }
+
     function applyLang(){
       labelTimer.textContent = GAME_CONFIG.lang.timer;
       coinBtn.textContent = GAME_CONFIG.lang.coinButton;
@@ -1073,11 +1084,7 @@
       flashMessage.textContent = GAME_CONFIG.lang.statusMiss;
       finishText.textContent = GAME_CONFIG.lang.finishTitle;
       finishSub.textContent = GAME_CONFIG.lang.finishSubtitle;
-      controlsHint.textContent = GAME_CONFIG.touchControls ? GAME_CONFIG.lang.controlsHintTouch : GAME_CONFIG.lang.controlsHint;
-      touchLeft.textContent = GAME_CONFIG.lang.touchLeft;
-      touchDrop.textContent = GAME_CONFIG.lang.touchDrop;
-      touchRight.textContent = GAME_CONFIG.lang.touchRight;
-      touchControlsBar.style.display = GAME_CONFIG.touchControls ? 'flex' : 'none';
+      renderBottomControls();
     }
 
     function showFlash(text){
@@ -1540,13 +1547,6 @@
         dropClaw();
       }
     });
-
-    if(GAME_CONFIG.touchControls){
-      touchControlsBar.style.display = 'flex';
-      touchLeft.addEventListener('click', function(){ moveClaw(-1); });
-      touchRight.addEventListener('click', function(){ moveClaw(1); });
-      touchDrop.addEventListener('click', function(){ dropClaw(); });
-    }
 
     flipCard.addEventListener('click', function(){
       taskCard.classList.toggle('flipped');
