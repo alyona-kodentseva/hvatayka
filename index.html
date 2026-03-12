@@ -490,6 +490,15 @@
       transform:rotate(-7deg) translateX(-3px);
     }
 
+    .claw.hasToy.closed .prong.left{
+      left:14px;
+      transform:rotate(13deg) translateX(1px);
+    }
+    .claw.hasToy.closed .prong.right{
+      right:14px;
+      transform:rotate(-13deg) translateX(-1px);
+    }
+
     .claw.swing-left{
       transform:translateX(-50%) rotate(-4deg);
     }
@@ -559,7 +568,7 @@
       position:absolute;
       left:16px;
       right:16px;
-      top:8px;
+      top:6px;
       height:8px;
       border-radius:999px;
       background: rgba(255,255,255,.14);
@@ -816,6 +825,9 @@
 
       .claw.closed .prong.left{ left:20px; }
       .claw.closed .prong.right{ right:20px; }
+
+      .claw.hasToy.closed .prong.left{ left:15px; }
+      .claw.hasToy.closed .prong.right{ right:15px; }
 
       .toyArea{
         top:57%;
@@ -1093,7 +1105,7 @@
 
     function resetClawVisual(){
       state.currentClawTop = GAME_CONFIG.clawStartTop;
-      claw.classList.remove('closed');
+      claw.classList.remove('closed', 'hasToy');
       clearSwingClasses();
       updateClawPosition();
     }
@@ -1225,12 +1237,12 @@
 
       await animateClawDown(targetTop);
 
-      claw.classList.add('closed');
-      await delay(180);
-
       const caughtToy = findCaughtToy();
 
       if(caughtToy){
+        claw.classList.add('closed', 'hasToy');
+        await delay(180);
+
         caughtToy.el.classList.add('caught');
         await delay(120);
         await liftWithToy(caughtToy);
@@ -1242,6 +1254,8 @@
         playSuccessSound();
         openCard(caughtToy);
       } else {
+        claw.classList.add('closed');
+        await delay(160);
         await animateClawUp();
         playFailSound();
         setStatus(GAME_CONFIG.lang.statusMiss);
@@ -1316,7 +1330,7 @@
           if(state.currentClawTop <= GAME_CONFIG.clawStartTop){
             state.currentClawTop = GAME_CONFIG.clawStartTop;
             updateClawPosition();
-            claw.classList.remove('closed');
+            claw.classList.remove('closed', 'hasToy');
             resolve();
             return;
           }
