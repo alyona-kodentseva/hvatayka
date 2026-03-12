@@ -146,19 +146,75 @@
       bottom:22px;
       width:min(18%, 140px);
       height:min(24%, 150px);
-      border-radius:18px;
+      border-radius:22px 22px 20px 20px;
       background:
-        linear-gradient(180deg, rgba(255,170,88,.28), rgba(255,130,66,.48)),
-        rgba(0,0,0,.22);
-      border:2px dashed rgba(255,220,180,.7);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:8px;
-      font-weight:800;
-      color:#fff2db;
+        linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0) 18%),
+        linear-gradient(180deg, #ffd9a0 0%, #ffb868 28%, #ef8c43 62%, #b55324 100%);
+      border:1px solid rgba(255,255,255,.28);
+      box-shadow:
+        inset 0 2px 2px rgba(255,255,255,.35),
+        inset 0 -10px 16px rgba(0,0,0,.18),
+        0 10px 18px rgba(0,0,0,.22);
       z-index:4;
+      overflow:hidden;
+      pointer-events:none;
+    }
+
+    .dropZone::before{
+      content:"";
+      position:absolute;
+      left:10px;
+      right:10px;
+      top:10px;
+      height:18px;
+      border-radius:999px;
+      background: linear-gradient(180deg, rgba(255,247,221,.95), rgba(255,196,112,.95));
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.65),
+        0 2px 4px rgba(0,0,0,.14);
+    }
+
+    .dropZone::after{
+      content:"";
+      position:absolute;
+      left:16%;
+      right:16%;
+      top:24%;
+      bottom:10%;
+      border-radius:16px 16px 18px 18px;
+      background:
+        linear-gradient(180deg, rgba(20,10,4,.15), rgba(20,10,4,.36)),
+        linear-gradient(180deg, #3a2416 0%, #1b1008 100%);
+      box-shadow:
+        inset 0 12px 20px rgba(0,0,0,.28),
+        inset 0 1px 1px rgba(255,255,255,.06);
+    }
+
+    .dropSlot{
+      position:absolute;
+      left:50%;
+      top:24%;
+      transform:translateX(-50%);
+      width:62%;
+      height:20px;
+      border-radius:12px 12px 10px 10px;
+      background: linear-gradient(180deg, #120c07, #2d1a10);
+      box-shadow:
+        inset 0 4px 6px rgba(0,0,0,.45),
+        0 1px 0 rgba(255,255,255,.08);
+      z-index:1;
+    }
+
+    .dropRamp{
+      position:absolute;
+      left:23%;
+      right:23%;
+      top:36%;
+      height:20px;
+      clip-path: polygon(0 0, 100% 0, 78% 100%, 22% 100%);
+      background: linear-gradient(180deg, rgba(255,229,180,.95), rgba(255,173,88,.28));
+      z-index:1;
+      opacity:.9;
     }
 
     .clawRig{
@@ -515,7 +571,6 @@
       .dropZone{
         width:110px;
         height:120px;
-        font-size:12px;
       }
 
       .prong.left{ left:10px; }
@@ -553,7 +608,10 @@
         <div class="glassShine"></div>
         <div class="ceilingRail"></div>
 
-        <div class="dropZone" id="dropZone">Воронка</div>
+        <div class="dropZone" id="dropZone">
+          <div class="dropSlot"></div>
+          <div class="dropRamp"></div>
+        </div>
 
         <div class="clawRig" id="clawRig">
           <div class="clawHead"></div>
@@ -602,7 +660,7 @@
     const GAME_CONFIG = {
       lang: {
         timer: "Время:",
-        dropZone: "Воронка",
+        dropZone: "",
         coinButton: "🪙 Бросить монетку",
         statusIdle: "Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел",
         statusActive: "У вас есть время, чтобы поймать игрушку",
