@@ -395,6 +395,7 @@
       height:124px;
       transform-origin: top center;
       transition: transform .18s ease;
+      --toy-gap: 42px;
     }
 
     .clawCore{
@@ -491,12 +492,12 @@
     }
 
     .claw.hasToy.closed .prong.left{
-      left:10px;
-      transform:rotate(17deg) translateX(0);
+      left: calc((100px - var(--toy-gap)) / 2 - 17px);
+      transform:rotate(15deg);
     }
     .claw.hasToy.closed .prong.right{
-      right:10px;
-      transform:rotate(-17deg) translateX(0);
+      right: calc((100px - var(--toy-gap)) / 2 - 17px);
+      transform:rotate(-15deg);
     }
 
     .claw.swing-left{
@@ -826,9 +827,6 @@
       .claw.closed .prong.left{ left:20px; }
       .claw.closed .prong.right{ right:20px; }
 
-      .claw.hasToy.closed .prong.left{ left:10px; }
-      .claw.hasToy.closed .prong.right{ right:10px; }
-
       .toyArea{
         top:57%;
       }
@@ -960,7 +958,7 @@
       toyCount: 10,
       clawStartTop: 150,
       clawTopMin: 150,
-      clawCatchOffsetY: 110
+      clawCatchOffsetY: 116
     };
 
     GAME_CONFIG.items = [
@@ -1036,7 +1034,9 @@
       toys: [],
       currentCardToy: null,
       completed: false,
-      swingTimeout: null
+      swingTimeout: null,
+      carriedToyOffsetX: 0,
+      carriedToyOffsetY: 0
     };
 
     const toyArea = document.getElementById('toyArea');
@@ -1046,7 +1046,6 @@
     const timerValue = document.getElementById('timerValue');
     const coinBtn = document.getElementById('coinBtn');
     const statusText = document.getElementById('statusText');
-    const dropZone = document.getElementById('dropZone');
     const flashMessage = document.getElementById('flashMessage');
 
     const cardOverlay = document.getElementById('cardOverlay');
@@ -1099,7 +1098,10 @@
 
     function resetClawVisual(){
       state.currentClawTop = GAME_CONFIG.clawStartTop;
+      state.carriedToyOffsetX = 0;
+      state.carriedToyOffsetY = 0;
       claw.classList.remove('closed', 'hasToy');
+      claw.style.removeProperty('--toy-gap');
       clearSwingClasses();
       updateClawPosition();
     }
@@ -1178,8 +1180,8 @@
       resetClawVisual();
     }
 
-    function getToySize(){
-      const toy = state.toys.find(t => !t.removed)?.el;
+    function getToySize(toyEl = null){
+      const toy = toyEl || state.toys.find(t => !t.removed)?.el;
       return toy ? (toy.getBoundingClientRect().width || 70) : 70;
     }
 
@@ -1194,24 +1196,37 @@
       const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
-      const catchRadius = getToySize() * 0.82;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
         const r = toy.el.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
+        const radius = r.width / 2;
+        const cx = r.left + radius;
+        const cy = r.top + radius;
         const dx = point.x - cx;
         const dy = point.y - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
+        const catchRadius = Math.max(8, radius * 0.58);
 
-        if(dist < catchRadius && dist < bestDistance){
+        if(dist <= catchRadius && dist < bestDistance){
           best = toy;
           bestDistance = dist;
         }
       });
 
       return best;
+    }
+
+    function setClawGapForToy(toy){
+      const toySize = getToySize(toy.el);
+      const gap = Math.max(34, Math.min(62, toySize + 4));
+      claw.style.setProperty('--toy-gap', gap + 'px');
+    }
+
+    function setCarriedToyOffsets(toy){
+      const toySize = getToySize(toy.el);
+      state.carriedToyOffsetX = -toySize / 2;
+      state.carriedToyOffsetY = 112 - toySize / 2;
     }
 
     async function dropClaw(){
@@ -1230,10 +1245,13 @@
       const caughtToy = findCaughtToy();
 
       if(caughtToy){
+        setClawGapForToy(caughtToy);
+        setCarriedToyOffsets(caughtToy);
         claw.classList.add('closed', 'hasToy');
         await delay(180);
 
         caughtToy.el.classList.add('caught');
+        placeToyInsideClaw(caughtToy);
         await delay(120);
         await liftWithToy(caughtToy);
         await moveToyToDropZone(caughtToy);
@@ -1253,6 +1271,15 @@
         showFlash(GAME_CONFIG.lang.statusMiss);
         endRound();
       }
+    }
+
+    function placeToyInsideClaw(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawCenterX = playRect.width * (state.currentXPercent / 100);
+      const toyAreaRect = toyArea.getBoundingClientRect();
+
+      toy.el.style.left = (clawCenterX - toyAreaRect.left + playRect.left + state.carriedToyOffsetX) + 'px';
+      toy.el.style.top = (state.currentClawTop + state.carriedToyOffsetY - (toyAreaRect.top - playRect.top)) + 'px';
     }
 
     function findNearestToyInColumn(){
@@ -1320,6 +1347,7 @@
             state.currentClawTop = GAME_CONFIG.clawStartTop;
             updateClawPosition();
             claw.classList.remove('closed', 'hasToy');
+            claw.style.removeProperty('--toy-gap');
             resolve();
             return;
           }
@@ -1334,26 +1362,16 @@
       while(state.currentClawTop > GAME_CONFIG.clawStartTop){
         state.currentClawTop -= 8;
         updateClawPosition();
-
-        const playRect = document.getElementById('playfield').getBoundingClientRect();
-        const clawX = playRect.width * (state.currentXPercent / 100);
-        const toyAreaRect = toyArea.getBoundingClientRect();
-        const toySize = toy.el.getBoundingClientRect().width || 70;
-
-        const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
-        const localY = state.currentClawTop + 112 - (toyAreaRect.top - playRect.top) - toySize / 2;
-
-        toy.el.style.left = localX + 'px';
-        toy.el.style.top = localY + 'px';
-
+        placeToyInsideClaw(toy);
         await delay(16);
       }
       updateClawPosition();
+      placeToyInsideClaw(toy);
     }
 
     async function moveToyToDropZone(toy){
       const toyAreaRect = toyArea.getBoundingClientRect();
-      const dropRect = dropZone.getBoundingClientRect();
+      const dropRect = document.getElementById('dropZone').getBoundingClientRect();
       const toySize = toy.el.getBoundingClientRect().width || 70;
 
       const startLeft = parseFloat(toy.el.style.left);
