@@ -670,9 +670,9 @@
     function buildConfig(){
       return {
         machineColor: state.machineColor,
-        language: state.language,
         fontFamily: state.fontFamily,
         touchControls: state.touchControls,
+        lang: (LANGUAGES[state.language] || LANGUAGES.ru).strings,
         items: state.cards.map((card, index) => ({
           emoji: SAFE_EMOJIS[index % SAFE_EMOJIS.length],
           color: RANDOM_COLORS[(index * 3 + 2) % RANDOM_COLORS.length],
@@ -687,10 +687,16 @@
       return encodeURIComponent(btoa(unescape(encodeURIComponent(json))));
     }
 
+    function getBasePath(){
+      const path = window.location.pathname;
+      return path.endsWith('/')
+        ? path
+        : path.substring(0, path.lastIndexOf('/') + 1);
+    }
+
     function getGameUrl(encodedConfig){
-      const gameUrl = new URL('./game.html', window.location.href);
-      gameUrl.searchParams.set('config', encodedConfig);
-      return gameUrl.toString();
+      const url = window.location.origin + getBasePath() + 'game.html';
+      return url + '?config=' + encodedConfig;
     }
 
     function updatePreview(){
