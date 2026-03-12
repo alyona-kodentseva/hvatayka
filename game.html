@@ -1126,14 +1126,37 @@
     }
 
     function buildToyPositions(count){
-      const presets = [
-        { x: 12, y: 24 }, { x: 30, y: 22 }, { x: 48, y: 24 }, { x: 66, y: 22 },
-        { x: 18, y: 43 }, { x: 36, y: 41 }, { x: 54, y: 43 }, { x: 72, y: 41 },
-        { x: 12, y: 62 }, { x: 30, y: 60 }, { x: 48, y: 62 }, { x: 66, y: 60 },
-        { x: 18, y: 77 }, { x: 36, y: 75 }, { x: 54, y: 77 }, { x: 72, y: 75 },
-        { x: 24, y: 86 }, { x: 42, y: 86 }, { x: 60, y: 86 }, { x: 78, y: 86 }
-      ];
-      return presets.slice(0, count);
+      const cols = count <= 8 ? 4 : count <= 12 ? 4 : count <= 16 ? 4 : 5;
+      const rows = Math.ceil(count / cols);
+
+      const leftMin = 12;
+      const leftMax = 78;
+      const topMin = 22;
+      const topMax = rows <= 2 ? 52 : rows === 3 ? 66 : 74;
+
+      const rowGap = rows > 1 ? (topMax - topMin) / (rows - 1) : 0;
+      const positions = [];
+
+      let index = 0;
+      for(let row = 0; row < rows; row++){
+        const remaining = count - index;
+        const itemsInRow = Math.min(cols, remaining);
+
+        const rowLeftMin = itemsInRow === 1 ? 45 : leftMin + ((cols - itemsInRow) * ((leftMax - leftMin) / Math.max(1, cols - 1))) / 2;
+        const rowLeftMax = itemsInRow === 1 ? 45 : leftMax - ((cols - itemsInRow) * ((leftMax - leftMin) / Math.max(1, cols - 1))) / 2;
+        const colGap = itemsInRow > 1 ? (rowLeftMax - rowLeftMin) / (itemsInRow - 1) : 0;
+        const y = topMin + row * rowGap;
+
+        for(let col = 0; col < itemsInRow; col++){
+          positions.push({
+            x: itemsInRow === 1 ? 45 : rowLeftMin + col * colGap,
+            y
+          });
+          index++;
+        }
+      }
+
+      return positions;
     }
 
     function initToys(){
@@ -1147,7 +1170,7 @@
         toy.dataset.id = String(index);
         toy.textContent = item.emoji || "🧸";
         toy.style.background = 'radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ' + (item.color || '#ff7b8e');
-        const pos = positions[index] || { x: 20 + index * 2, y: 40 };
+        const pos = positions[index] || { x: 45, y: 40 };
         toy.style.left = pos.x + '%';
         toy.style.top = pos.y + '%';
         toyArea.appendChild(toy);
