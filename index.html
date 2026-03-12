@@ -354,11 +354,11 @@
 
     .clawRig{
       position:absolute;
-      top:-120px;
+      top:36px;
       left:50%;
       transform:translateX(-50%);
       width:110px;
-      height:500px;
+      height:420px;
       z-index:18;
       pointer-events:none;
     }
@@ -381,7 +381,7 @@
       top:30px;
       transform:translateX(-50%);
       width:4px;
-      height:190px;
+      height:150px;
       background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
       border-radius:999px;
     }
@@ -389,7 +389,7 @@
     .claw{
       position:absolute;
       left:50%;
-      top:210px;
+      top:170px;
       transform:translateX(-50%);
       width:100px;
       height:124px;
@@ -796,16 +796,11 @@
       }
 
       .clawRig{
-        top:-108px;
-        height:480px;
+        height:400px;
       }
 
       .cable{
-        height:178px;
-      }
-
-      .claw{
-        top:198px;
+        height:148px;
       }
 
       .prong.left{ left:10px; }
@@ -946,9 +941,9 @@
       clawMinXPercent: 12,
       clawMaxXPercent: 76,
       toyCount: 10,
-      clawStartTop: 210,
-      clawTopMin: 210,
-      clawCatchOffset: 102
+      clawStartTop: 170,
+      clawTopMin: 170,
+      clawCatchOffsetY: 102
     };
 
     GAME_CONFIG.items = [
@@ -1181,19 +1176,15 @@
       return toy.getBoundingClientRect().width || 70;
     }
 
-    function getClawCatchPointAt(clawTop){
+    function getClawCatchPoint(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const x = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const y = playRect.top + clawTop + GAME_CONFIG.clawCatchOffset;
+      const y = playRect.top + state.currentClawTop + GAME_CONFIG.clawCatchOffsetY;
       return { x, y };
     }
 
-    function getClawCatchPoint(){
-      return getClawCatchPointAt(state.currentClawTop);
-    }
-
-    function findCaughtToyAt(clawTop){
-      const point = getClawCatchPointAt(clawTop);
+    function findCaughtToy(){
+      const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
       const catchRadius = getToySize() * 0.68;
@@ -1216,10 +1207,6 @@
       return best;
     }
 
-    function findCaughtToy(){
-      return findCaughtToyAt(state.currentClawTop);
-    }
-
     async function dropClaw(){
       if(!state.active || state.dropping || state.completed) return;
 
@@ -1228,15 +1215,19 @@
       clearSwingClasses();
       setStatus(GAME_CONFIG.lang.statusDropping);
 
-      const toyInColumn = findNearestToyInColumn();
-      const targetTop = toyInColumn ? getClawTopForToy(toyInColumn) : getDefaultDropTop();
+      const targetToy = findNearestToyInColumn();
+      const targetTop = targetToy ? getClawTopForToy(targetToy) : getDefaultDropTop();
 
-      const caughtToy = await animateClawDownAndCatch(targetTop);
+      await animateClawDown(targetTop);
+
       claw.classList.add('closed');
+      await delay(170);
+
+      const caughtToy = findCaughtToy();
 
       if(caughtToy){
         caughtToy.el.classList.add('caught');
-        await delay(180);
+        await delay(120);
         await liftWithToy(caughtToy);
         await moveToyToDropZone(caughtToy);
         caughtToy.removed = true;
@@ -1246,7 +1237,6 @@
         playSuccessSound();
         openCard(caughtToy);
       } else {
-        await delay(180);
         await animateClawUp();
         playFailSound();
         setStatus(GAME_CONFIG.lang.statusMiss);
@@ -1261,16 +1251,24 @@
       const maxDx = getToySize() * 0.85;
 
       let best = null;
-      let bestDx = Infinity;
+      let bestScore = Infinity;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
         const r = toy.el.getBoundingClientRect();
         const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
         const dx = Math.abs(clawX - cx);
-        if(dx < maxDx && dx < bestDx){
+
+        if(dx > maxDx) return;
+
+        const playfieldRect = document.getElementById('playfield').getBoundingClientRect();
+        const localY = cy - playfieldRect.top;
+        const score = dx + localY * 0.001;
+
+        if(score < bestScore){
           best = toy;
-          bestDx = dx;
+          bestScore = score;
         }
       });
 
@@ -1281,43 +1279,27 @@
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const toyRect = toy.el.getBoundingClientRect();
       const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
-      return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffset, 560));
+
+      return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
     }
 
     function getDefaultDropTop(){
-      return 470;
+      return 330;
     }
 
-    function animateClawDownAndCatch(targetTop){
+    function animateClawDown(targetTop){
       return new Promise(resolve => {
-        let caught = null;
-
         function step(){
           state.currentClawTop += 8;
-
-          if(!caught){
-            caught = findCaughtToyAt(state.currentClawTop);
-          }
-
-          if(caught){
-            updateClawPosition();
-            resolve(caught);
-            return;
-          }
-
           if(state.currentClawTop >= targetTop){
             state.currentClawTop = targetTop;
             updateClawPosition();
-
-            caught = findCaughtToyAt(state.currentClawTop);
-            resolve(caught || null);
+            resolve();
             return;
           }
-
           updateClawPosition();
           requestAnimationFrame(step);
         }
-
         step();
       });
     }
@@ -1350,7 +1332,7 @@
         const toyAreaRect = toyArea.getBoundingClientRect();
         const toySize = toy.el.getBoundingClientRect().width || 70;
         const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
-        const localY = state.currentClawTop + GAME_CONFIG.clawCatchOffset + 6 - (toyAreaRect.top - playRect.top) - toySize / 2;
+        const localY = state.currentClawTop + 108 - (toyAreaRect.top - playRect.top) - toySize / 2;
 
         toy.el.style.left = localX + 'px';
         toy.el.style.top = localY + 'px';
