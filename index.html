@@ -225,7 +225,7 @@
 
     .previewFrame{
       width:100%;
-      aspect-ratio: 16 / 10;
+      aspect-ratio:16 / 10;
       min-height:620px;
       border:1px solid #d7e1f3;
       border-radius:20px;
@@ -252,8 +252,6 @@
       color:#1d2740;
       resize:vertical;
     }
-
-    .footerGap{ height:4px; }
 
     @media (max-width: 1100px){
       .editorGrid{
@@ -323,7 +321,7 @@
             Для каждой карточки можно добавить текст, картинку по ссылке или оба варианта сразу на лицевой и обратной стороне.
           </div>
           <div class="cardsList" id="cardsList"></div>
-          <div class="footerGap"></div>
+          <div style="height:8px;"></div>
           <button class="btn btnSecondary btnBlock" id="addCardBtn" type="button">Добавить карточку</button>
         </div>
 
@@ -486,82 +484,13 @@
           touchDrop: "↓",
           touchRight: "→"
         }
-      },
-      it: {
-        name: "Italiano",
-        strings: {
-          timer: "Tempo:",
-          coinButton: "🪙 Inserisci moneta",
-          statusIdle: "Inserisci una moneta, muovi la pinza con le frecce e premi spazio",
-          statusActive: "Hai tempo per prendere un giocattolo",
-          statusDropping: "La pinza sta scendendo...",
-          statusCard: "Tocca la carta per girarla",
-          statusMiss: "Mancato! Inserisci di nuovo una moneta",
-          statusTimeout: "Tempo scaduto! Inserisci di nuovo una moneta",
-          controlsHint: "← → muovi la pinza • Spazio — abbassa la pinza",
-          controlsHintTouch: "Pulsanti sotto: sinistra • giù • destra",
-          cardFrontTitle: "Attività",
-          cardBackTitle: "Risposta",
-          cardFlipHint: "Tocca la carta per vedere l'altro lato",
-          finishTitle: "You did it!",
-          finishSubtitle: "Tutti i giocattoli raccolti",
-          touchLeft: "←",
-          touchDrop: "↓",
-          touchRight: "→"
-        }
-      },
-      pt: {
-        name: "Português",
-        strings: {
-          timer: "Tempo:",
-          coinButton: "🪙 Inserir moeda",
-          statusIdle: "Insira uma moeda, mova a garra com as setas e pressione espaço",
-          statusActive: "Você tem tempo para pegar um brinquedo",
-          statusDropping: "A garra está descendo...",
-          statusCard: "Toque no cartão para virar",
-          statusMiss: "Errou! Insira uma moeda novamente",
-          statusTimeout: "O tempo acabou! Insira uma moeda novamente",
-          controlsHint: "← → mover garra • Espaço — baixar garra",
-          controlsHintTouch: "Botões abaixo: esquerda • baixo • direita",
-          cardFrontTitle: "Tarefa",
-          cardBackTitle: "Resposta",
-          cardFlipHint: "Toque no cartão para ver o outro lado",
-          finishTitle: "You did it!",
-          finishSubtitle: "Todos os brinquedos coletados",
-          touchLeft: "←",
-          touchDrop: "↓",
-          touchRight: "→"
-        }
-      },
-      uk: {
-        name: "Українська",
-        strings: {
-          timer: "Час:",
-          coinButton: "🪙 Кинути монетку",
-          statusIdle: "Киньте монетку, рухайте клешнею стрілками та натисніть пробіл",
-          statusActive: "У вас є час, щоб упіймати іграшку",
-          statusDropping: "Клешня опускається...",
-          statusCard: "Натисніть на картку, щоб перевернути її",
-          statusMiss: "Промах! Киньте монетку ще раз",
-          statusTimeout: "Час вийшов! Киньте монетку ще раз",
-          controlsHint: "← → рухати клешню • Пробіл — опустити клешню",
-          controlsHintTouch: "Кнопки внизу: вліво • вниз • вправо",
-          cardFrontTitle: "Завдання",
-          cardBackTitle: "Відповідь",
-          cardFlipHint: "Натисніть на картку, щоб побачити інший бік",
-          finishTitle: "You did it!",
-          finishSubtitle: "Усі іграшки зібрано",
-          touchLeft: "←",
-          touchDrop: "↓",
-          touchRight: "→"
-        }
       }
     };
 
     const SAFE_EMOJIS = [
       "🧸","🚗","⚽","🪁","🦄","🎲","🎈","🪀","🧩","🎯",
       "🚂","🛴","🛹","🎳","🎮","🪅","🎨","🪄","🚀","🥁",
-      "🎺","🦋","🐥","🐠","🦕","🐢","🌟","🧸","🚜","🪄"
+      "🎺","🦋","🐥","🐠","🦕","🐢","🌟","🚜","🛶","🎹"
     ];
 
     const RANDOM_COLORS = [
@@ -607,12 +536,27 @@
     const iframeOutput = document.getElementById('iframeOutput');
     const previewFrame = document.getElementById('previewFrame');
 
+    function escapeAttr(s){
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    function escapeText(s){
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
     function populateLanguages(){
       languageSelect.innerHTML = '';
-      Object.keys(LANGUAGES).forEach(code => {
+      Object.entries(LANGUAGES).forEach(([code, data]) => {
         const option = document.createElement('option');
         option.value = code;
-        option.textContent = LANGUAGES[code].name;
+        option.textContent = data.name;
         languageSelect.appendChild(option);
       });
       languageSelect.value = state.language;
@@ -644,21 +588,6 @@
       cardCountInput.value = String(state.cards.length);
     }
 
-    function escapeAttr(s){
-      return String(s)
-        .replaceAll('&', '&amp;')
-        .replaceAll('"', '&quot;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
-    }
-
-    function escapeHtmlForTextarea(s){
-      return String(s)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
-    }
-
     function buildSideFields(card, sideKey, title){
       const typeKey = sideKey + 'Type';
       const textKey = sideKey + 'Text';
@@ -677,7 +606,7 @@
           </div>
           <div class="field">
             <label>Текст</label>
-            <textarea data-key="${textKey}">${escapeHtmlForTextarea(card[textKey] || "")}</textarea>
+            <textarea data-key="${textKey}">${escapeText(card[textKey] || "")}</textarea>
           </div>
           <div class="field">
             <label>Ссылка на картинку</label>
@@ -704,8 +633,7 @@
           </div>
         `;
 
-        const fields = wrapper.querySelectorAll('[data-key]');
-        fields.forEach(el => {
+        wrapper.querySelectorAll('[data-key]').forEach(el => {
           const handler = (e) => {
             const key = e.target.getAttribute('data-key');
             state.cards[index][key] = e.target.value;
@@ -746,7 +674,7 @@
       const nr = Math.max(0, Math.min(255, Math.round(r * factor)));
       const ng = Math.max(0, Math.min(255, Math.round(g * factor)));
       const nb = Math.max(0, Math.min(255, Math.round(b * factor)));
-      return 'rgb(' + nr + ', ' + ng + ', ' + nb + ')';
+      return `rgb(${nr}, ${ng}, ${nb})`;
     }
 
     function mapEditorSide(type, text, image){
@@ -762,8 +690,8 @@
         const emoji = SAFE_EMOJIS[index % SAFE_EMOJIS.length];
         const color = RANDOM_COLORS[(index * 3 + 2) % RANDOM_COLORS.length];
         return {
-          emoji: emoji,
-          color: color,
+          emoji,
+          color,
           front: mapEditorSide(card.frontType, card.frontText, card.frontImage),
           back: mapEditorSide(card.backType, card.backText, card.backImage)
         };
@@ -778,6 +706,487 @@
       const machineDark = shadeColor(machineBase, 0.62);
       const machineDeeper = shadeColor(machineBase, 0.48);
       const fontFamily = config.fontFamily;
+
+      const gameScript = `
+const GAME_CONFIG = {
+  lang: ${JSON.stringify(lang)},
+  timerSeconds: 5,
+  moveStep: 26,
+  clawMinXPercent: 12,
+  clawMaxXPercent: 76,
+  toyCount: ${gameItems.length},
+  clawStartTop: 150,
+  clawTopMin: 150,
+  clawCatchOffsetY: 116,
+  touchControls: ${config.touchControls ? 'true' : 'false'},
+  items: ${JSON.stringify(gameItems)}
+};
+
+const state = {
+  active: false,
+  dropping: false,
+  currentXPercent: 50,
+  currentClawTop: GAME_CONFIG.clawStartTop,
+  timerLeft: GAME_CONFIG.timerSeconds,
+  timerInterval: null,
+  toys: [],
+  currentCardToy: null,
+  completed: false,
+  swingTimeout: null,
+  carriedToyOffsetX: 0,
+  carriedToyOffsetY: 0
+};
+
+const toyArea = document.getElementById('toyArea');
+const clawRig = document.getElementById('clawRig');
+const claw = document.getElementById('claw');
+const cable = document.getElementById('cable');
+const timerValue = document.getElementById('timerValue');
+const coinBtn = document.getElementById('coinBtn');
+const statusText = document.getElementById('statusText');
+const flashMessage = document.getElementById('flashMessage');
+const cardOverlay = document.getElementById('cardOverlay');
+const taskCard = document.getElementById('taskCard');
+const flipCard = document.getElementById('flipCard');
+const closeCard = document.getElementById('closeCard');
+const cardFront = document.getElementById('cardFront');
+const cardBack = document.getElementById('cardBack');
+const finishOverlay = document.getElementById('finishOverlay');
+
+function escapeHTML(s){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#39;");
+}
+function escapeAttr(s){
+  return String(s)
+    .replaceAll('&','&amp;')
+    .replaceAll('"','&quot;')
+    .replaceAll('<','&lt;');
+}
+function showFlash(text){
+  flashMessage.textContent = text;
+  flashMessage.classList.add('show');
+  setTimeout(() => flashMessage.classList.remove('show'), 1200);
+}
+function setStatus(text){ statusText.textContent = text; }
+function updateClawPosition(){
+  clawRig.style.left = state.currentXPercent + '%';
+  const cableHeight = Math.max(40, state.currentClawTop - 20);
+  cable.style.height = cableHeight + 'px';
+  claw.style.top = state.currentClawTop + 'px';
+}
+function clearSwingClasses(){
+  claw.classList.remove('swing-left', 'swing-right');
+}
+function animateClawSwing(dir){
+  clearTimeout(state.swingTimeout);
+  claw.classList.remove(dir < 0 ? 'swing-right' : 'swing-left');
+  claw.classList.add(dir < 0 ? 'swing-left' : 'swing-right');
+  state.swingTimeout = setTimeout(clearSwingClasses, 180);
+}
+function resetClawVisual(){
+  state.currentClawTop = GAME_CONFIG.clawStartTop;
+  state.carriedToyOffsetX = 0;
+  state.carriedToyOffsetY = 0;
+  claw.classList.remove('closed', 'hasToy');
+  claw.style.removeProperty('--toy-gap');
+  clearSwingClasses();
+  updateClawPosition();
+}
+function buildToyPositions(count){
+  const presets = [
+    { x: 12, y: 24 }, { x: 30, y: 22 }, { x: 48, y: 24 }, { x: 66, y: 22 },
+    { x: 18, y: 43 }, { x: 36, y: 41 }, { x: 54, y: 43 }, { x: 72, y: 41 },
+    { x: 12, y: 62 }, { x: 30, y: 60 }, { x: 48, y: 62 }, { x: 66, y: 60 },
+    { x: 18, y: 77 }, { x: 36, y: 75 }, { x: 54, y: 77 }, { x: 72, y: 75 },
+    { x: 24, y: 86 }, { x: 42, y: 86 }, { x: 60, y: 86 }, { x: 78, y: 86 }
+  ];
+  return presets.slice(0, count);
+}
+function initToys(){
+  toyArea.innerHTML = '';
+  state.toys = [];
+  const positions = buildToyPositions(GAME_CONFIG.toyCount);
+
+  GAME_CONFIG.items.forEach((item, index) => {
+    const toy = document.createElement('div');
+    toy.className = 'toy';
+    toy.dataset.id = String(index);
+    toy.textContent = item.emoji;
+    toy.style.background = 'radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ' + item.color;
+    const pos = positions[index];
+    toy.style.left = pos.x + '%';
+    toy.style.top = pos.y + '%';
+    toyArea.appendChild(toy);
+    state.toys.push({ id:index, item:item, el:toy, removed:false });
+  });
+}
+function startRound(){
+  if(state.active || state.dropping || state.completed) return;
+  state.active = true;
+  state.timerLeft = GAME_CONFIG.timerSeconds;
+  timerValue.textContent = state.timerLeft.toFixed(1);
+  coinBtn.disabled = true;
+  setStatus(GAME_CONFIG.lang.statusActive);
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => {
+    state.timerLeft = Math.max(0, state.timerLeft - 0.1);
+    timerValue.textContent = state.timerLeft.toFixed(1);
+    if(state.timerLeft <= 0){
+      clearInterval(state.timerInterval);
+      state.active = false;
+      coinBtn.disabled = false;
+      playFailSound();
+      setStatus(GAME_CONFIG.lang.statusTimeout);
+      showFlash(GAME_CONFIG.lang.statusTimeout);
+    }
+  }, 100);
+}
+function endRound(){
+  clearInterval(state.timerInterval);
+  state.active = false;
+  state.dropping = false;
+  coinBtn.disabled = false;
+  timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+  resetClawVisual();
+}
+function getToySize(toyEl = null){
+  const toy = toyEl || (state.toys.find(t => !t.removed) || {}).el;
+  return toy ? (toy.getBoundingClientRect().width || 70) : 70;
+}
+function getClawCatchPoint(){
+  const playRect = document.getElementById('playfield').getBoundingClientRect();
+  return {
+    x: playRect.left + playRect.width * (state.currentXPercent / 100),
+    y: playRect.top + state.currentClawTop + GAME_CONFIG.clawCatchOffsetY
+  };
+}
+function findCaughtToy(){
+  const point = getClawCatchPoint();
+  let best = null;
+  let bestDistance = Infinity;
+  state.toys.forEach(toy => {
+    if(toy.removed) return;
+    const r = toy.el.getBoundingClientRect();
+    const radius = r.width / 2;
+    const cx = r.left + radius;
+    const cy = r.top + radius;
+    const dx = point.x - cx;
+    const dy = point.y - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const catchRadius = Math.max(8, radius * 0.58);
+    if(dist <= catchRadius && dist < bestDistance){
+      best = toy;
+      bestDistance = dist;
+    }
+  });
+  return best;
+}
+function setClawGapForToy(toy){
+  const toySize = getToySize(toy.el);
+  const gap = Math.max(34, Math.min(62, toySize + 4));
+  claw.style.setProperty('--toy-gap', gap + 'px');
+}
+function setCarriedToyOffsets(toy){
+  const toySize = getToySize(toy.el);
+  state.carriedToyOffsetX = -toySize / 2;
+  state.carriedToyOffsetY = 112 - toySize / 2;
+}
+async function dropClaw(){
+  if(!state.active || state.dropping || state.completed) return;
+  state.dropping = true;
+  clearInterval(state.timerInterval);
+  clearSwingClasses();
+  setStatus(GAME_CONFIG.lang.statusDropping);
+
+  const targetToy = findNearestToyInColumn();
+  const targetTop = targetToy ? getClawTopForToy(targetToy) : getDefaultDropTop();
+  await animateClawDown(targetTop);
+
+  const caughtToy = findCaughtToy();
+  if(caughtToy){
+    setClawGapForToy(caughtToy);
+    setCarriedToyOffsets(caughtToy);
+    claw.classList.add('closed', 'hasToy');
+    await delay(180);
+    caughtToy.el.classList.add('caught');
+    placeToyInsideClaw(caughtToy);
+    await delay(120);
+    await liftWithToy(caughtToy);
+    await moveToyToDropZone(caughtToy);
+    caughtToy.removed = true;
+    caughtToy.el.classList.add('hidden');
+    await delay(120);
+    playSuccessSound();
+    openCard(caughtToy);
+  } else {
+    claw.classList.add('closed');
+    await delay(160);
+    await animateClawUp();
+    playFailSound();
+    setStatus(GAME_CONFIG.lang.statusMiss);
+    showFlash(GAME_CONFIG.lang.statusMiss);
+    endRound();
+  }
+}
+function placeToyInsideClaw(toy){
+  const playRect = document.getElementById('playfield').getBoundingClientRect();
+  const clawCenterX = playRect.width * (state.currentXPercent / 100);
+  const toyAreaRect = toyArea.getBoundingClientRect();
+  toy.el.style.left = (clawCenterX - toyAreaRect.left + playRect.left + state.carriedToyOffsetX) + 'px';
+  toy.el.style.top = (state.currentClawTop + state.carriedToyOffsetY - (toyAreaRect.top - playRect.top)) + 'px';
+}
+function findNearestToyInColumn(){
+  const playRect = document.getElementById('playfield').getBoundingClientRect();
+  const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+  const maxDx = getToySize() * 1.0;
+  let best = null;
+  let bestScore = Infinity;
+  state.toys.forEach(toy => {
+    if(toy.removed) return;
+    const r = toy.el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = Math.abs(clawX - cx);
+    if(dx > maxDx) return;
+    const localY = cy - playRect.top;
+    const score = dx + localY * 0.001;
+    if(score < bestScore){
+      best = toy;
+      bestScore = score;
+    }
+  });
+  return best;
+}
+function getClawTopForToy(toy){
+  const playRect = document.getElementById('playfield').getBoundingClientRect();
+  const toyRect = toy.el.getBoundingClientRect();
+  const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
+  return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
+}
+function getDefaultDropTop(){ return 330; }
+function animateClawDown(targetTop){
+  return new Promise(resolve => {
+    function step(){
+      state.currentClawTop += 8;
+      if(state.currentClawTop >= targetTop){
+        state.currentClawTop = targetTop;
+        updateClawPosition();
+        resolve();
+        return;
+      }
+      updateClawPosition();
+      requestAnimationFrame(step);
+    }
+    step();
+  });
+}
+function animateClawUp(){
+  return new Promise(resolve => {
+    function step(){
+      state.currentClawTop -= 8;
+      if(state.currentClawTop <= GAME_CONFIG.clawStartTop){
+        state.currentClawTop = GAME_CONFIG.clawStartTop;
+        updateClawPosition();
+        claw.classList.remove('closed', 'hasToy');
+        claw.style.removeProperty('--toy-gap');
+        resolve();
+        return;
+      }
+      updateClawPosition();
+      requestAnimationFrame(step);
+    }
+    step();
+  });
+}
+async function liftWithToy(toy){
+  while(state.currentClawTop > GAME_CONFIG.clawStartTop){
+    state.currentClawTop -= 8;
+    updateClawPosition();
+    placeToyInsideClaw(toy);
+    await delay(16);
+  }
+  updateClawPosition();
+  placeToyInsideClaw(toy);
+}
+async function moveToyToDropZone(toy){
+  const toyAreaRect = toyArea.getBoundingClientRect();
+  const dropRect = document.getElementById('dropZone').getBoundingClientRect();
+  const toySize = toy.el.getBoundingClientRect().width || 70;
+
+  const startLeft = parseFloat(toy.el.style.left);
+  const startTop = parseFloat(toy.el.style.top);
+
+  toy.el.classList.add('dropForeground');
+
+  const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
+  const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
+
+  const stage1Frames = 14;
+  for(let i=1; i<=stage1Frames; i++){
+    const p = i / stage1Frames;
+    const ease = 1 - Math.pow(1 - p, 3);
+    const x = startLeft + (stage1X - startLeft) * ease;
+    const y = startTop + (stage1Y - startTop) * ease;
+    toy.el.style.left = x + 'px';
+    toy.el.style.top = y + 'px';
+    toy.el.style.transform = 'scale(' + (1 - p * 0.05) + ')';
+    await delay(16);
+  }
+
+  const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.5;
+  const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.5 - toySize * 0.5;
+
+  const stage2Frames = 18;
+  for(let i=1; i<=stage2Frames; i++){
+    const p = i / stage2Frames;
+    const ease = p < 0.45 ? 3.5 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    const x = stage1X + (holeX - stage1X) * ease;
+    const y = stage1Y + (holeY - stage1Y) * ease;
+    const scale = 0.95 - p * 0.62;
+    toy.el.style.left = x + 'px';
+    toy.el.style.top = y + 'px';
+    toy.el.style.transform = 'scale(' + scale + ')';
+    await delay(16);
+  }
+
+  toy.el.classList.remove('dropForeground');
+  await animateClawUp();
+}
+function renderCardSide(side, title, item){
+  let html = '<div class="cardTitle">' + escapeHTML(title) + '</div>';
+  if(item && item.emoji){
+    html += '<div class="cardEmoji">' + escapeHTML(item.emoji) + '</div>';
+  }
+  if(side.type === 'text'){
+    html += '<div class="cardText">' + escapeHTML(side.text || '') + '</div>';
+  } else if(side.type === 'image'){
+    html += side.image ? '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">' : '';
+  } else if(side.type === 'mixed'){
+    if(side.image){
+      html += '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">';
+    }
+    if(side.text){
+      html += '<div class="cardText">' + escapeHTML(side.text) + '</div>';
+    }
+  }
+  html += '<div class="cardSub">' + escapeHTML(GAME_CONFIG.lang.cardFlipHint) + '</div>';
+  return html;
+}
+function openCard(toy){
+  state.currentCardToy = toy;
+  taskCard.classList.remove('flipped');
+  cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
+  cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
+  cardOverlay.classList.add('show');
+  setStatus(GAME_CONFIG.lang.statusCard);
+}
+function closeCurrentCard(){
+  cardOverlay.classList.remove('show');
+  state.currentCardToy = null;
+  const remaining = state.toys.filter(t => !t.removed).length;
+  if(remaining === 0){
+    finishGame();
+  } else {
+    endRound();
+    setStatus(GAME_CONFIG.lang.statusIdle);
+  }
+}
+function finishGame(){
+  state.completed = true;
+  endRound();
+  finishOverlay.classList.add('show');
+  playTriumphSound();
+}
+function moveClaw(dir){
+  if(!state.active || state.dropping || state.completed) return;
+  const stepPercent = (GAME_CONFIG.moveStep / document.getElementById('playfield').clientWidth) * 100;
+  state.currentXPercent += dir * stepPercent;
+  state.currentXPercent = Math.max(GAME_CONFIG.clawMinXPercent, Math.min(GAME_CONFIG.clawMaxXPercent, state.currentXPercent));
+  updateClawPosition();
+  animateClawSwing(dir);
+}
+function delay(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new AudioCtx();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type='sine', gainValue=.05, startAt=0){
+  const now = audioCtx.currentTime + startAt;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + duration + 0.02);
+}
+function playSuccessSound(){
+  ensureAudio();
+  tone(523.25, .18, 'triangle', .06, 0);
+  tone(659.25, .18, 'triangle', .06, .08);
+  tone(783.99, .24, 'triangle', .06, .16);
+}
+function playFailSound(){
+  ensureAudio();
+  tone(240, .20, 'sawtooth', .05, 0);
+  tone(180, .28, 'sawtooth', .05, .10);
+}
+function playTriumphSound(){
+  ensureAudio();
+  tone(523.25, .22, 'triangle', .07, 0);
+  tone(659.25, .22, 'triangle', .07, .12);
+  tone(783.99, .22, 'triangle', .07, .24);
+  tone(1046.5, .45, 'triangle', .08, .36);
+}
+coinBtn.addEventListener('click', function(){
+  ensureAudio();
+  startRound();
+});
+document.addEventListener('keydown', function(e){
+  if(cardOverlay.classList.contains('show')) return;
+  if(finishOverlay.classList.contains('show')) return;
+  if(e.code === 'ArrowLeft'){
+    e.preventDefault();
+    moveClaw(-1);
+  } else if(e.code === 'ArrowRight'){
+    e.preventDefault();
+    moveClaw(1);
+  } else if(e.code === 'Space'){
+    e.preventDefault();
+    dropClaw();
+  }
+});
+if(GAME_CONFIG.touchControls){
+  document.getElementById('touchLeft').addEventListener('click', function(){ moveClaw(-1); });
+  document.getElementById('touchRight').addEventListener('click', function(){ moveClaw(1); });
+  document.getElementById('touchDrop').addEventListener('click', function(){ dropClaw(); });
+}
+flipCard.addEventListener('click', function(){
+  taskCard.classList.toggle('flipped');
+});
+closeCard.addEventListener('click', function(e){
+  e.stopPropagation();
+  closeCurrentCard();
+});
+window.addEventListener('resize', function(){
+  updateClawPosition();
+});
+initToys();
+updateClawPosition();
+timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+`;
 
       return `<!doctype html>
 <html lang="${config.language}">
@@ -1527,13 +1936,13 @@ body{
 
     <div class="topbar">
       <div class="panel">
-        <strong id="labelTimer">${escapeHTML(lang.timer)}</strong>
+        <strong id="labelTimer">${escapeText(lang.timer)}</strong>
         <span class="timerValue" id="timerValue">5.0</span>
       </div>
 
-      <div class="panel status" id="statusText">${escapeHTML(lang.statusIdle)}</div>
+      <div class="panel status" id="statusText">${escapeText(lang.statusIdle)}</div>
 
-      <button class="coinBtn" id="coinBtn">${escapeHTML(lang.coinButton)}</button>
+      <button class="coinBtn" id="coinBtn">${escapeText(lang.coinButton)}</button>
     </div>
 
     <div class="playfieldWrap">
@@ -1573,19 +1982,19 @@ body{
     </div>
 
     <div class="touchControls" id="touchControlsBar" style="display:${config.touchControls ? 'flex' : 'none'};">
-      <button class="touchBtn" id="touchLeft">${escapeHTML(lang.touchLeft)}</button>
-      <button class="touchBtn" id="touchDrop">${escapeHTML(lang.touchDrop)}</button>
-      <button class="touchBtn" id="touchRight">${escapeHTML(lang.touchRight)}</button>
+      <button class="touchBtn" id="touchLeft">${escapeText(lang.touchLeft)}</button>
+      <button class="touchBtn" id="touchDrop">${escapeText(lang.touchDrop)}</button>
+      <button class="touchBtn" id="touchRight">${escapeText(lang.touchRight)}</button>
     </div>
 
     <div class="basePanel">
       <div class="baseChrome"></div>
       <div class="baseSpeaker left"></div>
       <div class="baseSpeaker right"></div>
-      <div class="baseControls" id="controlsHint">${escapeHTML(config.touchControls ? lang.controlsHintTouch : lang.controlsHint)}</div>
+      <div class="baseControls" id="controlsHint">${escapeText(config.touchControls ? lang.controlsHintTouch : lang.controlsHint)}</div>
     </div>
 
-    <div class="flashMessage" id="flashMessage">${escapeHTML(lang.statusMiss)}</div>
+    <div class="flashMessage" id="flashMessage">${escapeText(lang.statusMiss)}</div>
 
     <div class="overlay" id="cardOverlay">
       <div class="card" id="taskCard">
@@ -1601,493 +2010,16 @@ body{
 
     <div class="overlay" id="finishOverlay">
       <div class="finish">
-        <div class="finishText" id="finishText">${escapeHTML(lang.finishTitle)}</div>
-        <div class="finishSub" id="finishSub">${escapeHTML(lang.finishSubtitle)}</div>
+        <div class="finishText" id="finishText">${escapeText(lang.finishTitle)}</div>
+        <div class="finishSub" id="finishSub">${escapeText(lang.finishSubtitle)}</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const GAME_CONFIG = {
-  lang: ${JSON.stringify(lang)},
-  timerSeconds: 5,
-  moveStep: 26,
-  clawMinXPercent: 12,
-  clawMaxXPercent: 76,
-  toyCount: ${gameItems.length},
-  clawStartTop: 150,
-  clawTopMin: 150,
-  clawCatchOffsetY: 116,
-  touchControls: ${config.touchControls ? 'true' : 'false'},
-  items: ${JSON.stringify(gameItems)}
-};
-
-const state = {
-  active: false,
-  dropping: false,
-  currentXPercent: 50,
-  currentClawTop: GAME_CONFIG.clawStartTop,
-  timerLeft: GAME_CONFIG.timerSeconds,
-  timerInterval: null,
-  toys: [],
-  currentCardToy: null,
-  completed: false,
-  swingTimeout: null,
-  carriedToyOffsetX: 0,
-  carriedToyOffsetY: 0
-};
-
-const toyArea = document.getElementById('toyArea');
-const clawRig = document.getElementById('clawRig');
-const claw = document.getElementById('claw');
-const cable = document.getElementById('cable');
-const timerValue = document.getElementById('timerValue');
-const coinBtn = document.getElementById('coinBtn');
-const statusText = document.getElementById('statusText');
-const flashMessage = document.getElementById('flashMessage');
-const cardOverlay = document.getElementById('cardOverlay');
-const taskCard = document.getElementById('taskCard');
-const flipCard = document.getElementById('flipCard');
-const closeCard = document.getElementById('closeCard');
-const cardFront = document.getElementById('cardFront');
-const cardBack = document.getElementById('cardBack');
-const finishOverlay = document.getElementById('finishOverlay');
-
-function escapeHTML(s){
-  return String(s)
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'","&#39;");
-}
-function escapeAttr(s){
-  return String(s)
-    .replaceAll('&','&amp;')
-    .replaceAll('"','&quot;')
-    .replaceAll('<','&lt;');
-}
-function showFlash(text){
-  flashMessage.textContent = text;
-  flashMessage.classList.add('show');
-  setTimeout(() => flashMessage.classList.remove('show'), 1200);
-}
-function setStatus(text){ statusText.textContent = text; }
-function updateClawPosition(){
-  clawRig.style.left = state.currentXPercent + '%';
-  const cableHeight = Math.max(40, state.currentClawTop - 20);
-  cable.style.height = cableHeight + 'px';
-  claw.style.top = state.currentClawTop + 'px';
-}
-function clearSwingClasses(){
-  claw.classList.remove('swing-left', 'swing-right');
-}
-function animateClawSwing(dir){
-  clearTimeout(state.swingTimeout);
-  claw.classList.remove(dir < 0 ? 'swing-right' : 'swing-left');
-  claw.classList.add(dir < 0 ? 'swing-left' : 'swing-right');
-  state.swingTimeout = setTimeout(clearSwingClasses, 180);
-}
-function resetClawVisual(){
-  state.currentClawTop = GAME_CONFIG.clawStartTop;
-  state.carriedToyOffsetX = 0;
-  state.carriedToyOffsetY = 0;
-  claw.classList.remove('closed', 'hasToy');
-  claw.style.removeProperty('--toy-gap');
-  clearSwingClasses();
-  updateClawPosition();
-}
-function buildToyPositions(count){
-  const presets = [
-    { x: 12, y: 24 }, { x: 30, y: 22 }, { x: 48, y: 24 }, { x: 66, y: 22 },
-    { x: 18, y: 43 }, { x: 36, y: 41 }, { x: 54, y: 43 }, { x: 72, y: 41 },
-    { x: 12, y: 62 }, { x: 30, y: 60 }, { x: 48, y: 62 }, { x: 66, y: 60 },
-    { x: 18, y: 77 }, { x: 36, y: 75 }, { x: 54, y: 77 }, { x: 72, y: 75 },
-    { x: 24, y: 86 }, { x: 42, y: 86 }, { x: 60, y: 86 }, { x: 78, y: 86 }
-  ];
-  return presets.slice(0, count);
-}
-function initToys(){
-  toyArea.innerHTML = '';
-  state.toys = [];
-  const positions = buildToyPositions(GAME_CONFIG.toyCount);
-
-  GAME_CONFIG.items.forEach((item, index) => {
-    const toy = document.createElement('div');
-    toy.className = 'toy';
-    toy.dataset.id = String(index);
-    toy.textContent = item.emoji;
-    toy.style.background = 'radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ' + item.color;
-    const pos = positions[index];
-    toy.style.left = pos.x + '%';
-    toy.style.top = pos.y + '%';
-    toyArea.appendChild(toy);
-    state.toys.push({ id:index, item:item, el:toy, removed:false });
-  });
-}
-function startRound(){
-  if(state.active || state.dropping || state.completed) return;
-  state.active = true;
-  state.timerLeft = GAME_CONFIG.timerSeconds;
-  timerValue.textContent = state.timerLeft.toFixed(1);
-  coinBtn.disabled = true;
-  setStatus(GAME_CONFIG.lang.statusActive);
-  clearInterval(state.timerInterval);
-  state.timerInterval = setInterval(() => {
-    state.timerLeft = Math.max(0, state.timerLeft - 0.1);
-    timerValue.textContent = state.timerLeft.toFixed(1);
-    if(state.timerLeft <= 0){
-      clearInterval(state.timerInterval);
-      state.active = false;
-      coinBtn.disabled = false;
-      playFailSound();
-      setStatus(GAME_CONFIG.lang.statusTimeout);
-      showFlash(GAME_CONFIG.lang.statusTimeout);
-    }
-  }, 100);
-}
-function endRound(){
-  clearInterval(state.timerInterval);
-  state.active = false;
-  state.dropping = false;
-  coinBtn.disabled = false;
-  timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
-  resetClawVisual();
-}
-function getToySize(toyEl = null){
-  const toy = toyEl || (state.toys.find(t => !t.removed) || {}).el;
-  return toy ? (toy.getBoundingClientRect().width || 70) : 70;
-}
-function getClawCatchPoint(){
-  const playRect = document.getElementById('playfield').getBoundingClientRect();
-  return {
-    x: playRect.left + playRect.width * (state.currentXPercent / 100),
-    y: playRect.top + state.currentClawTop + GAME_CONFIG.clawCatchOffsetY
-  };
-}
-function findCaughtToy(){
-  const point = getClawCatchPoint();
-  let best = null;
-  let bestDistance = Infinity;
-  state.toys.forEach(toy => {
-    if(toy.removed) return;
-    const r = toy.el.getBoundingClientRect();
-    const radius = r.width / 2;
-    const cx = r.left + radius;
-    const cy = r.top + radius;
-    const dx = point.x - cx;
-    const dy = point.y - cy;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const catchRadius = Math.max(8, radius * 0.58);
-    if(dist <= catchRadius && dist < bestDistance){
-      best = toy;
-      bestDistance = dist;
-    }
-  });
-  return best;
-}
-function setClawGapForToy(toy){
-  const toySize = getToySize(toy.el);
-  const gap = Math.max(34, Math.min(62, toySize + 4));
-  claw.style.setProperty('--toy-gap', gap + 'px');
-}
-function setCarriedToyOffsets(toy){
-  const toySize = getToySize(toy.el);
-  state.carriedToyOffsetX = -toySize / 2;
-  state.carriedToyOffsetY = 112 - toySize / 2;
-}
-async function dropClaw(){
-  if(!state.active || state.dropping || state.completed) return;
-  state.dropping = true;
-  clearInterval(state.timerInterval);
-  clearSwingClasses();
-  setStatus(GAME_CONFIG.lang.statusDropping);
-
-  const targetToy = findNearestToyInColumn();
-  const targetTop = targetToy ? getClawTopForToy(targetToy) : getDefaultDropTop();
-  await animateClawDown(targetTop);
-
-  const caughtToy = findCaughtToy();
-  if(caughtToy){
-    setClawGapForToy(caughtToy);
-    setCarriedToyOffsets(caughtToy);
-    claw.classList.add('closed', 'hasToy');
-    await delay(180);
-    caughtToy.el.classList.add('caught');
-    placeToyInsideClaw(caughtToy);
-    await delay(120);
-    await liftWithToy(caughtToy);
-    await moveToyToDropZone(caughtToy);
-    caughtToy.removed = true;
-    caughtToy.el.classList.add('hidden');
-    await delay(120);
-    playSuccessSound();
-    openCard(caughtToy);
-  } else {
-    claw.classList.add('closed');
-    await delay(160);
-    await animateClawUp();
-    playFailSound();
-    setStatus(GAME_CONFIG.lang.statusMiss);
-    showFlash(GAME_CONFIG.lang.statusMiss);
-    endRound();
-  }
-}
-function placeToyInsideClaw(toy){
-  const playRect = document.getElementById('playfield').getBoundingClientRect();
-  const clawCenterX = playRect.width * (state.currentXPercent / 100);
-  const toyAreaRect = toyArea.getBoundingClientRect();
-  toy.el.style.left = (clawCenterX - toyAreaRect.left + playRect.left + state.carriedToyOffsetX) + 'px';
-  toy.el.style.top = (state.currentClawTop + state.carriedToyOffsetY - (toyAreaRect.top - playRect.top)) + 'px';
-}
-function findNearestToyInColumn(){
-  const playRect = document.getElementById('playfield').getBoundingClientRect();
-  const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
-  const maxDx = getToySize() * 1.0;
-  let best = null;
-  let bestScore = Infinity;
-  state.toys.forEach(toy => {
-    if(toy.removed) return;
-    const r = toy.el.getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const cy = r.top + r.height / 2;
-    const dx = Math.abs(clawX - cx);
-    if(dx > maxDx) return;
-    const localY = cy - playRect.top;
-    const score = dx + localY * 0.001;
-    if(score < bestScore){
-      best = toy;
-      bestScore = score;
-    }
-  });
-  return best;
-}
-function getClawTopForToy(toy){
-  const playRect = document.getElementById('playfield').getBoundingClientRect();
-  const toyRect = toy.el.getBoundingClientRect();
-  const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
-  return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
-}
-function getDefaultDropTop(){ return 330; }
-function animateClawDown(targetTop){
-  return new Promise(resolve => {
-    function step(){
-      state.currentClawTop += 8;
-      if(state.currentClawTop >= targetTop){
-        state.currentClawTop = targetTop;
-        updateClawPosition();
-        resolve();
-        return;
-      }
-      updateClawPosition();
-      requestAnimationFrame(step);
-    }
-    step();
-  });
-}
-function animateClawUp(){
-  return new Promise(resolve => {
-    function step(){
-      state.currentClawTop -= 8;
-      if(state.currentClawTop <= GAME_CONFIG.clawStartTop){
-        state.currentClawTop = GAME_CONFIG.clawStartTop;
-        updateClawPosition();
-        claw.classList.remove('closed', 'hasToy');
-        claw.style.removeProperty('--toy-gap');
-        resolve();
-        return;
-      }
-      updateClawPosition();
-      requestAnimationFrame(step);
-    }
-    step();
-  });
-}
-async function liftWithToy(toy){
-  while(state.currentClawTop > GAME_CONFIG.clawStartTop){
-    state.currentClawTop -= 8;
-    updateClawPosition();
-    placeToyInsideClaw(toy);
-    await delay(16);
-  }
-  updateClawPosition();
-  placeToyInsideClaw(toy);
-}
-async function moveToyToDropZone(toy){
-  const toyAreaRect = toyArea.getBoundingClientRect();
-  const dropRect = document.getElementById('dropZone').getBoundingClientRect();
-  const toySize = toy.el.getBoundingClientRect().width || 70;
-
-  const startLeft = parseFloat(toy.el.style.left);
-  const startTop = parseFloat(toy.el.style.top);
-
-  toy.el.classList.add('dropForeground');
-
-  const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
-  const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
-
-  const stage1Frames = 14;
-  for(let i=1; i<=stage1Frames; i++){
-    const p = i / stage1Frames;
-    const ease = 1 - Math.pow(1 - p, 3);
-    const x = startLeft + (stage1X - startLeft) * ease;
-    const y = startTop + (stage1Y - startTop) * ease;
-    toy.el.style.left = x + 'px';
-    toy.el.style.top = y + 'px';
-    toy.el.style.transform = 'scale(' + (1 - p * 0.05) + ')';
-    await delay(16);
-  }
-
-  const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.5;
-  const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.5 - toySize * 0.5;
-
-  const stage2Frames = 18;
-  for(let i=1; i<=stage2Frames; i++){
-    const p = i / stage2Frames;
-    const ease = p < 0.45 ? 3.5 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
-    const x = stage1X + (holeX - stage1X) * ease;
-    const y = stage1Y + (holeY - stage1Y) * ease;
-    const scale = 0.95 - p * 0.62;
-    toy.el.style.left = x + 'px';
-    toy.el.style.top = y + 'px';
-    toy.el.style.transform = 'scale(' + scale + ')';
-    await delay(16);
-  }
-
-  toy.el.classList.remove('dropForeground');
-  await animateClawUp();
-}
-function renderCardSide(side, title, item){
-  let html = '<div class="cardTitle">' + escapeHTML(title) + '</div>';
-  if(item && item.emoji){
-    html += '<div class="cardEmoji">' + escapeHTML(item.emoji) + '</div>';
-  }
-  if(side.type === 'text'){
-    html += '<div class="cardText">' + escapeHTML(side.text || '') + '</div>';
-  } else if(side.type === 'image'){
-    html += side.image ? '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">' : '';
-  } else if(side.type === 'mixed'){
-    if(side.image){
-      html += '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">';
-    }
-    if(side.text){
-      html += '<div class="cardText">' + escapeHTML(side.text) + '</div>';
-    }
-  }
-  html += '<div class="cardSub">' + escapeHTML(GAME_CONFIG.lang.cardFlipHint) + '</div>';
-  return html;
-}
-function openCard(toy){
-  state.currentCardToy = toy;
-  taskCard.classList.remove('flipped');
-  cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
-  cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
-  cardOverlay.classList.add('show');
-  setStatus(GAME_CONFIG.lang.statusCard);
-}
-function closeCurrentCard(){
-  cardOverlay.classList.remove('show');
-  state.currentCardToy = null;
-  const remaining = state.toys.filter(t => !t.removed).length;
-  if(remaining === 0){
-    finishGame();
-  } else {
-    endRound();
-    setStatus(GAME_CONFIG.lang.statusIdle);
-  }
-}
-function finishGame(){
-  state.completed = true;
-  endRound();
-  finishOverlay.classList.add('show');
-  playTriumphSound();
-}
-function moveClaw(dir){
-  if(!state.active || state.dropping || state.completed) return;
-  const stepPercent = (GAME_CONFIG.moveStep / document.getElementById('playfield').clientWidth) * 100;
-  state.currentXPercent += dir * stepPercent;
-  state.currentXPercent = Math.max(GAME_CONFIG.clawMinXPercent, Math.min(GAME_CONFIG.clawMaxXPercent, state.currentXPercent));
-  updateClawPosition();
-  animateClawSwing(dir);
-}
-function delay(ms){
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-function ensureAudio(){
-  if(!audioCtx) audioCtx = new AudioCtx();
-  if(audioCtx.state === 'suspended') audioCtx.resume();
-}
-function tone(freq, duration, type='sine', gainValue=.05, startAt=0){
-  const now = audioCtx.currentTime + startAt;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, now);
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-  osc.connect(gain).connect(audioCtx.destination);
-  osc.start(now);
-  osc.stop(now + duration + 0.02);
-}
-function playSuccessSound(){
-  ensureAudio();
-  tone(523.25, .18, 'triangle', .06, 0);
-  tone(659.25, .18, 'triangle', .06, .08);
-  tone(783.99, .24, 'triangle', .06, .16);
-}
-function playFailSound(){
-  ensureAudio();
-  tone(240, .20, 'sawtooth', .05, 0);
-  tone(180, .28, 'sawtooth', .05, .10);
-}
-function playTriumphSound(){
-  ensureAudio();
-  tone(523.25, .22, 'triangle', .07, 0);
-  tone(659.25, .22, 'triangle', .07, .12);
-  tone(783.99, .22, 'triangle', .07, .24);
-  tone(1046.5, .45, 'triangle', .08, .36);
-}
-coinBtn.addEventListener('click', function(){
-  ensureAudio();
-  startRound();
-});
-document.addEventListener('keydown', function(e){
-  if(cardOverlay.classList.contains('show')) return;
-  if(finishOverlay.classList.contains('show')) return;
-  if(e.code === 'ArrowLeft'){
-    e.preventDefault();
-    moveClaw(-1);
-  } else if(e.code === 'ArrowRight'){
-    e.preventDefault();
-    moveClaw(1);
-  } else if(e.code === 'Space'){
-    e.preventDefault();
-    dropClaw();
-  }
-});
-if(GAME_CONFIG.touchControls){
-  document.getElementById('touchLeft').addEventListener('click', function(){ moveClaw(-1); });
-  document.getElementById('touchRight').addEventListener('click', function(){ moveClaw(1); });
-  document.getElementById('touchDrop').addEventListener('click', function(){ dropClaw(); });
-}
-flipCard.addEventListener('click', function(){
-  taskCard.classList.toggle('flipped');
-});
-closeCard.addEventListener('click', function(e){
-  e.stopPropagation();
-  closeCurrentCard();
-});
-window.addEventListener('resize', function(){
-  updateClawPosition();
-});
-initToys();
-updateClawPosition();
-timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
-</script>
+${gameScript}
+<\/script>
 </body>
 </html>`;
     }
@@ -2100,7 +2032,7 @@ timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
     function generateIframe(){
       const html = buildGameHTML(state);
       const dataUri = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-      iframeOutput.value = '<iframe src="' + dataUri + '" width="100%" height="800" style="border:none;" allowfullscreen></iframe>';
+      iframeOutput.value = `<iframe src="${dataUri}" width="100%" height="800" style="border:none;" allowfullscreen></iframe>`;
     }
 
     machineColorInput.addEventListener('input', function(e){
