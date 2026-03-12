@@ -1029,7 +1029,6 @@
     const state = {
       active: false,
       dropping: false,
-      caughtToyId: null,
       currentXPercent: 50,
       currentClawTop: GAME_CONFIG.clawStartTop,
       timerLeft: GAME_CONFIG.timerSeconds,
@@ -1040,7 +1039,6 @@
       swingTimeout: null
     };
 
-    const machine = document.getElementById('machine');
     const toyArea = document.getElementById('toyArea');
     const clawRig = document.getElementById('clawRig');
     const claw = document.getElementById('claw');
@@ -1096,10 +1094,7 @@
       clearTimeout(state.swingTimeout);
       claw.classList.remove(dir < 0 ? 'swing-right' : 'swing-left');
       claw.classList.add(dir < 0 ? 'swing-left' : 'swing-right');
-
-      state.swingTimeout = setTimeout(() => {
-        clearSwingClasses();
-      }, 180);
+      state.swingTimeout = setTimeout(clearSwingClasses, 180);
     }
 
     function resetClawVisual(){
@@ -1114,7 +1109,6 @@
       state.toys = [];
 
       const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
-
       const positions = [
         { x: 12, y: 28 },
         { x: 30, y: 24 },
@@ -1135,7 +1129,7 @@
         toy.textContent = item.emoji;
         toy.style.background = `radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ${item.color}`;
 
-        const pos = positions[index % positions.length];
+        const pos = positions[index];
         toy.style.left = pos.x + '%';
         toy.style.top = pos.y + '%';
 
@@ -1186,8 +1180,7 @@
 
     function getToySize(){
       const toy = state.toys.find(t => !t.removed)?.el;
-      if(!toy) return 70;
-      return toy.getBoundingClientRect().width || 70;
+      return toy ? (toy.getBoundingClientRect().width || 70) : 70;
     }
 
     function getClawCatchPoint(){
@@ -1244,6 +1237,7 @@
         await delay(120);
         await liftWithToy(caughtToy);
         await moveToyToDropZone(caughtToy);
+
         caughtToy.removed = true;
         caughtToy.el.classList.add('hidden');
         await delay(120);
@@ -1278,8 +1272,7 @@
 
         if(dx > maxDx) return;
 
-        const playfieldRect = document.getElementById('playfield').getBoundingClientRect();
-        const localY = cy - playfieldRect.top;
+        const localY = cy - playRect.top;
         const score = dx + localY * 0.001;
 
         if(score < bestScore){
@@ -1295,7 +1288,6 @@
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const toyRect = toy.el.getBoundingClientRect();
       const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
-
       return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
     }
 
@@ -1347,6 +1339,7 @@
         const clawX = playRect.width * (state.currentXPercent / 100);
         const toyAreaRect = toyArea.getBoundingClientRect();
         const toySize = toy.el.getBoundingClientRect().width || 70;
+
         const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
         const localY = state.currentClawTop + 112 - (toyAreaRect.top - playRect.top) - toySize / 2;
 
