@@ -354,7 +354,7 @@
 
     .clawRig{
       position:absolute;
-      top:36px;
+      top:24px;
       left:50%;
       transform:translateX(-50%);
       width:110px;
@@ -381,7 +381,7 @@
       top:30px;
       transform:translateX(-50%);
       width:4px;
-      height:150px;
+      height:136px;
       background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
       border-radius:999px;
     }
@@ -389,7 +389,7 @@
     .claw{
       position:absolute;
       left:50%;
-      top:170px;
+      top:156px;
       transform:translateX(-50%);
       width:100px;
       height:124px;
@@ -796,11 +796,16 @@
       }
 
       .clawRig{
+        top:16px;
         height:400px;
       }
 
       .cable{
-        height:148px;
+        height:128px;
+      }
+
+      .claw{
+        top:148px;
       }
 
       .prong.left{ left:10px; }
@@ -941,9 +946,9 @@
       clawMinXPercent: 12,
       clawMaxXPercent: 76,
       toyCount: 10,
-      clawStartTop: 170,
-      clawTopMin: 170,
-      clawCatchOffsetY: 102
+      clawStartTop: 156,
+      clawTopMin: 156,
+      clawCatchOffsetY: 108
     };
 
     GAME_CONFIG.items = [
@@ -1187,7 +1192,7 @@
       const point = getClawCatchPoint();
       let best = null;
       let bestDistance = Infinity;
-      const catchRadius = getToySize() * 0.68;
+      const catchRadius = getToySize() * 0.78;
 
       state.toys.forEach(toy => {
         if(toy.removed) return;
@@ -1221,7 +1226,7 @@
       await animateClawDown(targetTop);
 
       claw.classList.add('closed');
-      await delay(170);
+      await delay(180);
 
       const caughtToy = findCaughtToy();
 
@@ -1248,7 +1253,7 @@
     function findNearestToyInColumn(){
       const playRect = document.getElementById('playfield').getBoundingClientRect();
       const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
-      const maxDx = getToySize() * 0.85;
+      const maxDx = getToySize() * 0.95;
 
       let best = null;
       let bestScore = Infinity;
@@ -1332,7 +1337,7 @@
         const toyAreaRect = toyArea.getBoundingClientRect();
         const toySize = toy.el.getBoundingClientRect().width || 70;
         const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
-        const localY = state.currentClawTop + 108 - (toyAreaRect.top - playRect.top) - toySize / 2;
+        const localY = state.currentClawTop + 112 - (toyAreaRect.top - playRect.top) - toySize / 2;
 
         toy.el.style.left = localX + 'px';
         toy.el.style.top = localY + 'px';
