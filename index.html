@@ -159,7 +159,6 @@
       overflow:hidden;
     }
 
-    /* убрали верхний валик */
     .dropInner{
       position:absolute;
       left:50%;
@@ -172,6 +171,22 @@
       box-shadow:
         inset 0 10px 16px rgba(0,0,0,.35),
         inset 0 1px 1px rgba(255,255,255,.04);
+    }
+
+    /* Коричневый прямоугольник-дырка по центру */
+    .dropHole{
+      position:absolute;
+      left:50%;
+      top:34%;
+      transform:translateX(-50%);
+      width:48%;
+      height:22px;
+      border-radius:8px 8px 10px 10px;
+      background: linear-gradient(180deg, #120c07, #2d1a10);
+      box-shadow:
+        inset 0 4px 6px rgba(0,0,0,.45),
+        0 1px 0 rgba(255,255,255,.08);
+      z-index:2;
     }
 
     .clawRig{
@@ -567,6 +582,7 @@
 
         <div class="dropZone" id="dropZone">
           <div class="dropInner"></div>
+          <div class="dropHole"></div>
         </div>
 
         <div class="clawRig" id="clawRig">
