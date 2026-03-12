@@ -213,4 +213,1293 @@
     }
 
     .ceilingRail{
-      position:absolute
+      position:absolute;
+      left:8%;
+      right:8%;
+      top:28px;
+      height:10px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #dce6ff, #93a4d6);
+      box-shadow:
+        inset 0 2px 2px rgba(255,255,255,.6),
+        inset 0 -2px 3px rgba(0,0,0,.16),
+        0 3px 8px rgba(0,0,0,.18);
+      z-index:14;
+    }
+
+    .innerLights{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:6;
+    }
+
+    .innerLights::before,
+    .innerLights::after{
+      content:"";
+      position:absolute;
+      top:12px;
+      width:12px;
+      bottom:12px;
+      border-radius:999px;
+      opacity:.75;
+      animation: sideGlow 2.2s ease-in-out infinite alternate;
+    }
+
+    .innerLights::before{
+      left:10px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(92,233,255,.95) 0 8px,
+          rgba(92,233,255,.15) 8px 18px
+        );
+      box-shadow: 0 0 10px rgba(92,233,255,.45);
+    }
+
+    .innerLights::after{
+      right:10px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,150,205,.95) 0 8px,
+          rgba(255,150,205,.15) 8px 18px
+        );
+      box-shadow: 0 0 10px rgba(255,150,205,.42);
+      animation-delay:.5s;
+    }
+
+    @keyframes sideGlow{
+      from{ opacity:.45; filter:brightness(.92); }
+      to{ opacity:.9; filter:brightness(1.18); }
+    }
+
+    .dropZoneWrap{
+      position:absolute;
+      right:48px;
+      bottom:34px;
+      width:86px;
+      height:86px;
+      z-index:9;
+      pointer-events:none;
+    }
+
+    .dropFrameGlow{
+      display:none;
+    }
+
+    .dropZone{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 30%, #5a3220 0%, #361b10 28%, #1a0d08 58%, #080403 82%, #020101 100%);
+      box-shadow:
+        inset 0 10px 14px rgba(255,255,255,.04),
+        inset 0 -18px 24px rgba(0,0,0,.62);
+      overflow:hidden;
+      z-index:9;
+    }
+
+    .dropTopLip,
+    .dropDepth,
+    .dropBulbs{
+      display:none;
+    }
+
+    .dropHole{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 30%, #5a3220 0%, #361b10 28%, #1a0d08 58%, #080403 82%, #020101 100%);
+      box-shadow:
+        inset 0 10px 14px rgba(255,255,255,.04),
+        inset 0 -18px 24px rgba(0,0,0,.62);
+      z-index:1;
+      pointer-events:none;
+    }
+
+    .clawRig{
+      position:absolute;
+      top:36px;
+      left:50%;
+      transform:translateX(-50%);
+      width:110px;
+      height:310px;
+      z-index:18;
+      pointer-events:none;
+    }
+
+    .clawHead{
+      position:absolute;
+      left:50%;
+      top:0;
+      transform:translateX(-50%);
+      width:72px;
+      height:34px;
+      border-radius:12px;
+      background: linear-gradient(180deg, #f8fbff, #a9b9df);
+      box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.14);
+    }
+
+    .cable{
+      position:absolute;
+      left:50%;
+      top:30px;
+      transform:translateX(-50%);
+      width:4px;
+      height:150px;
+      background: linear-gradient(180deg, #f4f7ff, #9aa9d0);
+      border-radius:999px;
+    }
+
+    .claw{
+      position:absolute;
+      left:50%;
+      top:170px;
+      transform:translateX(-50%);
+      width:100px;
+      height:124px;
+      transform-origin: top center;
+      transition: transform .18s ease;
+    }
+
+    .clawCore{
+      position:absolute;
+      left:50%;
+      top:8px;
+      transform:translateX(-50%);
+      width:24px;
+      height:30px;
+      border-radius:8px;
+      background: linear-gradient(180deg, #ffffff, #9fb2dd);
+      box-shadow: inset 0 2px 2px rgba(255,255,255,.7), inset 0 -3px 5px rgba(0,0,0,.12);
+      z-index:4;
+    }
+
+    .clawStem{
+      position:absolute;
+      left:50%;
+      top:34px;
+      transform:translateX(-50%);
+      width:8px;
+      height:16px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #f8fbff, #a8b9de);
+      z-index:4;
+    }
+
+    .prong{
+      position:absolute;
+      top:40px;
+      width:34px;
+      height:68px;
+      transform-origin: top center;
+      transition:
+        transform .18s ease,
+        left .18s ease,
+        right .18s ease;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
+      z-index:2;
+    }
+
+    .prong::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border:6px solid #dfe8ff;
+      background: transparent;
+    }
+
+    .prong::after{
+      content:"";
+      position:absolute;
+      top:-3px;
+      width:15px;
+      height:11px;
+      background: linear-gradient(180deg, #eef4ff, #cad7f0);
+      border-radius:7px 7px 3px 3px;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,.7);
+    }
+
+    .prong.left{
+      left:6px;
+      transform:rotate(22deg);
+    }
+    .prong.left::before{
+      border-right:none;
+      border-radius:32px 0 0 32px;
+    }
+    .prong.left::after{
+      right:-8px;
+      transform:none;
+    }
+
+    .prong.right{
+      right:6px;
+      transform:rotate(-22deg);
+    }
+    .prong.right::before{
+      border-left:none;
+      border-radius:0 32px 32px 0;
+    }
+    .prong.right::after{
+      left:-8px;
+      transform:none;
+    }
+
+    .claw.closed .prong.left{
+      left:19px;
+      transform:rotate(7deg) translateX(3px);
+    }
+    .claw.closed .prong.right{
+      right:19px;
+      transform:rotate(-7deg) translateX(-3px);
+    }
+
+    .claw.swing-left{
+      transform:translateX(-50%) rotate(-4deg);
+    }
+    .claw.swing-right{
+      transform:translateX(-50%) rotate(4deg);
+    }
+
+    .toyArea{
+      position:absolute;
+      left:5%;
+      right:22%;
+      bottom:7%;
+      top:55%;
+      z-index:10;
+    }
+
+    .toy{
+      position:absolute;
+      width:70px;
+      height:70px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:34px;
+      font-weight:700;
+      color:#fff;
+      box-shadow: 0 10px 20px rgba(0,0,0,.22);
+      border:2px solid rgba(255,255,255,.55);
+      user-select:none;
+      transition: transform .25s ease, opacity .25s ease;
+      z-index:10;
+    }
+    .toy.caught{
+      transform: scale(.95);
+    }
+    .toy.hidden{
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .toy.dropForeground{
+      z-index:40;
+    }
+
+    .basePanel{
+      position:absolute;
+      left:18px;
+      right:18px;
+      bottom:18px;
+      height:82px;
+      border-radius:22px;
+      z-index:20;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0) 16%),
+        linear-gradient(180deg, #ff5f76 0%, #d92f47 40%, #941629 100%);
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:
+        inset 0 2px 2px rgba(255,255,255,.18),
+        inset 0 -10px 14px rgba(0,0,0,.18),
+        0 8px 18px rgba(0,0,0,.24);
+      overflow:hidden;
+    }
+
+    .basePanel::before{
+      content:"";
+      position:absolute;
+      left:16px;
+      right:16px;
+      top:10px;
+      height:8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.14);
+    }
+
+    .baseChrome{
+      position:absolute;
+      left:22px;
+      right:22px;
+      top:16px;
+      height:10px;
+      border-radius:999px;
+      background: linear-gradient(180deg, #f6f9ff, #adb9d5);
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.78),
+        0 1px 3px rgba(0,0,0,.16);
+    }
+
+    .baseSpeaker{
+      position:absolute;
+      top:26px;
+      width:78px;
+      height:42px;
+      border-radius:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 6px 10px rgba(0,0,0,.18);
+    }
+
+    .baseSpeaker.left{ left:18px; }
+    .baseSpeaker.right{ right:18px; }
+
+    .baseSpeaker::before{
+      content:"";
+      position:absolute;
+      inset:10px 12px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.14) 1px, transparent 1.5px);
+      background-size: 8px 8px;
+      opacity:.95;
+    }
+
+    .baseControls{
+      position:absolute;
+      left:50%;
+      top:24px;
+      transform:translateX(-50%);
+      width:min(52%, 420px);
+      min-width:260px;
+      height:44px;
+      border-radius:12px;
+      background: linear-gradient(180deg, #1b2238, #0e1423);
+      box-shadow:
+        inset 0 4px 6px rgba(0,0,0,.48),
+        0 1px 0 rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 14px;
+      color:#dce7ff;
+      font-size:13px;
+      font-weight:700;
+      text-align:center;
+      line-height:1.2;
+      white-space:normal;
+    }
+
+    .bottomHint{
+      display:none;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+      background: rgba(6,10,20,.35);
+      padding:20px;
+    }
+    .overlay.show{ display:flex; }
+
+    .card{
+      position:relative;
+      width:min(92vw, 700px);
+      min-height:360px;
+      border-radius:24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(240,246,255,.96));
+      color:#1e2740;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.7);
+    }
+
+    .cardClose{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:38px;
+      height:38px;
+      border:none;
+      border-radius:999px;
+      cursor:pointer;
+      font-size:22px;
+      font-weight:900;
+      background:#ff6e8f;
+      color:white;
+      z-index:4;
+    }
+
+    .cardFlipWrap{
+      position:relative;
+      width:100%;
+      min-height:360px;
+      perspective:1200px;
+      cursor:pointer;
+    }
+
+    .cardInner{
+      position:relative;
+      width:100%;
+      min-height:360px;
+      transition: transform .7s ease;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .cardInner{
+      transform: rotateY(180deg);
+    }
+
+    .cardFace{
+      position:absolute;
+      inset:0;
+      padding:56px 24px 24px;
+      backface-visibility:hidden;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:18px;
+    }
+
+    .cardBack{
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, #eef7ff, #ffffff);
+    }
+
+    .cardEmoji{
+      font-size: clamp(46px, 9vw, 82px);
+      line-height:1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    }
+
+    .cardTitle{
+      font-size:18px;
+      font-weight:800;
+      opacity:.7;
+    }
+
+    .cardText{
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight:800;
+      line-height:1.25;
+      white-space:pre-wrap;
+    }
+
+    .cardSub{
+      font-size:14px;
+      opacity:.65;
+      font-weight:700;
+    }
+
+    .cardImage{
+      max-width:min(86%, 340px);
+      max-height:220px;
+      object-fit:contain;
+      border-radius:18px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    }
+
+    .finish{
+      width:min(90vw, 760px);
+      padding:38px 24px;
+      border-radius:28px;
+      text-align:center;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(238,245,255,.96));
+      color:#13203c;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    }
+    .finishText{
+      font-size: clamp(34px, 6vw, 78px);
+      font-weight:900;
+      line-height:1.05;
+      margin-bottom:12px;
+    }
+    .finishSub{
+      font-size: clamp(16px, 2vw, 24px);
+      opacity:.75;
+      font-weight:700;
+    }
+
+    .flashMessage{
+      position:absolute;
+      left:50%;
+      top:26%;
+      transform:translate(-50%, -50%);
+      z-index:40;
+      padding:12px 18px;
+      border-radius:14px;
+      background: rgba(255,85,120,.92);
+      color:white;
+      font-weight:900;
+      box-shadow: var(--shadow);
+      display:none;
+    }
+    .flashMessage.show{ display:block; }
+
+    @media (max-width: 800px){
+      .machine{ min-height:560px; }
+
+      .toy{
+        width:58px;
+        height:58px;
+        font-size:28px;
+      }
+
+      .dropZoneWrap{
+        width:72px;
+        height:72px;
+        right:42px;
+        bottom:30px;
+      }
+
+      .prong.left{ left:10px; }
+      .prong.right{ right:10px; }
+
+      .prong.left::after{ right:-7px; }
+      .prong.right::after{ left:-7px; }
+
+      .claw.closed .prong.left{ left:20px; }
+      .claw.closed .prong.right{ right:20px; }
+
+      .toyArea{
+        top:57%;
+      }
+
+      .baseSpeaker{
+        width:64px;
+      }
+
+      .baseControls{
+        width:min(52%, 330px);
+        min-width:180px;
+        font-size:11px;
+        padding:0 10px;
+        height:46px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game">
+    <div class="machine" id="machine">
+      <div class="machineInnerFrame"></div>
+
+      <div class="topbar">
+        <div class="panel">
+          <strong id="labelTimer">Время:</strong>
+          <span class="timerValue" id="timerValue">5.0</span>
+        </div>
+
+        <div class="panel status" id="statusText">
+          Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел
+        </div>
+
+        <button class="coinBtn" id="coinBtn">🪙 Бросить монетку</button>
+      </div>
+
+      <div class="playfieldWrap">
+        <div class="playfield" id="playfield">
+          <div class="playfieldGlow"></div>
+          <div class="innerLights"></div>
+          <div class="glassShine"></div>
+          <div class="glassReflections"></div>
+          <div class="ceilingRail"></div>
+
+          <div class="dropZoneWrap">
+            <div class="dropFrameGlow"></div>
+            <div class="dropZone" id="dropZone">
+              <div class="dropTopLip"></div>
+              <div class="dropDepth"></div>
+              <div class="dropHole"></div>
+              <div class="dropBulbs">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="clawRig" id="clawRig">
+            <div class="clawHead"></div>
+            <div class="cable" id="cable"></div>
+            <div class="claw" id="claw">
+              <div class="clawCore"></div>
+              <div class="clawStem"></div>
+              <div class="prong left"></div>
+              <div class="prong right"></div>
+            </div>
+          </div>
+
+          <div class="toyArea" id="toyArea"></div>
+        </div>
+      </div>
+
+      <div class="basePanel">
+        <div class="baseChrome"></div>
+        <div class="baseSpeaker left"></div>
+        <div class="baseSpeaker right"></div>
+        <div class="baseControls" id="controlsHint">
+          ← → двигать клешню • Пробел — опустить клешню
+        </div>
+      </div>
+
+      <div class="flashMessage" id="flashMessage">Промах!</div>
+
+      <div class="overlay" id="cardOverlay">
+        <div class="card" id="taskCard">
+          <button class="cardClose" id="closeCard">×</button>
+          <div class="cardFlipWrap" id="flipCard">
+            <div class="cardInner">
+              <div class="cardFace cardFront" id="cardFront"></div>
+              <div class="cardFace cardBack" id="cardBack"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay" id="finishOverlay">
+        <div class="finish">
+          <div class="finishText" id="finishText">You did it!</div>
+          <div class="finishSub" id="finishSub">Все игрушки собраны</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GAME_CONFIG = {
+      lang: {
+        timer: "Время:",
+        dropZone: "",
+        coinButton: "🪙 Бросить монетку",
+        statusIdle: "Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел",
+        statusActive: "У вас есть время, чтобы поймать игрушку",
+        statusDropping: "Клешня опускается...",
+        statusCard: "Нажмите на карточку, чтобы перевернуть её",
+        statusMiss: "Промах! Бросьте монетку снова",
+        statusTimeout: "Время вышло! Бросьте монетку снова",
+        controlsHint: "← → двигать клешню • Пробел — опустить клешню",
+        cardFrontTitle: "Задание",
+        cardBackTitle: "Ответ",
+        cardFlipHint: "Нажмите на карточку, чтобы увидеть обратную сторону",
+        finishTitle: "You did it!",
+        finishSubtitle: "Все игрушки собраны"
+      },
+
+      timerSeconds: 5,
+      moveStep: 26,
+      clawMinXPercent: 12,
+      clawMaxXPercent: 76,
+      toyCount: 10
+    };
+
+    GAME_CONFIG.items = [
+      {
+        emoji: "🧸",
+        color: "#ff7b8e",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Медвежонок" }
+      },
+      {
+        emoji: "🚗",
+        color: "#57b8ff",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Машина" }
+      },
+      {
+        emoji: "⚽",
+        color: "#67d38c",
+        front: { type: "text", text: "Прочитай слово: мяч" },
+        back:  { type: "text", text: "мяч" }
+      },
+      {
+        emoji: "🪁",
+        color: "#c987ff",
+        front: { type: "text", text: "Что это?" },
+        back:  { type: "text", text: "Воздушный змей" }
+      },
+      {
+        emoji: "🦄",
+        color: "#ff8bd8",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Единорог" }
+      },
+      {
+        emoji: "🎲",
+        color: "#ffad5c",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Кубик" }
+      },
+      {
+        emoji: "🎈",
+        color: "#ff667a",
+        front: { type: "text", text: "Что изображено?" },
+        back:  { type: "text", text: "Воздушный шар" }
+      },
+      {
+        emoji: "🪀",
+        color: "#6ed3ff",
+        front: { type: "text", text: "Назови игрушку" },
+        back:  { type: "text", text: "Йо-йо" }
+      },
+      {
+        emoji: "🧩",
+        color: "#8dda66",
+        front: { type: "text", text: "Выполни устно: назови цвет игрушки" },
+        back:  { type: "text", text: "Пример ответа: зелёный / салатовый" }
+      },
+      {
+        emoji: "🎯",
+        color: "#ff8c42",
+        front: { type: "text", text: "Назови предмет" },
+        back:  { type: "text", text: "Мишень" }
+      }
+    ];
+
+    const state = {
+      active: false,
+      dropping: false,
+      caughtToyId: null,
+      currentXPercent: 50,
+      currentClawTop: 170,
+      timerLeft: GAME_CONFIG.timerSeconds,
+      timerInterval: null,
+      toys: [],
+      currentCardToy: null,
+      completed: false,
+      swingTimeout: null
+    };
+
+    const machine = document.getElementById('machine');
+    const toyArea = document.getElementById('toyArea');
+    const clawRig = document.getElementById('clawRig');
+    const claw = document.getElementById('claw');
+    const cable = document.getElementById('cable');
+    const timerValue = document.getElementById('timerValue');
+    const coinBtn = document.getElementById('coinBtn');
+    const statusText = document.getElementById('statusText');
+    const dropZone = document.getElementById('dropZone');
+    const flashMessage = document.getElementById('flashMessage');
+
+    const cardOverlay = document.getElementById('cardOverlay');
+    const taskCard = document.getElementById('taskCard');
+    const flipCard = document.getElementById('flipCard');
+    const closeCard = document.getElementById('closeCard');
+    const cardFront = document.getElementById('cardFront');
+    const cardBack = document.getElementById('cardBack');
+
+    const finishOverlay = document.getElementById('finishOverlay');
+    const finishText = document.getElementById('finishText');
+    const finishSub = document.getElementById('finishSub');
+
+    function applyLanguage(){
+      document.getElementById('labelTimer').textContent = GAME_CONFIG.lang.timer;
+      dropZone.textContent = GAME_CONFIG.lang.dropZone;
+      coinBtn.textContent = GAME_CONFIG.lang.coinButton;
+      statusText.textContent = GAME_CONFIG.lang.statusIdle;
+      document.getElementById('controlsHint').textContent = GAME_CONFIG.lang.controlsHint;
+      finishText.textContent = GAME_CONFIG.lang.finishTitle;
+      finishSub.textContent = GAME_CONFIG.lang.finishSubtitle;
+    }
+
+    function showFlash(text){
+      flashMessage.textContent = text;
+      flashMessage.classList.add('show');
+      setTimeout(() => flashMessage.classList.remove('show'), 1200);
+    }
+
+    function setStatus(text){
+      statusText.textContent = text;
+    }
+
+    function updateClawPosition(){
+      clawRig.style.left = state.currentXPercent + '%';
+      const cableHeight = Math.max(40, state.currentClawTop - 20);
+      cable.style.height = cableHeight + 'px';
+      claw.style.top = state.currentClawTop + 'px';
+    }
+
+    function clearSwingClasses(){
+      claw.classList.remove('swing-left', 'swing-right');
+    }
+
+    function animateClawSwing(dir){
+      clearTimeout(state.swingTimeout);
+      claw.classList.remove(dir < 0 ? 'swing-right' : 'swing-left');
+      claw.classList.add(dir < 0 ? 'swing-left' : 'swing-right');
+
+      state.swingTimeout = setTimeout(() => {
+        clearSwingClasses();
+      }, 180);
+    }
+
+    function resetClawVisual(){
+      state.currentClawTop = 170;
+      claw.classList.remove('closed');
+      clearSwingClasses();
+      updateClawPosition();
+    }
+
+    function initToys(){
+      toyArea.innerHTML = '';
+      state.toys = [];
+
+      const items = GAME_CONFIG.items.slice(0, GAME_CONFIG.toyCount);
+
+      const positions = [
+        { x: 12, y: 28 },
+        { x: 30, y: 24 },
+        { x: 48, y: 28 },
+        { x: 66, y: 24 },
+
+        { x: 18, y: 50 },
+        { x: 36, y: 46 },
+        { x: 54, y: 50 },
+        { x: 72, y: 46 },
+
+        { x: 28, y: 68 },
+        { x: 58, y: 66 }
+      ];
+
+      items.forEach((item, index) => {
+        const toy = document.createElement('div');
+        toy.className = 'toy';
+        toy.dataset.id = String(index);
+        toy.textContent = item.emoji;
+        toy.style.background = `radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ${item.color}`;
+
+        const pos = positions[index % positions.length];
+        toy.style.left = pos.x + '%';
+        toy.style.top = pos.y + '%';
+
+        toyArea.appendChild(toy);
+
+        state.toys.push({
+          id: index,
+          item,
+          el: toy,
+          removed: false
+        });
+      });
+    }
+
+    function startRound(){
+      if(state.active || state.dropping || state.completed) return;
+
+      state.active = true;
+      state.timerLeft = GAME_CONFIG.timerSeconds;
+      timerValue.textContent = state.timerLeft.toFixed(1);
+      coinBtn.disabled = true;
+      setStatus(GAME_CONFIG.lang.statusActive);
+
+      clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        state.timerLeft = Math.max(0, state.timerLeft - 0.1);
+        timerValue.textContent = state.timerLeft.toFixed(1);
+
+        if(state.timerLeft <= 0){
+          clearInterval(state.timerInterval);
+          state.active = false;
+          coinBtn.disabled = false;
+          playFailSound();
+          setStatus(GAME_CONFIG.lang.statusTimeout);
+          showFlash(GAME_CONFIG.lang.statusTimeout);
+        }
+      }, 100);
+    }
+
+    function endRound(){
+      clearInterval(state.timerInterval);
+      state.active = false;
+      state.dropping = false;
+      coinBtn.disabled = false;
+      timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+      resetClawVisual();
+    }
+
+    function getToySize(){
+      const toy = state.toys.find(t => !t.removed)?.el;
+      if(!toy) return 70;
+      return toy.getBoundingClientRect().width || 70;
+    }
+
+    function getClawCatchPoint(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const x = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const y = playRect.top + state.currentClawTop + 102;
+      return { x, y };
+    }
+
+    function findCaughtToy(){
+      const point = getClawCatchPoint();
+      let best = null;
+      let bestDistance = Infinity;
+      const catchRadius = getToySize() * 0.68;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = point.x - cx;
+        const dy = point.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if(dist < catchRadius && dist < bestDistance){
+          best = toy;
+          bestDistance = dist;
+        }
+      });
+
+      return best;
+    }
+
+    async function dropClaw(){
+      if(!state.active || state.dropping || state.completed) return;
+
+      state.dropping = true;
+      clearInterval(state.timerInterval);
+      clearSwingClasses();
+      setStatus(GAME_CONFIG.lang.statusDropping);
+
+      const toy = findNearestToyInColumn();
+      const targetTop = toy ? getClawTopForToy(toy) : getDefaultDropTop();
+
+      await animateClawDown(targetTop);
+
+      const caughtToy = findCaughtToy();
+      claw.classList.add('closed');
+
+      if(caughtToy){
+        caughtToy.el.classList.add('caught');
+        await delay(180);
+        await liftWithToy(caughtToy);
+        await moveToyToDropZone(caughtToy);
+        caughtToy.removed = true;
+        caughtToy.el.classList.add('hidden');
+        await delay(120);
+
+        playSuccessSound();
+        openCard(caughtToy);
+      } else {
+        await delay(180);
+        await animateClawUp();
+        playFailSound();
+        setStatus(GAME_CONFIG.lang.statusMiss);
+        showFlash(GAME_CONFIG.lang.statusMiss);
+        endRound();
+      }
+    }
+
+    function findNearestToyInColumn(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const maxDx = getToySize() * 0.85;
+
+      let best = null;
+      let bestDx = Infinity;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const dx = Math.abs(clawX - cx);
+        if(dx < maxDx && dx < bestDx){
+          best = toy;
+          bestDx = dx;
+        }
+      });
+
+      return best;
+    }
+
+    function getClawTopForToy(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const toyRect = toy.el.getBoundingClientRect();
+      const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
+
+      return Math.max(170, Math.min(toyCenterY - 102, 360));
+    }
+
+    function getDefaultDropTop(){
+      return 320;
+    }
+
+    function animateClawDown(targetTop){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop += 8;
+          if(state.currentClawTop >= targetTop){
+            state.currentClawTop = targetTop;
+            updateClawPosition();
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    function animateClawUp(){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop -= 8;
+          if(state.currentClawTop <= 170){
+            state.currentClawTop = 170;
+            updateClawPosition();
+            claw.classList.remove('closed');
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    async function liftWithToy(toy){
+      while(state.currentClawTop > 170){
+        state.currentClawTop -= 8;
+        updateClawPosition();
+
+        const playRect = document.getElementById('playfield').getBoundingClientRect();
+        const clawX = playRect.width * (state.currentXPercent / 100);
+        const toyAreaRect = toyArea.getBoundingClientRect();
+        const toySize = toy.el.getBoundingClientRect().width || 70;
+        const localX = clawX - toyAreaRect.left + playRect.left - toySize / 2;
+        const localY = state.currentClawTop + 108 - (toyAreaRect.top - playRect.top) - toySize / 2;
+
+        toy.el.style.left = localX + 'px';
+        toy.el.style.top = localY + 'px';
+
+        await delay(16);
+      }
+      updateClawPosition();
+    }
+
+    async function moveToyToDropZone(toy){
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      const dropRect = dropZone.getBoundingClientRect();
+      const toySize = toy.el.getBoundingClientRect().width || 70;
+
+      const startLeft = parseFloat(toy.el.style.left);
+      const startTop = parseFloat(toy.el.style.top);
+
+      toy.el.classList.add('dropForeground');
+
+      const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
+      const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
+
+      const stage1Frames = 14;
+      for(let i=1; i<=stage1Frames; i++){
+        const p = i / stage1Frames;
+        const ease = 1 - Math.pow(1 - p, 3);
+        const x = startLeft + (stage1X - startLeft) * ease;
+        const y = startTop + (stage1Y - startTop) * ease;
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${1 - p * 0.05})`;
+        await delay(16);
+      }
+
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.30;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.50 - toySize * 0.10;
+
+      const stage2Frames = 18;
+      for(let i=1; i<=stage2Frames; i++){
+        const p = i / stage2Frames;
+        const ease = p < 0.45
+          ? 3.5 * p * p * p
+          : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+        const x = stage1X + (holeX - stage1X) * ease;
+        const y = stage1Y + (holeY - stage1Y) * ease;
+        const scale = 0.95 - p * 0.62;
+
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${scale})`;
+        await delay(16);
+      }
+
+      toy.el.classList.remove('dropForeground');
+
+      await animateClawUp();
+    }
+
+    function renderCardSide(side, title, item){
+      let html = `<div class="cardTitle">${escapeHtml(title)}</div>`;
+
+      if(item && item.emoji){
+        html += `<div class="cardEmoji">${escapeHtml(item.emoji)}</div>`;
+      }
+
+      if(side.type === 'text'){
+        html += `<div class="cardText">${escapeHtml(side.text || '')}</div>`;
+      } else if(side.type === 'image'){
+        html += side.image ? `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">` : '';
+      } else if(side.type === 'mixed'){
+        if(side.image){
+          html += `<img class="cardImage" src="${escapeAttr(side.image)}" alt="">`;
+        }
+        if(side.text){
+          html += `<div class="cardText">${escapeHtml(side.text)}</div>`;
+        }
+      }
+
+      html += `<div class="cardSub">${escapeHtml(GAME_CONFIG.lang.cardFlipHint)}</div>`;
+      return html;
+    }
+
+    function openCard(toy){
+      state.currentCardToy = toy;
+      taskCard.classList.remove('flipped');
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
+      cardOverlay.classList.add('show');
+      setStatus(GAME_CONFIG.lang.statusCard);
+    }
+
+    function closeCurrentCard(){
+      cardOverlay.classList.remove('show');
+      state.currentCardToy = null;
+
+      const remaining = state.toys.filter(t => !t.removed).length;
+      if(remaining === 0){
+        finishGame();
+      } else {
+        endRound();
+        setStatus(GAME_CONFIG.lang.statusIdle);
+      }
+    }
+
+    function finishGame(){
+      state.completed = true;
+      endRound();
+      finishOverlay.classList.add('show');
+      playTriumphSound();
+    }
+
+    function moveClaw(dir){
+      if(!state.active || state.dropping || state.completed) return;
+      const stepPercent = (GAME_CONFIG.moveStep / document.getElementById('playfield').clientWidth) * 100;
+      state.currentXPercent += dir * stepPercent;
+      state.currentXPercent = Math.max(GAME_CONFIG.clawMinXPercent, Math.min(GAME_CONFIG.clawMaxXPercent, state.currentXPercent));
+      updateClawPosition();
+      animateClawSwing(dir);
+    }
+
+    function delay(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#39;");
+    }
+
+    function escapeAttr(s){
+      return String(s).replaceAll('"', '&quot;');
+    }
+
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function ensureAudio(){
+      if(!audioCtx) audioCtx = new AudioCtx();
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function tone(freq, duration, type='sine', gainValue=.05, startAt=0){
+      const now = audioCtx.currentTime + startAt;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    function playSuccessSound(){
+      ensureAudio();
+      tone(523.25, .18, 'triangle', .06, 0);
+      tone(659.25, .18, 'triangle', .06, .08);
+      tone(783.99, .24, 'triangle', .06, .16);
+    }
+
+    function playFailSound(){
+      ensureAudio();
+      tone(240, .20, 'sawtooth', .05, 0);
+      tone(180, .28, 'sawtooth', .05, .10);
+    }
+
+    function playTriumphSound(){
+      ensureAudio();
+      tone(523.25, .22, 'triangle', .07, 0);
+      tone(659.25, .22, 'triangle', .07, .12);
+      tone(783.99, .22, 'triangle', .07, .24);
+      tone(1046.5, .45, 'triangle', .08, .36);
+    }
+
+    coinBtn.addEventListener('click', () => {
+      ensureAudio();
+      startRound();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if(cardOverlay.classList.contains('show')) return;
+      if(finishOverlay.classList.contains('show')) return;
+
+      if(e.code === 'ArrowLeft'){
+        e.preventDefault();
+        moveClaw(-1);
+      } else if(e.code === 'ArrowRight'){
+        e.preventDefault();
+        moveClaw(1);
+      } else if(e.code === 'Space'){
+        e.preventDefault();
+        dropClaw();
+      }
+    });
+
+    flipCard.addEventListener('click', () => {
+      taskCard.classList.toggle('flipped');
+    });
+
+    closeCard.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeCurrentCard();
+    });
+
+    window.addEventListener('resize', () => {
+      updateClawPosition();
+    });
+
+    applyLanguage();
+    initToys();
+    updateClawPosition();
+    timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+  </script>
+</body>
+</html>
