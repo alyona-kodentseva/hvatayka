@@ -18,18 +18,19 @@
       --machine-w: min(92vw, 980px);
       --machine-h: min(78vh, 720px);
 
-      --panel-red-1: #ff6b7f;
-      --panel-red-2: #d93649;
-      --panel-red-3: #8c1524;
+      --pink-led: #ff9bc2;
+      --pink-led-soft: rgba(255,155,194,.38);
+      --panel-red-1: #ff627c;
+      --panel-red-2: #d92e46;
+      --panel-red-3: #8c1424;
 
-      --metal-1: #f2f5ff;
-      --metal-2: #c6d2ea;
-      --metal-3: #8ea0c8;
-      --metal-4: #5f729f;
-
-      --tray-orange-1: #ffd79b;
-      --tray-orange-2: #ffad5f;
-      --tray-orange-3: #cf662c;
+      --tray-cream: #ffe8bf;
+      --tray-cream-2: #ffd99e;
+      --tray-orange-1: #f6bd73;
+      --tray-orange-2: #eb8a42;
+      --tray-orange-3: #b85a25;
+      --tray-brown-1: #6a3419;
+      --tray-brown-2: #2a1409;
     }
 
     *{box-sizing:border-box}
@@ -146,7 +147,7 @@
 
     .playfieldWrap{
       position:absolute;
-      inset:70px 18px 112px 18px;
+      inset:70px 18px 18px 18px;
       border-radius:24px;
       z-index:5;
       overflow:hidden;
@@ -160,14 +161,16 @@
 
     .playfield{
       position:absolute;
-      inset:0;
-      border-radius:24px;
+      inset:0 0 108px 0;
+      border-radius:24px 24px 0 0;
       overflow:hidden;
       background:
         radial-gradient(480px 170px at 50% 4%, rgba(255,255,255,.32), transparent 75%),
         linear-gradient(180deg, rgba(170,226,255,.36), rgba(118,187,255,.12) 44%, rgba(9,14,28,.22) 45%, rgba(9,14,28,.24)),
         linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,0));
       border:1px solid rgba(255,255,255,.16);
+      border-bottom:none;
+      z-index:1;
     }
 
     .playfieldGlow{
@@ -283,61 +286,42 @@
       to{ opacity:.9; filter:brightness(1.18); }
     }
 
-    .dropZone{
+    /* БОКОВАЯ ПУНКТИРНАЯ ГРАНИЦА */
+    .sideDashes{
       position:absolute;
-      right:18px;
-      bottom:22px;
+      right:0;
+      top:0;
+      bottom:108px;
+      width:42px;
+      z-index:15;
+      pointer-events:none;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+      align-items:flex-end;
+      gap:16px;
+      padding-top:12px;
+      padding-right:8px;
+      background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,0));
+    }
+
+    .sideDashes span{
+      width:24px;
+      height:16px;
+      border-radius:0;
+      background: rgba(255,155,194,.62);
+      box-shadow: 0 0 10px rgba(255,155,194,.15);
+    }
+
+    /* Воронка теперь не залезает на пунктир */
+    .dropZoneWrap{
+      position:absolute;
+      right:52px;
+      bottom:122px;
       width:min(19%, 150px);
       height:min(27%, 176px);
-      border-radius:24px 24px 20px 20px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0) 16%),
-        linear-gradient(180deg, #ffd9a0 0%, #ffb868 28%, #ef8c43 62%, #b55324 100%);
-      border:1px solid rgba(255,255,255,.28);
-      box-shadow:
-        inset 0 2px 2px rgba(255,255,255,.35),
-        inset 0 -10px 16px rgba(0,0,0,.18),
-        0 10px 18px rgba(0,0,0,.22);
-      z-index:15;
-      overflow:hidden;
-    }
-
-    .dropZone::before{
-      content:"";
-      position:absolute;
-      inset:7px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
+      z-index:22;
       pointer-events:none;
-    }
-
-    .dropInner{
-      position:absolute;
-      left:50%;
-      top:24%;
-      transform:translateX(-50%);
-      width:68%;
-      height:60%;
-      border-radius:24px;
-      background: linear-gradient(180deg, #2f170c, #140904);
-      box-shadow:
-        inset 0 10px 16px rgba(0,0,0,.35),
-        inset 0 1px 1px rgba(255,255,255,.04);
-    }
-
-    .dropHole{
-      position:absolute;
-      left:50%;
-      top:35%;
-      transform:translateX(-50%);
-      width:48%;
-      height:22px;
-      border-radius:8px 8px 10px 10px;
-      background: linear-gradient(180deg, #120c07, #2d1a10);
-      box-shadow:
-        inset 0 4px 6px rgba(0,0,0,.45),
-        0 1px 0 rgba(255,255,255,.08);
-      z-index:2;
     }
 
     .dropFrameGlow{
@@ -345,7 +329,7 @@
       inset:-4px;
       border-radius:28px;
       pointer-events:none;
-      z-index:14;
+      z-index:21;
       box-shadow:
         0 0 0 2px rgba(255,232,170,.22),
         0 0 12px rgba(255,180,70,.26);
@@ -363,11 +347,88 @@
       }
     }
 
+    .dropZone{
+      position:absolute;
+      inset:0;
+      border-radius:30px 30px 28px 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.36), rgba(255,255,255,.10) 10%, rgba(255,255,255,0) 24%),
+        linear-gradient(180deg, var(--tray-cream) 0%, var(--tray-orange-1) 26%, var(--tray-orange-2) 62%, var(--tray-orange-3) 100%);
+      border:2px solid rgba(255,235,198,.72);
+      box-shadow:
+        inset 0 3px 4px rgba(255,255,255,.30),
+        inset 0 -14px 18px rgba(0,0,0,.16),
+        0 14px 22px rgba(0,0,0,.22);
+      overflow:hidden;
+      z-index:22;
+    }
+
+    .dropZone::before{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:24px;
+      border:2px solid rgba(255,235,198,.22);
+      pointer-events:none;
+    }
+
+    .dropInner{
+      position:absolute;
+      left:50%;
+      top:34%;
+      transform:translateX(-50%);
+      width:58%;
+      height:34px;
+      border-radius:10px 10px 16px 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
+        linear-gradient(180deg, var(--tray-brown-1), var(--tray-brown-2));
+      box-shadow:
+        inset 0 8px 10px rgba(0,0,0,.34),
+        0 2px 0 rgba(255,255,255,.08);
+      z-index:3;
+    }
+
+    .dropDepth{
+      position:absolute;
+      left:50%;
+      top:34%;
+      transform:translateX(-50%);
+      width:70%;
+      height:40%;
+      border-radius:14px 14px 24px 24px;
+      background:
+        linear-gradient(180deg, rgba(20,8,4,.04), rgba(20,8,4,.24) 24%, rgba(20,8,4,.42) 100%),
+        linear-gradient(180deg, #7f3d1b, #2a1409);
+      box-shadow:
+        inset 0 16px 18px rgba(0,0,0,.24),
+        inset 0 -4px 8px rgba(255,255,255,.04);
+      z-index:2;
+      clip-path: polygon(14% 0, 86% 0, 100% 32%, 88% 100%, 12% 100%, 0 32%);
+    }
+
+    .dropFloor{
+      position:absolute;
+      left:50%;
+      bottom:16px;
+      transform:translateX(-50%);
+      width:74%;
+      height:24px;
+      border-radius:0 0 18px 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.04)),
+        linear-gradient(180deg, #f5cb86, #d17736);
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.28),
+        0 2px 6px rgba(0,0,0,.12);
+      z-index:1;
+    }
+
     .dropBulbs{
       position:absolute;
       inset:-6px;
       pointer-events:none;
-      z-index:16;
+      z-index:24;
     }
 
     .dropBulbs span{
@@ -591,6 +652,12 @@
       pointer-events:none;
     }
 
+    /* Игрушка при пролете над передним краем воронки */
+    .toy.frontDrop{
+      z-index:30 !important;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.22));
+    }
+
     .basePanel{
       position:absolute;
       left:18px;
@@ -634,20 +701,6 @@
         0 1px 3px rgba(0,0,0,.16);
     }
 
-    .baseAccess{
-      position:absolute;
-      left:50%;
-      top:34px;
-      transform:translateX(-50%);
-      width:min(32%, 220px);
-      height:30px;
-      border-radius:10px;
-      background: linear-gradient(180deg, #1b2238, #0e1423);
-      box-shadow:
-        inset 0 4px 6px rgba(0,0,0,.48),
-        0 1px 0 rgba(255,255,255,.08);
-    }
-
     .baseSpeaker{
       position:absolute;
       top:26px;
@@ -672,20 +725,34 @@
       opacity:.95;
     }
 
-    .bottomHint{
+    .baseControls{
       position:absolute;
-      left:14px;
-      right:14px;
-      bottom:106px;
-      z-index:30;
+      left:50%;
+      top:34px;
+      transform:translateX(-50%);
+      width:min(46%, 360px);
+      min-width:220px;
+      height:30px;
+      border-radius:10px;
+      background: linear-gradient(180deg, #1b2238, #0e1423);
+      box-shadow:
+        inset 0 4px 6px rgba(0,0,0,.48),
+        0 1px 0 rgba(255,255,255,.08);
       display:flex;
+      align-items:center;
       justify-content:center;
-      pointer-events:none;
-    }
-    .bottomHint .panel{
-      pointer-events:auto;
+      padding:0 14px;
+      color:#dce7ff;
       font-size:14px;
-      text-align:center;
+      font-weight:700;
+      letter-spacing:.1px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .bottomHint{
+      display:none;
     }
 
     .overlay{
@@ -837,7 +904,7 @@
     .flashMessage.show{ display:block; }
 
     @media (max-width: 800px){
-      .machine{ min-height:560px; }
+      .machine{ min-height:580px; }
 
       .toy{
         width:58px;
@@ -845,9 +912,19 @@
         font-size:28px;
       }
 
-      .dropZone{
+      .dropZoneWrap{
+        right:48px;
         width:110px;
-        height:124px;
+        height:126px;
+      }
+
+      .sideDashes{
+        width:36px;
+      }
+
+      .sideDashes span{
+        width:22px;
+        height:15px;
       }
 
       .prong.left{ left:10px; }
@@ -863,8 +940,10 @@
         top:57%;
       }
 
-      .baseAccess{
-        width:42%;
+      .baseControls{
+        width:44%;
+        min-width:180px;
+        font-size:12px;
       }
 
       .baseSpeaker{
@@ -899,14 +978,22 @@
           <div class="glassReflections"></div>
           <div class="ceilingRail"></div>
 
-          <div class="dropFrameGlow"></div>
-          <div class="dropZone" id="dropZone">
-            <div class="dropInner"></div>
-            <div class="dropHole"></div>
-            <div class="dropBulbs">
-              <span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
+          <div class="sideDashes" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="dropZoneWrap">
+            <div class="dropFrameGlow"></div>
+            <div class="dropZone" id="dropZone">
+              <div class="dropDepth"></div>
+              <div class="dropInner"></div>
+              <div class="dropFloor"></div>
+              <div class="dropBulbs">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
             </div>
           </div>
 
@@ -923,22 +1010,18 @@
 
           <div class="toyArea" id="toyArea"></div>
         </div>
-      </div>
 
-      <div class="basePanel">
-        <div class="baseChrome"></div>
-        <div class="baseSpeaker left"></div>
-        <div class="baseSpeaker right"></div>
-        <div class="baseAccess"></div>
+        <div class="basePanel">
+          <div class="baseChrome"></div>
+          <div class="baseSpeaker left"></div>
+          <div class="baseSpeaker right"></div>
+          <div class="baseControls" id="controlsHint">
+            ← → двигать клешню • Пробел — опустить клешню
+          </div>
+        </div>
       </div>
 
       <div class="flashMessage" id="flashMessage">Промах!</div>
-
-      <div class="bottomHint">
-        <div class="panel" id="controlsHint">
-          ← → двигать клешню • Пробел — опустить клешню
-        </div>
-      </div>
 
       <div class="overlay" id="cardOverlay">
         <div class="card" id="taskCard">
@@ -1378,24 +1461,51 @@
     async function moveToyToDropZone(toy){
       const toyAreaRect = toyArea.getBoundingClientRect();
       const dropRect = dropZone.getBoundingClientRect();
-
-      const targetX = dropRect.left - toyAreaRect.left + dropRect.width * 0.35;
-      const targetY = dropRect.top - toyAreaRect.top + dropRect.height * 0.28;
+      const toySize = toy.el.getBoundingClientRect().width || 70;
 
       const startLeft = parseFloat(toy.el.style.left);
       const startTop = parseFloat(toy.el.style.top);
 
-      const frames = 28;
-      for(let i=1; i<=frames; i++){
-        const p = i / frames;
+      /* Передний план: сначала к верхнему краю воронки */
+      const lipX = dropRect.left - toyAreaRect.left + dropRect.width * 0.48 - toySize / 2;
+      const lipY = dropRect.top - toyAreaRect.top - toySize * 0.22;
+
+      const framesFront = 16;
+      toy.el.classList.add('frontDrop');
+
+      for(let i=1; i<=framesFront; i++){
+        const p = i / framesFront;
         const ease = 1 - Math.pow(1 - p, 3);
-        const x = startLeft + (targetX - startLeft) * ease;
-        const y = startTop + (targetY - startTop) * ease;
+        const x = startLeft + (lipX - startLeft) * ease;
+        const y = startTop + (lipY - startTop) * ease;
         toy.el.style.left = x + 'px';
         toy.el.style.top = y + 'px';
-        toy.el.style.transform = `scale(${1 - p * 0.18})`;
+        toy.el.style.transform = `scale(${1 - p * 0.08})`;
         await delay(16);
       }
+
+      /* Затем "провал" внутрь глубины воронки */
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.34;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.37;
+
+      const framesFall = 18;
+      for(let i=1; i<=framesFall; i++){
+        const p = i / framesFall;
+        const ease = p < 0.6
+          ? 4 * p * p * p
+          : 1 - Math.pow(-2 * p + 2, 3) / 2;
+
+        const x = lipX + (holeX - lipX) * ease;
+        const y = lipY + (holeY - lipY) * ease;
+        const scale = 0.92 - p * 0.26;
+
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = `scale(${scale})`;
+        await delay(16);
+      }
+
+      toy.el.classList.remove('frontDrop');
 
       await animateClawUp();
     }
