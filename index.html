@@ -319,7 +319,323 @@
             Для каждой карточки можно добавить текст, картинку по ссылке или оба варианта сразу на лицевой и обратной стороне.
           </div>
           <div class="cardsList" id="cardsList"></div>
- updatePreview();
+          <div style="height:8px;"></div>
+          <button class="btn btnSecondary btnBlock" id="addCardBtn" type="button">Добавить карточку</button>
+        </div>
+
+        <div class="section">
+          <h3>Генерация iframe для Genially</h3>
+          <div class="smallText" style="margin-bottom:10px;">
+            После публикации репозитория на GitHub Pages редактор сам подставит адрес <code>game.html</code>.
+          </div>
+          <button class="btn btnPrimary btnBlock" id="generateBtn" type="button">Сгенерировать iframe</button>
+          <div style="height:10px;"></div>
+          <textarea id="iframeOutput" class="outputArea" placeholder="Здесь появится код iframe для Genially"></textarea>
+        </div>
+      </aside>
+
+      <main class="previewPanel">
+        <div class="previewTop">
+          <h2 class="previewTitle">Предпросмотр</h2>
+          <div class="smallText">Все изменения применяются в режиме реального времени</div>
+        </div>
+        <div class="previewFrame">
+          <iframe id="previewFrame" title="Предпросмотр автомата"></iframe>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const LANGUAGES = {
+      ru: {
+        name: "Русский",
+        strings: {
+          timer: "Время:",
+          coinButton: "🪙 Бросить монетку",
+          statusIdle: "Бросьте монетку, затем двигайте клешню стрелками и нажмите пробел",
+          statusActive: "У вас есть время, чтобы поймать игрушку",
+          statusDropping: "Клешня опускается...",
+          statusCard: "Нажмите на карточку, чтобы перевернуть её",
+          statusMiss: "Промах! Бросьте монетку снова",
+          statusTimeout: "Время вышло! Бросьте монетку снова",
+          controlsHint: "← → двигать клешню • Пробел — опустить клешню",
+          controlsHintTouch: "Кнопки внизу: влево • вниз • вправо",
+          cardFrontTitle: "Задание",
+          cardBackTitle: "Ответ",
+          cardFlipHint: "Нажмите на карточку, чтобы увидеть обратную сторону",
+          finishTitle: "You did it!",
+          finishSubtitle: "Все игрушки собраны",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      },
+      en: {
+        name: "English",
+        strings: {
+          timer: "Time:",
+          coinButton: "🪙 Insert coin",
+          statusIdle: "Insert a coin, move the claw with arrows and press space",
+          statusActive: "You have time to catch a toy",
+          statusDropping: "The claw is going down...",
+          statusCard: "Tap the card to flip it",
+          statusMiss: "Missed! Insert a coin again",
+          statusTimeout: "Time is up! Insert a coin again",
+          controlsHint: "← → move claw • Space — drop claw",
+          controlsHintTouch: "Buttons below: left • down • right",
+          cardFrontTitle: "Task",
+          cardBackTitle: "Answer",
+          cardFlipHint: "Tap the card to see the other side",
+          finishTitle: "You did it!",
+          finishSubtitle: "All toys collected",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      },
+      de: {
+        name: "Deutsch",
+        strings: {
+          timer: "Zeit:",
+          coinButton: "🪙 Münze einwerfen",
+          statusIdle: "Münze einwerfen, Klaue mit Pfeilen bewegen und Leertaste drücken",
+          statusActive: "Du hast Zeit, ein Spielzeug zu fangen",
+          statusDropping: "Die Klaue fährt herunter...",
+          statusCard: "Klicke auf die Karte, um sie umzudrehen",
+          statusMiss: "Daneben! Münze erneut einwerfen",
+          statusTimeout: "Zeit abgelaufen! Münze erneut einwerfen",
+          controlsHint: "← → Klaue bewegen • Leertaste — Klaue senken",
+          controlsHintTouch: "Tasten unten: links • runter • rechts",
+          cardFrontTitle: "Aufgabe",
+          cardBackTitle: "Antwort",
+          cardFlipHint: "Klicke auf die Karte, um die Rückseite zu sehen",
+          finishTitle: "You did it!",
+          finishSubtitle: "Alle Spielzeuge gesammelt",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      },
+      fr: {
+        name: "Français",
+        strings: {
+          timer: "Temps :",
+          coinButton: "🪙 Insérer une pièce",
+          statusIdle: "Insérez une pièce, déplacez la pince avec les flèches et appuyez sur espace",
+          statusActive: "Vous avez du temps pour attraper un jouet",
+          statusDropping: "La pince descend...",
+          statusCard: "Touchez la carte pour la retourner",
+          statusMiss: "Raté ! Insérez une pièce à nouveau",
+          statusTimeout: "Temps écoulé ! Insérez une pièce à nouveau",
+          controlsHint: "← → déplacer la pince • Espace — descendre la pince",
+          controlsHintTouch: "Boutons en bas : gauche • bas • droite",
+          cardFrontTitle: "Consigne",
+          cardBackTitle: "Réponse",
+          cardFlipHint: "Touchez la carte pour voir l'autre côté",
+          finishTitle: "You did it!",
+          finishSubtitle: "Tous les jouets sont récupérés",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      },
+      es: {
+        name: "Español",
+        strings: {
+          timer: "Tiempo:",
+          coinButton: "🪙 Insertar moneda",
+          statusIdle: "Inserta una moneda, mueve la garra con las flechas y pulsa espacio",
+          statusActive: "Tienes tiempo para atrapar un juguete",
+          statusDropping: "La garra está bajando...",
+          statusCard: "Pulsa la tarjeta para girarla",
+          statusMiss: "¡Fallaste! Inserta una moneda otra vez",
+          statusTimeout: "¡Se acabó el tiempo! Inserta una moneda otra vez",
+          controlsHint: "← → mover garra • Espacio — bajar garra",
+          controlsHintTouch: "Botones abajo: izquierda • abajo • derecha",
+          cardFrontTitle: "Tarea",
+          cardBackTitle: "Respuesta",
+          cardFlipHint: "Pulsa la tarjeta para ver el reverso",
+          finishTitle: "You did it!",
+          finishSubtitle: "Todos los juguetes recogidos",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      },
+      zh: {
+        name: "中文",
+        strings: {
+          timer: "时间：",
+          coinButton: "🪙 投币",
+          statusIdle: "先投币，然后用方向键移动爪子并按空格",
+          statusActive: "你有时间抓住一个玩具",
+          statusDropping: "爪子正在下降……",
+          statusCard: "点击卡片翻面",
+          statusMiss: "没抓到！请重新投币",
+          statusTimeout: "时间到了！请重新投币",
+          controlsHint: "← → 移动爪子 • 空格 — 放下爪子",
+          controlsHintTouch: "下方按钮：左 • 下 • 右",
+          cardFrontTitle: "任务",
+          cardBackTitle: "答案",
+          cardFlipHint: "点击卡片查看背面",
+          finishTitle: "You did it!",
+          finishSubtitle: "所有玩具都收集好了",
+          touchLeft: "←",
+          touchDrop: "↓",
+          touchRight: "→"
+        }
+      }
+    };
+
+    const SAFE_EMOJIS = [
+      "🧸","🚗","⚽","🪁","🦄","🎲","🎈","🪀","🧩","🎯","🚂","🛴"
+    ];
+
+    const RANDOM_COLORS = [
+      "#ff7b8e","#57b8ff","#67d38c","#c987ff","#ff8bd8",
+      "#ffad5c","#ff667a","#6ed3ff","#8dda66","#ff8c42",
+      "#7fe0d4","#f2a5ff"
+    ];
+
+    const DEFAULT_CARDS = [
+      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Медвежонок", backImage:"" },
+      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Машина", backImage:"" },
+      { frontType:"text", frontText:"Прочитай слово: мяч", frontImage:"", backType:"text", backText:"мяч", backImage:"" },
+      { frontType:"text", frontText:"Что это?", frontImage:"", backType:"text", backText:"Воздушный змей", backImage:"" },
+      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Единорог", backImage:"" },
+      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Кубик", backImage:"" },
+      { frontType:"text", frontText:"Что изображено?", frontImage:"", backType:"text", backText:"Воздушный шар", backImage:"" },
+      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Йо-йо", backImage:"" },
+      { frontType:"text", frontText:"Назови цвет игрушки", frontImage:"", backType:"text", backText:"Пример ответа: зелёный", backImage:"" },
+      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Мишень", backImage:"" }
+    ];
+
+    function deepClone(obj){
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    const state = {
+      machineColor: "#ff5b74",
+      language: "ru",
+      fontFamily: "Arial, Helvetica, sans-serif",
+      touchControls: false,
+      cards: deepClone(DEFAULT_CARDS)
+    };
+
+    const languageSelect = document.getElementById('languageSelect');
+    const machineColorInput = document.getElementById('machineColor');
+    const fontSelect = document.getElementById('fontSelect');
+    const touchControlsInput = document.getElementById('touchControls');
+    const cardCountInput = document.getElementById('cardCount');
+    const cardsList = document.getElementById('cardsList');
+    const addCardBtn = document.getElementById('addCardBtn');
+    const generateBtn = document.getElementById('generateBtn');
+    const iframeOutput = document.getElementById('iframeOutput');
+    const previewFrame = document.getElementById('previewFrame');
+
+    function escapeAttr(s){
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    function escapeText(s){
+      return String(s)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+
+    function populateLanguages(){
+      languageSelect.innerHTML = '';
+      Object.entries(LANGUAGES).forEach(([code, data]) => {
+        const option = document.createElement('option');
+        option.value = code;
+        option.textContent = data.name;
+        languageSelect.appendChild(option);
+      });
+      languageSelect.value = state.language;
+    }
+
+    function clampCardCount(n){
+      return Math.max(3, Math.min(12, Number(n) || 3));
+    }
+
+    function createEmptyCard(){
+      return {
+        frontType: "text",
+        frontText: "Новое задание",
+        frontImage: "",
+        backType: "text",
+        backText: "Новый ответ",
+        backImage: ""
+      };
+    }
+
+    function ensureCardCount(target){
+      const count = clampCardCount(target);
+      while(state.cards.length < count){
+        state.cards.push(createEmptyCard());
+      }
+      while(state.cards.length > count){
+        state.cards.pop();
+      }
+      cardCountInput.value = String(state.cards.length);
+    }
+
+    function buildSideFields(card, sideKey, title){
+      const typeKey = sideKey + 'Type';
+      const textKey = sideKey + 'Text';
+      const imageKey = sideKey + 'Image';
+
+      return `
+        <div class="cardEditor">
+          <div class="cardEditorTitle" style="margin-bottom:8px;">${title}</div>
+          <div class="field">
+            <label>Тип содержимого</label>
+            <select data-key="${typeKey}">
+              <option value="text" ${card[typeKey] === "text" ? "selected" : ""}>Только текст</option>
+              <option value="image" ${card[typeKey] === "image" ? "selected" : ""}>Только картинка</option>
+              <option value="mixed" ${card[typeKey] === "mixed" ? "selected" : ""}>Текст + картинка</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Текст</label>
+            <textarea data-key="${textKey}">${escapeText(card[textKey] || "")}</textarea>
+          </div>
+          <div class="field">
+            <label>Ссылка на картинку</label>
+            <input type="text" data-key="${imageKey}" value="${escapeAttr(card[imageKey] || "")}" placeholder="https://..." />
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCardEditors(){
+      cardsList.innerHTML = '';
+
+      state.cards.forEach((card, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'cardEditor';
+        wrapper.innerHTML = `
+          <div class="cardEditorHead">
+            <div class="cardEditorTitle">Карточка ${index + 1}</div>
+            <button class="btn btnDanger" type="button" data-remove="${index}" ${state.cards.length <= 3 ? 'disabled' : ''}>Удалить</button>
+          </div>
+          <div class="dual">
+            ${buildSideFields(card, 'front', 'Лицевая сторона')}
+            ${buildSideFields(card, 'back', 'Обратная сторона')}
+          </div>
+        `;
+
+        wrapper.querySelectorAll('[data-key]').forEach(el => {
+          const handler = (e) => {
+            const key = e.target.getAttribute('data-key');
+            state.cards[index][key] = e.target.value;
+            updatePreview();
           };
           el.addEventListener('input', handler);
           el.addEventListener('change', handler);
