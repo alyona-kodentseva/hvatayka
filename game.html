@@ -709,14 +709,15 @@
     .cardFace{
       position:absolute;
       inset:0;
-      padding:56px 24px 24px;
+      padding:18px 24px 18px;
       backface-visibility:hidden;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
+      display:grid;
+      grid-template-rows:auto minmax(0, 1fr) auto;
+      align-items:stretch;
+      justify-items:center;
       text-align:center;
-      gap:18px;
+      gap:10px;
+      overflow:hidden;
     }
 
     .cardBack{
@@ -724,37 +725,82 @@
       background: linear-gradient(180deg, #eef7ff, #ffffff);
     }
 
-    .cardEmoji{
-      font-size: clamp(46px, 9vw, 82px);
-      line-height:1;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
-    }
-
     .cardTitle{
       font-size:18px;
       font-weight:800;
       opacity:.7;
+      margin-top:2px;
+      align-self:start;
+    }
+
+    .cardContent{
+      width:100%;
+      min-width:0;
+      min-height:0;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      overflow:hidden;
+      padding:0 4px;
     }
 
     .cardText{
       font-size: clamp(22px, 3vw, 34px);
       font-weight:800;
-      line-height:1.25;
+      line-height:1.2;
       white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      max-width:100%;
+      margin:0;
     }
 
     .cardSub{
-      font-size:14px;
+      font-size:13px;
       opacity:.65;
       font-weight:700;
+      align-self:end;
     }
 
     .cardImage{
-      max-width:min(86%, 340px);
-      max-height:220px;
+      display:block;
+      max-width:100%;
+      max-height:100%;
+      width:auto;
+      height:auto;
       object-fit:contain;
       border-radius:18px;
       box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    }
+
+    .cardContent.only-image .cardImage{
+      max-width:min(100%, 94%);
+      max-height:100%;
+    }
+
+    .cardContent.only-text{
+      padding-inline:10px;
+    }
+
+    .cardContent.mixed{
+      justify-content:flex-start;
+      padding-top:2px;
+    }
+
+    .cardContent.mixed .cardImage{
+      flex:1 1 auto;
+      min-height:0;
+      max-height:68%;
+      max-width:min(100%, 92%);
+    }
+
+    .cardContent.mixed .cardText{
+      flex:0 1 auto;
+      max-height:32%;
+      overflow:hidden;
     }
 
     .finish{
@@ -835,6 +881,27 @@
         width:42px;
         height:42px;
         font-size:18px;
+      }
+
+      .cardFace{
+        padding:14px 16px 14px;
+        gap:8px;
+      }
+
+      .cardTitle{
+        font-size:17px;
+      }
+
+      .cardSub{
+        font-size:12px;
+      }
+
+      .cardContent.mixed .cardImage{
+        max-height:64%;
+      }
+
+      .cardContent.mixed .cardText{
+        max-height:36%;
       }
     }
   </style>
@@ -1501,37 +1568,155 @@
       await animateClawUp();
     }
 
-    function renderCardSide(side, title, item){
+    function normalizeSide(side){
+      return {
+        type: side && side.type ? side.type : 'text',
+        text: side && typeof side.text === 'string' ? side.text : '',
+        image: side && typeof side.image === 'string' ? side.image : ''
+      };
+    }
+
+    function isSideEmpty(side){
+      return !String(side.text || '').trim() && !String(side.image || '').trim();
+    }
+
+    function renderCardSide(side, title){
+      const safeSide = normalizeSide(side);
+      const empty = isSideEmpty(safeSide);
+
+      let modeClass = 'only-text';
+      if(safeSide.type === 'image') modeClass = 'only-image';
+      if(safeSide.type === 'mixed') modeClass = 'mixed';
+
       let html = '<div class="cardTitle">' + escapeHTML(title) + '</div>';
+      html += '<div class="cardContent ' + modeClass + (empty ? ' empty' : '') + '">';
 
-      if(item && item.emoji){
-        html += '<div class="cardEmoji">' + escapeHTML(item.emoji) + '</div>';
+      if(!empty){
+        if(safeSide.type === 'text'){
+          if(safeSide.text.trim()){
+            html += '<div class="cardText autoFitText">' + escapeHTML(safeSide.text) + '</div>';
+          }
+        } else if(safeSide.type === 'image'){
+          if(safeSide.image.trim()){
+            html += '<img class="cardImage autoFitImage" src="' + escapeAttr(safeSide.image) + '" alt="">';
+          }
+        } else if(safeSide.type === 'mixed'){
+          if(safeSide.image.trim()){
+            html += '<img class="cardImage autoFitImage" src="' + escapeAttr(safeSide.image) + '" alt="">';
+          }
+          if(safeSide.text.trim()){
+            html += '<div class="cardText autoFitText">' + escapeHTML(safeSide.text) + '</div>';
+          }
+        }
       }
 
-      if(side.type === 'text'){
-        html += '<div class="cardText">' + escapeHTML(side.text || '') + '</div>';
-      } else if(side.type === 'image'){
-        html += side.image ? '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">' : '';
-      } else if(side.type === 'mixed'){
-        if(side.image){
-          html += '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">';
-        }
-        if(side.text){
-          html += '<div class="cardText">' + escapeHTML(side.text) + '</div>';
-        }
-      }
-
+      html += '</div>';
       html += '<div class="cardSub">' + escapeHTML(GAME_CONFIG.lang.cardFlipHint) + '</div>';
       return html;
+    }
+
+    function fitCardBlock(face){
+      if(!face) return;
+      const content = face.querySelector('.cardContent');
+      if(!content) return;
+
+      const textEls = Array.from(content.querySelectorAll('.autoFitText'));
+      const imageEls = Array.from(content.querySelectorAll('.autoFitImage'));
+
+      textEls.forEach(el => {
+        el.style.fontSize = '';
+        el.style.lineHeight = '';
+      });
+
+      imageEls.forEach(img => {
+        img.style.maxWidth = '';
+        img.style.maxHeight = '';
+      });
+
+      const contentStyle = window.getComputedStyle(content);
+      const availableHeight = content.clientHeight
+        - parseFloat(contentStyle.paddingTop || '0')
+        - parseFloat(contentStyle.paddingBottom || '0');
+
+      if(availableHeight <= 0) return;
+
+      if(content.classList.contains('mixed')){
+        imageEls.forEach(img => {
+          img.style.maxWidth = '92%';
+          img.style.maxHeight = Math.max(80, Math.floor(availableHeight * 0.66)) + 'px';
+        });
+      } else if(content.classList.contains('only-image')){
+        imageEls.forEach(img => {
+          img.style.maxWidth = '94%';
+          img.style.maxHeight = Math.max(120, availableHeight) + 'px';
+        });
+      }
+
+      let fontSize = 34;
+      if(textEls.length){
+        const computedSize = parseFloat(window.getComputedStyle(textEls[0]).fontSize);
+        if(computedSize) fontSize = computedSize;
+      }
+
+      let guard = 0;
+      while(
+        guard < 120 &&
+        (content.scrollHeight > content.clientHeight || content.scrollWidth > content.clientWidth)
+      ){
+        guard++;
+
+        if(textEls.length && fontSize > 12){
+          fontSize -= 1;
+          textEls.forEach(el => {
+            el.style.fontSize = fontSize + 'px';
+            el.style.lineHeight = fontSize <= 16 ? '1.08' : fontSize <= 22 ? '1.12' : '1.18';
+          });
+        } else if(imageEls.length){
+          imageEls.forEach(img => {
+            const current = parseFloat(img.style.maxHeight || img.clientHeight || 0);
+            const next = Math.max(60, current - 8);
+            img.style.maxHeight = next + 'px';
+          });
+        } else {
+          break;
+        }
+      }
+    }
+
+    function fitAllCardContent(){
+      fitCardBlock(cardFront);
+      fitCardBlock(cardBack);
+    }
+
+    function scheduleCardFit(){
+      requestAnimationFrame(() => {
+        fitAllCardContent();
+        setTimeout(fitAllCardContent, 50);
+        setTimeout(fitAllCardContent, 150);
+      });
+    }
+
+    function bindCardMediaFit(){
+      [cardFront, cardBack].forEach(face => {
+        face.querySelectorAll('img').forEach(img => {
+          if(img.complete){
+            return;
+          }
+          img.addEventListener('load', scheduleCardFit, { once:true });
+          img.addEventListener('error', scheduleCardFit, { once:true });
+        });
+      });
     }
 
     function openCard(toy){
       state.currentCardToy = toy;
       taskCard.classList.remove('flipped');
-      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
-      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle);
       cardOverlay.classList.add('show');
       setStatus(GAME_CONFIG.lang.statusCard);
+      bindCardMediaFit();
+      scheduleCardFit();
     }
 
     function closeCurrentCard(){
@@ -1610,21 +1795,8 @@
       tone(1046.5, .45, 'triangle', .08, .36);
     }
 
-    function playCoinSound(){
-      ensureAudio();
-      tone(1200, .07, 'square', .05, 0);
-      tone(1800, .11, 'triangle', .045, .04);
-    }
-
-    function playCardFlipSound(){
-      ensureAudio();
-      tone(420, .05, 'triangle', .035, 0);
-      tone(680, .07, 'sine', .03, .03);
-    }
-
     coinBtn.addEventListener('click', function(){
       ensureAudio();
-      playCoinSound();
       startRound();
     });
 
@@ -1646,7 +1818,7 @@
 
     flipCard.addEventListener('click', function(){
       taskCard.classList.toggle('flipped');
-      playCardFlipSound();
+      scheduleCardFit();
     });
 
     closeCard.addEventListener('click', function(e){
@@ -1657,6 +1829,9 @@
     window.addEventListener('resize', function(){
       initToys();
       updateClawPosition();
+      if(cardOverlay.classList.contains('show')){
+        scheduleCardFit();
+      }
     });
 
     applyLang();
