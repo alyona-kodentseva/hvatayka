@@ -498,18 +498,14 @@
       "#7fe0d4","#f2a5ff"
     ];
 
-    const DEFAULT_CARDS = [
-      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Медвежонок", backImage:"" },
-      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Машина", backImage:"" },
-      { frontType:"text", frontText:"Прочитай слово: мяч", frontImage:"", backType:"text", backText:"мяч", backImage:"" },
-      { frontType:"text", frontText:"Что это?", frontImage:"", backType:"text", backText:"Воздушный змей", backImage:"" },
-      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Единорог", backImage:"" },
-      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Кубик", backImage:"" },
-      { frontType:"text", frontText:"Что изображено?", frontImage:"", backType:"text", backText:"Воздушный шар", backImage:"" },
-      { frontType:"text", frontText:"Назови игрушку", frontImage:"", backType:"text", backText:"Йо-йо", backImage:"" },
-      { frontType:"text", frontText:"Назови цвет игрушки", frontImage:"", backType:"text", backText:"Пример ответа: зелёный", backImage:"" },
-      { frontType:"text", frontText:"Назови предмет", frontImage:"", backType:"text", backText:"Мишень", backImage:"" }
-    ];
+    const DEFAULT_CARDS = Array.from({ length: 10 }, () => ({
+      frontType:"text",
+      frontText:"",
+      frontImage:"",
+      backType:"text",
+      backText:"",
+      backImage:""
+    }));
 
     function deepClone(obj){
       return JSON.parse(JSON.stringify(obj));
@@ -567,10 +563,10 @@
     function createEmptyCard(){
       return {
         frontType: "text",
-        frontText: "Новое задание",
+        frontText: "",
         frontImage: "",
         backType: "text",
-        backText: "Новый ответ",
+        backText: "",
         backImage: ""
       };
     }
