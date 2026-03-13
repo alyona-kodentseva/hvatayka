@@ -717,7 +717,6 @@
       justify-content:center;
       text-align:center;
       gap:18px;
-      overflow:hidden;
     }
 
     .cardBack{
@@ -725,34 +724,16 @@
       background: linear-gradient(180deg, #eef7ff, #ffffff);
     }
 
+    .cardEmoji{
+      font-size: clamp(46px, 9vw, 82px);
+      line-height:1;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    }
+
     .cardTitle{
       font-size:18px;
       font-weight:800;
       opacity:.7;
-      flex:0 0 auto;
-    }
-
-    .cardContent{
-      width:100%;
-      flex:1 1 auto;
-      min-height:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      overflow:hidden;
-    }
-
-    .cardTextWrap{
-      width:100%;
-      flex:1 1 auto;
-      min-height:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      padding:0 6px;
     }
 
     .cardText{
@@ -760,18 +741,12 @@
       font-weight:800;
       line-height:1.25;
       white-space:pre-wrap;
-      word-break:break-word;
-      overflow-wrap:anywhere;
-      margin:0;
-      max-width:100%;
-      display:block;
     }
 
     .cardSub{
       font-size:14px;
       opacity:.65;
       font-weight:700;
-      flex:0 0 auto;
     }
 
     .cardImage{
@@ -780,7 +755,6 @@
       object-fit:contain;
       border-radius:18px;
       box-shadow: 0 12px 24px rgba(0,0,0,.12);
-      flex:0 1 auto;
     }
 
     .finish{
@@ -861,9 +835,6 @@
         width:42px;
         height:42px;
         font-size:18px;
-      }
-      .cardImage{
-        max-height:180px;
       }
     }
   </style>
@@ -1013,20 +984,20 @@
         {
           emoji: "🧸",
           color: "#ff7b8e",
-          front: { type: "text", text: "", image: "" },
-          back: { type: "text", text: "", image: "" }
+          front: { type: "text", text: "Назови игрушку", image: "" },
+          back: { type: "text", text: "Медвежонок", image: "" }
         },
         {
           emoji: "🚗",
           color: "#57b8ff",
-          front: { type: "text", text: "", image: "" },
-          back: { type: "text", text: "", image: "" }
+          front: { type: "text", text: "Назови предмет", image: "" },
+          back: { type: "text", text: "Машина", image: "" }
         },
         {
           emoji: "⚽",
           color: "#67d38c",
-          front: { type: "text", text: "", image: "" },
-          back: { type: "text", text: "", image: "" }
+          front: { type: "text", text: "Прочитай слово: мяч", image: "" },
+          back: { type: "text", text: "мяч", image: "" }
         }
       ]
     };
@@ -1232,7 +1203,291 @@
         const fallback = [
           { x: 14, y: 22 }, { x: 31, y: 18 }, { x: 50, y: 24 }, { x: 67, y: 20 },
           { x: 22, y: 44 }, { x: 40, y: 39 }, { x: 58, y: 46 }, { x: 75, y: 42 },
-          { x: 16, y: 63 }, { x: 35, y: 60 }, { x: 54, y: 66 }, { = p < 0.45 ? 3.5 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+          { x: 16, y: 63 }, { x: 35, y: 60 }, { x: 54, y: 66 }, { x: 72, y: 61 }
+        ];
+        while(positions.length < count){
+          const f = fallback[positions.length];
+          positions.push({
+            xPx: (f.x / 100) * width,
+            yPx: (f.y / 100) * height,
+            x: f.x,
+            y: f.y
+          });
+        }
+      }
+
+      return positions.slice(0, count);
+    }
+
+    function initToys(){
+      toyArea.innerHTML = '';
+      state.toys = [];
+      const positions = buildToyPositions(GAME_CONFIG.toyCount);
+
+      GAME_CONFIG.items.forEach((item, index) => {
+        const toy = document.createElement('div');
+        toy.className = 'toy';
+        toy.dataset.id = String(index);
+        toy.textContent = item.emoji || "🧸";
+        toy.style.background = 'radial-gradient(circle at 30% 28%, rgba(255,255,255,.35), transparent 30%), ' + (item.color || '#ff7b8e');
+        const pos = positions[index] || { x: 45, y: 40 };
+        toy.style.left = pos.x + '%';
+        toy.style.top = pos.y + '%';
+        toyArea.appendChild(toy);
+        state.toys.push({ id:index, item:item, el:toy, removed:false });
+      });
+    }
+
+    function startRound(){
+      if(state.active || state.dropping || state.completed) return;
+      state.active = true;
+      state.timerLeft = GAME_CONFIG.timerSeconds;
+      timerValue.textContent = state.timerLeft.toFixed(1);
+      coinBtn.disabled = true;
+      setStatus(GAME_CONFIG.lang.statusActive);
+      clearInterval(state.timerInterval);
+
+      state.timerInterval = setInterval(() => {
+        state.timerLeft = Math.max(0, state.timerLeft - 0.1);
+        timerValue.textContent = state.timerLeft.toFixed(1);
+
+        if(state.timerLeft <= 0){
+          clearInterval(state.timerInterval);
+          state.active = false;
+          coinBtn.disabled = false;
+          playFailSound();
+          setStatus(GAME_CONFIG.lang.statusTimeout);
+          showFlash(GAME_CONFIG.lang.statusTimeout);
+        }
+      }, 100);
+    }
+
+    function endRound(){
+      clearInterval(state.timerInterval);
+      state.active = false;
+      state.dropping = false;
+      coinBtn.disabled = false;
+      timerValue.textContent = GAME_CONFIG.timerSeconds.toFixed(1);
+      resetClawVisual();
+    }
+
+    function getToySize(toyEl = null){
+      const toy = toyEl || (state.toys.find(t => !t.removed) || {}).el;
+      return toy ? (toy.getBoundingClientRect().width || 70) : 70;
+    }
+
+    function getClawCatchPoint(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      return {
+        x: playRect.left + playRect.width * (state.currentXPercent / 100),
+        y: playRect.top + state.currentClawTop + GAME_CONFIG.clawCatchOffsetY
+      };
+    }
+
+    function findCaughtToy(){
+      const point = getClawCatchPoint();
+      let best = null;
+      let bestDistance = Infinity;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const radius = r.width / 2;
+        const cx = r.left + radius;
+        const cy = r.top + radius;
+        const dx = point.x - cx;
+        const dy = point.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const catchRadius = Math.max(8, radius * 0.58);
+
+        if(dist <= catchRadius && dist < bestDistance){
+          best = toy;
+          bestDistance = dist;
+        }
+      });
+
+      return best;
+    }
+
+    function setClawGapForToy(toy){
+      const toySize = getToySize(toy.el);
+      const gap = Math.max(34, Math.min(62, toySize + 4));
+      claw.style.setProperty('--toy-gap', gap + 'px');
+    }
+
+    function setCarriedToyOffsets(toy){
+      const toySize = getToySize(toy.el);
+      state.carriedToyOffsetX = -toySize / 2;
+      state.carriedToyOffsetY = 112 - toySize / 2;
+    }
+
+    async function dropClaw(){
+      if(!state.active || state.dropping || state.completed) return;
+
+      state.dropping = true;
+      clearInterval(state.timerInterval);
+      clearSwingClasses();
+      setStatus(GAME_CONFIG.lang.statusDropping);
+
+      const targetToy = findNearestToyInColumn();
+      const targetTop = targetToy ? getClawTopForToy(targetToy) : getDefaultDropTop();
+      await animateClawDown(targetTop);
+
+      const caughtToy = findCaughtToy();
+
+      if(caughtToy){
+        setClawGapForToy(caughtToy);
+        setCarriedToyOffsets(caughtToy);
+        claw.classList.add('closed', 'hasToy');
+        await delay(180);
+
+        caughtToy.el.classList.add('caught');
+        placeToyInsideClaw(caughtToy);
+        await delay(120);
+        await liftWithToy(caughtToy);
+        await moveToyToDropZone(caughtToy);
+
+        caughtToy.removed = true;
+        caughtToy.el.classList.add('hidden');
+        await delay(120);
+
+        playSuccessSound();
+        openCard(caughtToy);
+      } else {
+        claw.classList.add('closed');
+        await delay(160);
+        await animateClawUp();
+        playFailSound();
+        setStatus(GAME_CONFIG.lang.statusMiss);
+        showFlash(GAME_CONFIG.lang.statusMiss);
+        endRound();
+      }
+    }
+
+    function placeToyInsideClaw(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawCenterX = playRect.width * (state.currentXPercent / 100);
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      toy.el.style.left = (clawCenterX - toyAreaRect.left + playRect.left + state.carriedToyOffsetX) + 'px';
+      toy.el.style.top = (state.currentClawTop + state.carriedToyOffsetY - (toyAreaRect.top - playRect.top)) + 'px';
+    }
+
+    function findNearestToyInColumn(){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const clawX = playRect.left + playRect.width * (state.currentXPercent / 100);
+      const maxDx = getToySize() * 1.0;
+      let best = null;
+      let bestScore = Infinity;
+
+      state.toys.forEach(toy => {
+        if(toy.removed) return;
+        const r = toy.el.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = Math.abs(clawX - cx);
+        if(dx > maxDx) return;
+        const localY = cy - playRect.top;
+        const score = dx + localY * 0.001;
+
+        if(score < bestScore){
+          best = toy;
+          bestScore = score;
+        }
+      });
+
+      return best;
+    }
+
+    function getClawTopForToy(toy){
+      const playRect = document.getElementById('playfield').getBoundingClientRect();
+      const toyRect = toy.el.getBoundingClientRect();
+      const toyCenterY = toyRect.top - playRect.top + toyRect.height / 2;
+      return Math.max(GAME_CONFIG.clawTopMin, Math.min(toyCenterY - GAME_CONFIG.clawCatchOffsetY, 360));
+    }
+
+    function getDefaultDropTop(){
+      return 330;
+    }
+
+    function animateClawDown(targetTop){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop += 8;
+          if(state.currentClawTop >= targetTop){
+            state.currentClawTop = targetTop;
+            updateClawPosition();
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    function animateClawUp(){
+      return new Promise(resolve => {
+        function step(){
+          state.currentClawTop -= 8;
+          if(state.currentClawTop <= GAME_CONFIG.clawStartTop){
+            state.currentClawTop = GAME_CONFIG.clawStartTop;
+            updateClawPosition();
+            claw.classList.remove('closed', 'hasToy');
+            claw.style.removeProperty('--toy-gap');
+            resolve();
+            return;
+          }
+          updateClawPosition();
+          requestAnimationFrame(step);
+        }
+        step();
+      });
+    }
+
+    async function liftWithToy(toy){
+      while(state.currentClawTop > GAME_CONFIG.clawStartTop){
+        state.currentClawTop -= 8;
+        updateClawPosition();
+        placeToyInsideClaw(toy);
+        await delay(16);
+      }
+      updateClawPosition();
+      placeToyInsideClaw(toy);
+    }
+
+    async function moveToyToDropZone(toy){
+      const toyAreaRect = toyArea.getBoundingClientRect();
+      const dropRect = document.getElementById('dropZone').getBoundingClientRect();
+      const toySize = toy.el.getBoundingClientRect().width || 70;
+
+      const startLeft = parseFloat(toy.el.style.left);
+      const startTop = parseFloat(toy.el.style.top);
+
+      toy.el.classList.add('dropForeground');
+
+      const stage1X = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize / 2;
+      const stage1Y = dropRect.top - toyAreaRect.top - toySize * 0.95;
+
+      const stage1Frames = 14;
+      for(let i=1; i<=stage1Frames; i++){
+        const p = i / stage1Frames;
+        const ease = 1 - Math.pow(1 - p, 3);
+        const x = startLeft + (stage1X - startLeft) * ease;
+        const y = startTop + (stage1Y - startTop) * ease;
+        toy.el.style.left = x + 'px';
+        toy.el.style.top = y + 'px';
+        toy.el.style.transform = 'scale(' + (1 - p * 0.05) + ')';
+        await delay(16);
+      }
+
+      const holeX = dropRect.left - toyAreaRect.left + dropRect.width * 0.5 - toySize * 0.5;
+      const holeY = dropRect.top - toyAreaRect.top + dropRect.height * 0.5 - toySize * 0.5;
+
+      const stage2Frames = 18;
+      for(let i=1; i<=stage2Frames; i++){
+        const p = i / stage2Frames;
+        const ease = p < 0.45 ? 3.5 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
         const x = stage1X + (holeX - stage1X) * ease;
         const y = stage1Y + (holeY - stage1Y) * ease;
         const scale = 0.95 - p * 0.62;
@@ -1246,76 +1501,37 @@
       await animateClawUp();
     }
 
-    function hasVisibleText(value){
-      return String(value || '').trim().length > 0;
-    }
-
-    function createTextBlock(text){
-      return '<div class="cardTextWrap"><div class="cardText autoFitText">' + escapeHTML(text) + '</div></div>';
-    }
-
-    function renderCardSide(side, title){
-      const type = side?.type || 'text';
-      const text = side?.text || '';
-      const image = side?.image || '';
-      const hasText = hasVisibleText(text);
-      const hasImage = !!image;
-
+    function renderCardSide(side, title, item){
       let html = '<div class="cardTitle">' + escapeHTML(title) + '</div>';
-      html += '<div class="cardContent">';
 
-      if(type === 'text'){
-        if(hasText){
-          html += createTextBlock(text);
+      if(item && item.emoji){
+        html += '<div class="cardEmoji">' + escapeHTML(item.emoji) + '</div>';
+      }
+
+      if(side.type === 'text'){
+        html += '<div class="cardText">' + escapeHTML(side.text || '') + '</div>';
+      } else if(side.type === 'image'){
+        html += side.image ? '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">' : '';
+      } else if(side.type === 'mixed'){
+        if(side.image){
+          html += '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">';
         }
-      } else if(type === 'image'){
-        if(hasImage){
-          html += '<img class="cardImage" src="' + escapeAttr(image) + '" alt="">';
-        }
-      } else if(type === 'mixed'){
-        if(hasImage){
-          html += '<img class="cardImage" src="' + escapeAttr(image) + '" alt="">';
-        }
-        if(hasText){
-          html += createTextBlock(text);
+        if(side.text){
+          html += '<div class="cardText">' + escapeHTML(side.text) + '</div>';
         }
       }
 
-      html += '</div>';
       html += '<div class="cardSub">' + escapeHTML(GAME_CONFIG.lang.cardFlipHint) + '</div>';
       return html;
-    }
-
-    function fitTextToBox(element){
-      const parent = element.parentElement;
-      if(!parent) return;
-
-      element.style.fontSize = '';
-      let size = parseFloat(getComputedStyle(element).fontSize);
-      const minSize = 12;
-
-      while(size > minSize && (element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth)){
-        size -= 1;
-        element.style.fontSize = size + 'px';
-      }
-    }
-
-    function fitAllCardTexts(){
-      const texts = document.querySelectorAll('.autoFitText');
-      texts.forEach(fitTextToBox);
     }
 
     function openCard(toy){
       state.currentCardToy = toy;
       taskCard.classList.remove('flipped');
-      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle);
-      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle);
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
       cardOverlay.classList.add('show');
       setStatus(GAME_CONFIG.lang.statusCard);
-
-      requestAnimationFrame(() => {
-        fitAllCardTexts();
-      });
     }
 
     function closeCurrentCard(){
@@ -1417,9 +1633,6 @@
 
     flipCard.addEventListener('click', function(){
       taskCard.classList.toggle('flipped');
-      requestAnimationFrame(() => {
-        fitAllCardTexts();
-      });
     });
 
     closeCard.addEventListener('click', function(e){
@@ -1430,9 +1643,6 @@
     window.addEventListener('resize', function(){
       initToys();
       updateClawPosition();
-      if(cardOverlay.classList.contains('show')){
-        fitAllCardTexts();
-      }
     });
 
     applyLang();
