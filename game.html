@@ -1051,20 +1051,20 @@
         {
           emoji: "🧸",
           color: "#ff7b8e",
-          front: { type: "text", text: "Назови игрушку", image: "" },
-          back: { type: "text", text: "Медвежонок", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         },
         {
           emoji: "🚗",
           color: "#57b8ff",
-          front: { type: "text", text: "Назови предмет", image: "" },
-          back: { type: "text", text: "Машина", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         },
         {
           emoji: "⚽",
           color: "#67d38c",
-          front: { type: "text", text: "Прочитай слово: мяч", image: "" },
-          back: { type: "text", text: "мяч", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         }
       ]
     };
@@ -1699,9 +1699,7 @@
     function bindCardMediaFit(){
       [cardFront, cardBack].forEach(face => {
         face.querySelectorAll('img').forEach(img => {
-          if(img.complete){
-            return;
-          }
+          if(img.complete) return;
           img.addEventListener('load', scheduleCardFit, { once:true });
           img.addEventListener('error', scheduleCardFit, { once:true });
         });
