@@ -724,16 +724,24 @@
       background: linear-gradient(180deg, #eef7ff, #ffffff);
     }
 
-    .cardEmoji{
-      font-size: clamp(46px, 9vw, 82px);
-      line-height:1;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
-    }
-
     .cardTitle{
       font-size:18px;
       font-weight:800;
       opacity:.7;
+      flex:0 0 auto;
+    }
+
+    .cardContent{
+      width:100%;
+      max-width:100%;
+      flex:1 1 auto;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:14px;
+      min-height:0;
+      overflow:hidden;
     }
 
     .cardText{
@@ -741,12 +749,16 @@
       font-weight:800;
       line-height:1.25;
       white-space:pre-wrap;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      max-width:100%;
     }
 
     .cardSub{
       font-size:14px;
       opacity:.65;
       font-weight:700;
+      flex:0 0 auto;
     }
 
     .cardImage{
@@ -984,20 +996,20 @@
         {
           emoji: "🧸",
           color: "#ff7b8e",
-          front: { type: "text", text: "Назови игрушку", image: "" },
-          back: { type: "text", text: "Медвежонок", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         },
         {
           emoji: "🚗",
           color: "#57b8ff",
-          front: { type: "text", text: "Назови предмет", image: "" },
-          back: { type: "text", text: "Машина", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         },
         {
           emoji: "⚽",
           color: "#67d38c",
-          front: { type: "text", text: "Прочитай слово: мяч", image: "" },
-          back: { type: "text", text: "мяч", image: "" }
+          front: { type: "text", text: "", image: "" },
+          back: { type: "text", text: "", image: "" }
         }
       ]
     };
@@ -1501,37 +1513,86 @@
       await animateClawUp();
     }
 
-    function renderCardSide(side, title, item){
+    function isSideEmpty(side){
+      if(!side) return true;
+      const text = String(side.text || '').trim();
+      const image = String(side.image || '').trim();
+      return !text && !image;
+    }
+
+    function renderCardSide(side, title){
+      const safeSide = side || { type:'text', text:'', image:'' };
+      const empty = isSideEmpty(safeSide);
+
       let html = '<div class="cardTitle">' + escapeHTML(title) + '</div>';
+      html += '<div class="cardContent">';
 
-      if(item && item.emoji){
-        html += '<div class="cardEmoji">' + escapeHTML(item.emoji) + '</div>';
+      if(!empty){
+        if(safeSide.type === 'text'){
+          if((safeSide.text || '').trim()){
+            html += '<div class="cardText autoFitText">' + escapeHTML(safeSide.text || '') + '</div>';
+          }
+        } else if(safeSide.type === 'image'){
+          html += safeSide.image ? '<img class="cardImage" src="' + escapeAttr(safeSide.image) + '" alt="">' : '';
+        } else if(safeSide.type === 'mixed'){
+          if(safeSide.image){
+            html += '<img class="cardImage" src="' + escapeAttr(safeSide.image) + '" alt="">';
+          }
+          if((safeSide.text || '').trim()){
+            html += '<div class="cardText autoFitText">' + escapeHTML(safeSide.text) + '</div>';
+          }
+        }
       }
 
-      if(side.type === 'text'){
-        html += '<div class="cardText">' + escapeHTML(side.text || '') + '</div>';
-      } else if(side.type === 'image'){
-        html += side.image ? '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">' : '';
-      } else if(side.type === 'mixed'){
-        if(side.image){
-          html += '<img class="cardImage" src="' + escapeAttr(side.image) + '" alt="">';
-        }
-        if(side.text){
-          html += '<div class="cardText">' + escapeHTML(side.text) + '</div>';
-        }
-      }
-
+      html += '</div>';
       html += '<div class="cardSub">' + escapeHTML(GAME_CONFIG.lang.cardFlipHint) + '</div>';
       return html;
+    }
+
+    function fitTextToBox(textEl){
+      if(!textEl) return;
+
+      const container = textEl.closest('.cardContent');
+      if(!container) return;
+
+      const style = window.getComputedStyle(textEl);
+      const defaultFontSize = parseFloat(style.fontSize) || 34;
+      let fontSize = defaultFontSize;
+
+      textEl.style.fontSize = defaultFontSize + 'px';
+
+      let guard = 0;
+      while(
+        guard < 80 &&
+        (
+          textEl.scrollHeight > container.clientHeight ||
+          textEl.scrollWidth > container.clientWidth
+        ) &&
+        fontSize > 14
+      ){
+        fontSize -= 1;
+        textEl.style.fontSize = fontSize + 'px';
+        guard++;
+      }
+    }
+
+    function fitCardContent(){
+      const texts = document.querySelectorAll('.autoFitText');
+      texts.forEach(fitTextToBox);
     }
 
     function openCard(toy){
       state.currentCardToy = toy;
       taskCard.classList.remove('flipped');
-      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle, toy.item);
-      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle, toy.item);
+      cardFront.innerHTML = renderCardSide(toy.item.front, GAME_CONFIG.lang.cardFrontTitle);
+      cardBack.innerHTML = renderCardSide(toy.item.back, GAME_CONFIG.lang.cardBackTitle);
       cardOverlay.classList.add('show');
       setStatus(GAME_CONFIG.lang.statusCard);
+
+      requestAnimationFrame(() => {
+        fitCardContent();
+        setTimeout(fitCardContent, 60);
+      });
     }
 
     function closeCurrentCard(){
@@ -1633,6 +1694,10 @@
 
     flipCard.addEventListener('click', function(){
       taskCard.classList.toggle('flipped');
+      requestAnimationFrame(() => {
+        fitCardContent();
+        setTimeout(fitCardContent, 60);
+      });
     });
 
     closeCard.addEventListener('click', function(e){
@@ -1643,6 +1708,7 @@
     window.addEventListener('resize', function(){
       initToys();
       updateClawPosition();
+      fitCardContent();
     });
 
     applyLang();
